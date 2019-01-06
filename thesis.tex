@@ -318,8 +318,10 @@ Système de module pour Gambit Scheme.
 Une bibliothèque est le regroupement de plusieurs types de données
 identifié de façon unique dans le contexte de la bibliothèque.
 Les types de données qu'une bibliothèque
-peut exporté sont des données utilisateurs et des fonctions.
-Les fonctionnalités d'une bibliothèque peut être copié dans l'exécutable
+peut exporté sont des nombres, des chaînes de caractères des
+structure composite, des procédures et des fonctions.
+L'ensemble de ces données constitue les fonctionnalités de la
+bibliothèque de code. Les fonctionnalités d'une bibliothèque peut être copié dans l'exécutable
 (bibliothèque statique), cela facilité la distribution du binaire puisque
 que ses dépendances sont inclus dans l'exécutable.
 Les fonctionnalités d'une bibliothèque peuvent aussi être chargé
@@ -447,6 +449,26 @@ LibFoo.foo
 \caption{Code d'importation de la fonction \textbf{foo} de la bibliothèque \textit{libFoo.so} en Ruby}
 \end{figure}
 \end{center}
+
+La résolution des fonctionnalités effectué par le \textit{dynamic linker} utilise un ordre de recherche
+définit. Cet ordre de recherche inclut l'exécutable courant, les dépendances de l'exécutable, la bibliothèque
+passé à \textit{dlsym}. La résolution d'une fonctionnalité par \textit{dlsym} qui n'engendre pas la résolution
+d'un autre fonctionnalité externe n'utilise pas le programme principale dans l'ordre de recherche qui alors
+commence par la bibliothèque passé à \textit{dlsym} suivit de ses dépendances. Les résolution de fonctionnalité
+provenant d'appels indirecte au \textit{dynamic linker} inclut le programme principal et ses dépendances avant
+la bibliothèque passé à \textit{dlsym}.
+
+\begin{center}
+    \begin{figure}[ht]
+        \includegraphics{figures/libdeps-ex1.pdf}
+        \caption{Exemple de dépendance dans un application simple fictive.
+            Les ellipses sont les fonctionnalités exportées par les bibliothèques}
+    \end{figure}
+
+\end{center}
+
+% TODO: exemple de résolution indirect
+% TODO: exemple de résolution direct
 
 %% BEGIN
 % D'autre langage compilé comme C/C++
@@ -924,7 +946,7 @@ TODO: rng générator
 %Une bibliothèque liant les fonctions principales de SDL au monde Scheme.
 
 
-\TODO{Fill}
+%\TODO{Fill}
 % SDL / SDL2
 % - Hypothèse
 % - Démarche
@@ -945,7 +967,7 @@ TODO: rng générator
 
 
 \subsection{Bibliothèque Javascript (NodeJS)}
-\TODO{Fill}
+%\TODO{Fill}
 % Démarche général
 % express / sqlite3
 % - Hypothèse * 2
