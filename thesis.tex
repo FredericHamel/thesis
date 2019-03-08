@@ -118,7 +118,11 @@
 %%% etc. soient numérotés successivement, utilisez plutôt un bloc de
 %%% commandes de la forme :
 %%%
-\newcommand\TODO[1]{\colorbox{red}{#1}}
+\newcommand\TODO[1]{\colorbox{green}{#1\rule{\linewidth}{0.5cm}}}
+\newcommand\FIX[1]{\colorbox{red}{#1\rule{\linewidth}{0.5cm}{0}}}
+
+\newcommand{\todo}[1]{\noindent\colorbox{green}{#1\hspace{\textwidth}}}
+\newcommand{\fix}[1]{\noindent\colorbox{red}{#1\hspace{\textwidth}}}
 %% \newtheorem{cor}{\corollaryname}[section]
 %% \newtheorem{deff}[cor]{\definitionnamr}
 %% \newtheorem{ex}[cor]{\examplename}
@@ -307,21 +311,354 @@ Système de module pour Gambit Scheme.
 %%                pages 1                           %
 %%------------------------------------------------- %
 
-\chapter[]{Coexistence entre bibliothèques}% TODO: maybe rename.
-
+%\chapter[]{Coexistence entre bibliothèques}% TODO: maybe rename.
+\chapter[]{Bibliothèques}% TODO: maybe rename.
 %%
 %%% - Programme/Processus
 %%% - Exécutable
-%%% - 
+La création d'exécutable inclut deux étapes importantes, la compilation et
+l'édition des liens. La première étape consiste à prendre un fichier de code
+source et de le traduire en fichier objet, que l'on retrouve souvent avec
+l'extension \verb|.o| ou \verb|.obj|, qui contient la représentation des
+procédures compréhensible par le processeur. Ces fichiers objets ne sont pas
+encore exécutable pour autant, il faut tout d'abord effectuer la seconde étape,
+qui va les regrouper en un exécutable. Le programme qui s'occupe de l'édition
+des liens est le \textit{linker}, la version GNU se nomme \verb|ld|.  Voici
+l'exemple de la création d'un exécutable composé des fichier source
+\verb|main.c| et \verb|foo.c|:
+
+\begin{figure}[ht]
+    \begin{minipage}[t]{0.5\textwidth}
+\begin{verbatim}
+# Compilation
+gcc -c main.c -o main.o
+gcc -c foo.c -o foo.o
+# Édition de liens
+ld -o main.exe main.o foo.o
+\end{verbatim}
+    \end{minipage}
+
+    \caption{Exemple de création d'un exécutable}
+\end{figure}
+
+Dans les systèmes comme DOS, les programmes devaient contenir toutes les
+informations nécessaire pour s'exécuter. De tels programmes sont dit lié
+statiquement dans le sens qu'il ne dépende de rien. Pour permettre la
+réutilisation de code et faciliter l'écriture de programme plus complexe,
+le concept de bibliothèque de code est apparu. Par la contraint des
+système, le premier type de bibliothèques utilisé étaient dit statique.
+Elles consistaient en un regroupement logique de plusieurs fichiers objets en
+un archive (.a). La création d'une bibliothèque statique peut s'effectuer avec
+l'utilitaire \verb|ar|. Lorsque que programme se lie à une bibliothèque
+statique, il inclut tout simplement l'ensemble des procédures contenu dans les
+fichiers objets. L'avantage des bibliothèques statiques est de regrouper
+plusieurs fonctionnalité commune en un seul concept, par exemple la
+bibliothèque mathématique \verb|libm.a| qui contient les fonctions mathématique
+(i.e. \verb|cos|, \verb|sin|).  En plus,  fait que le processus d'édition des
+liens, qui consiste à associer les noms des fonctionnalités avec leur valeur (AMBIGU), n'est
+effectué juste une fois. Une liaison avec une bibliothèque statique
+\verb|libfoo.a| qui contient le fichier objet \verb|foo.o| est équivalent à une
+liaison directe avec le fichier \verb|foo.o|.
+
+\begin{figure}[ht]
+    \begin{minipage}[t]{0.5\textwidth}
+\begin{verbatim}
+# Création de la bibliothèque statique libfoo.a
+ar cr libfoo.a foo.o
+# Création de l'exécutable main.exe
+ld -o main.exe main.o libfoo.a
+\end{verbatim}
+    \end{minipage}
+
+    \caption{Exemple de création de bibliothèque statique suivit d'un exemple
+    d'utilisation.}
+\end{figure}
+
+
+\todo{Citation}
+Un des problèmes des bibliothèques statiques le coût lié à la maintenance.  Les
+programmes qui utilise des bibliothèques statiques ne permettent pas une
+construction modulaire. La mise à niveau d'une des bibliothèques statiques
+nécessite la recompilation du programme au complet. En plus, cela n'est pas
+adapté pour des application d'un application évolutif qui peuvent être étendu
+par l'utilisateur. Une solution qui a été adopté est le
+concept des bibliothèques partagés (ou dynamique). Cela offre une plus grande
+liberté dans la conception des programmes. Un programme qui ce lié avec une
+bibliothèque partagé ne contient pas les définitions importé de la
+bibliothèque, seulement l'information pour la trouvé. Cette information
+consiste généralement aux noms de la fonctionnalités utilisé et des
+bibliothèques dépendantes. Contrairement aux bibliothèques statiques,
+l'édition des liens s'effectue à chaque exécution du programme.
+Les bibliothèques partagés offre plusieurs avantages par rapport
+aux bibliothèques statique.
+
+La construction d'un programme peut s'effectuer de façon modulaire; chaque
+composantes du programme peuvent être construites en séparément.  La
+modification d'une des bibliothèques partagés utilisés par
+le programme ne nécessite pas la recompilation de celui-ci. Le nom qui est
+donné à l'entité qui résout les noms des fonctionnalités est le \textit{dynamic linker}.
+Habituellement les bibliothèques exportent des fonctions, mais il peuvent aussi
+exporter plusieurs types de données comme des entiers, des nombres à virgules,
+des chaînes de caractères et des données composites (structures). Chacune de ces données est
+associées à un nom unique (symbole) au sein de la bibliothèque.
+Il n'est pas possible d'avoir deux bibliothèques statiques qui exportent une
+fonctionnalité avec le même nom au sein d'une même application, alors qu'avec
+les bibliothèques partagés c'est possible. Cela limite le choix des
+bibliothèques qui peuvent être utilisé simultanément au sein du programme;
+chaque bibliothèque doit avoir un ensemble de nom de fonctionnalité distinct
+des autres. Puisque la résolution d'une fonctionnalité retourne la première
+occurrence trouvée, il n'y a rien qui empêche d'avoir plus d'une fonctionnalité
+associée au même nom.
+
+\section{Coexistence entre bibliothèque}
+Les bibliothèques coexistent de deux façon principales, de façon passive dans
+un système fichier et et de façon active durant l'exécution d'un programme.  Un
+système de fichier contient un arborescence hiérarchique de répertoires et de
+fichiers avec une seule racine. Un fichier est l'entité dans un système de
+fichier qui contient les données, c'est dans cette entité que le code des
+bibliothèques ce situe.  Les répertoires sont les entités qui permette de
+regrouper plusieurs fichiers de façon logique. La racine correspond au sommet
+de la hiérarchie du système de fichier. La façon de référer au un fichier
+uniquement dans un système de fichier est d'utiliser le chemin absolu. Cela
+correspond à la liste des répertoires à parcourir de la racine jusqu'au
+fichier. L'outil responsable d'organiser les bibliothèques sur un système
+est le \textit{package manager}. Il possède plusieurs objectif incluant
+l'installation de bibliothèque, la mise à jour de toute les bibliothèques
+installées, la désinstallation de bibliothèque et la résolution des dépendances.
+
+Un cas intéressant de coexistence entre bibliothèques est celui qui inclue
+plusieurs versions d'une même bibliothèque, car cela peut amener des problème
+à la fois sur le système de fichier et durant l'exécution d'un processus utilisant
+ces bibliothèques. Il y a aussi plusieurs utilités d'avoir plusieurs version
+d'une même bibliothèque, cela permet de supporter des application qui dépend de
+bibliothèques antérieurs.
+
+Un autre application est de convertir un vieux format de fichier vers un format
+plus récent. Dans le cas où il n'est pas possible de plusieurs version d'une bibliothèque
+il faut alors écrire un \textit{reader} pour lire le vieux format manuellement ensuite le
+utilise fonctions de la version cible de bibliothèque pour générer le nouveau format du fichier.
+Cette solution à comme problème que le \textit{reader} est beaucoup moins testé que la
+vielle version de la bibliothèque. Cela demande aussi de réécrire qu'est-ce qui à déjà été fait.
+
+\begin{figure}[ht]
+  \includegraphics[width=30em]{figures/app_convert_v1_to_v2.pdf}
+  \caption{Un exemple d'application de conversion entre deux version d'un format
+  de fichier comme sqlite2 et sqlite3 exploitant la possibilité de charger plusieurs
+  version d'une bibliothèque.}
+\end{figure}
+
+
+L'architecture de processus sur un système permet plusieurs propriétés. La
+robustesse, un processus failli les autres processus ne sont pas affectés. La
+sécurité et l'isolation, chaque processus possède leur mémoire qui n'est pas
+accessible par les autre processus et peuvent utilisé une version spécifique
+des bibliothèques. Il est possible de concevoir l'architecture de processus en
+utilisant des threads.  Un \textit{thread} décrit un courant d'exécution d'un
+programme. Un processus à au minimum un \textit{thread} qui correspond au
+courant d'exécution principal du programme. Les \textit{threads} sont utiles
+pour paralléliser l'exécution d'un processus. La création de \textit{threads}
+est beaucoup plus rapide que la création d'un processus, car elle ne nécessite
+pas l'appel au système d'exploitation.
+
+Ce modèle exploite la légèreté des \textit{threads} par rapport au processus et
+la possibilité de charger plusieurs version des bibliothèques qu'il a besoin au sein
+du système. Cela est similaire au modèle de processus utilisé par les
+système d'exploitation, sauf que l'ensemble est juste au sein d'un seul processus.
+Étant donnée que les \textit{threads} vivent tous au sein d'un même processus,
+il est donc facile de partagé des informations d'un \textit{thread} à un autre.
+Ce qui est plus difficile avec le modèle de processus, cela nécessite l'utilisation
+méchanisme comme la mémoire partagé.
+
+\todo{picture: Thread as Light process}
+
+% TODO: exemple de chemin.
+
+%et s'il c'est un cas qui peut
+%contenir un coexistence néfaste.  Cela n'est possible que s'il est possible de
+%distinguer les deux version de la bibliothèque et aussi répartir les appels à
+%des fonctions de même nom à la bonne version de la bibliothèque.
+
+
+\subsection{Coexistence sur un système de fichiers}
+La coexistence sur un même système de fichier implique que les deux
+bibliothèques n'utilise pas le même espace physique et possède un chemin
+différent pour les qualifier. Le choix de l'organisation des bibliothèques
+dans le système de fichier ne permet pas toujours de conserver deux versions
+d'une même bibliothèques.
+
+La caractéristique que le système de bibliothèque doit avoir pour permettent
+plusieurs version d'une bibliothèque est un organisation qui permet de distinguer
+les différentes versions de la bibliothèque par un chemin unique.
+Le nombre de bibliothèque moyen dans un langage est d'environ 90000 \colorbox{red}{ref}
+en prennant en compte les gestionnaire de modules (bibliothèques) suivant:
+
+\todo{Include number of module in pm from www.modulecounts.com}
+
+% En supposant que chaque bibliothèque prend environ 5MB de mémoire de masse, il faudrait
+% au minimum 500GB de mémoire pour entreposer une version de chaque package.
+
+\subsubsection{Organisation de OCaml}
+Le système de gestion de bibliothèques d'OCaml se nomme OPAM. Ce système permet d'avoir
+plusieurs environnement distinct contenant chacun un ensemble de version des bibliothèques.
+Chaque environnement permet l'installation d'une version spécifique de chaque bibliothèque et
+est étiqueté avec un nom choisit par l'utilisateur. Un changement d'environnement est
+effectué par une requête de l'utilisateur \verb|opam switch <envname>|. Il utilise
+le projet \textit{mancoosi}, un projet Européen de recherche dans le 7e cadre de recherche (FP7)
+de la commission Européenne, pour gérer les contrainte de version, les dépendances optionnelles
+et la gestion des conflits. L'environnement par défaut est lié aux dépôts standard d'OCaml.
+
+\subsubsection{Organisation de Python}
+L'organisation des bibliothèques Python ne permet de stocker que la dernière version
+d'une bibliothèques. Les emplacements des bibliothèques sont modifiés par la variable d'environnement
+\verb|PYTHONPATH| qui correspond dans python à la variable \verb|path| de la bibliothèque
+interne \verb|sys|. Le système de bibliothèque de Python ne permet pas la coexistence de plusieurs
+version de la même bibliothèque. Le \textit{package manager} principal de Python est \textit{pip}.
+L'installation d'une autre version d'une bibliothèque désinstalle
+ou masque la version déjà installé. Le système de module ne permet pas de référer à deux version
+de la même bibliothèques.
+
+\begin{figure}[ht]
+    \begin{minipage}[t]{0.5\textwidth}
+\begin{verbatim}
+>>> import sys
+>>> print('\n'.join(sys.path))
+/usr/lib/python37.zip
+/usr/lib/python3.7
+/usr/lib/python3.7/lib-dynload
+/home/username/.local/lib/python3.7/site-packages
+/usr/lib/python3.7/site-packages
+\end{verbatim}
+    \end{minipage}
+    \caption{L'ensemble des répertoires qui est utilisé par Python version 3.7
+    pour organiser les bibliothèques sur un système de type Linux.}
+\end{figure}
+
+Python a le concept équivalent à OCaml de \textit{virtualenv} qui permet d'avoir plusieurs
+versions installées sur la même machine. Cela permet de d'installer des
+bibliothèques dans un environnement isolé des autre. L'avantage est qu'il est
+possible d'avoir une compatibilité avec des logiciel qui utilise des version de
+bibliothèques antérieur. Un inconvénient est qu'il n'y a pas un partage des
+versions de bibliothèques communes entre les différent environnement, cela a
+comme effet d'avoir plus d'un exemplaire d'une version de la bibliothèque installée
+sur le système de fichier. Chaque \texttt{virtualenv} ne permet qu'une seule version de
+chaque bibliothèque d'être installé.
+
+\todo{\hspace{2.5in}Image de coexistence venv}
+
+\subsubsection{Organisation de NodeJS}
+NodeJS est un interprète Javascript qui a été conçu pour être exécuté
+du côté serveur dans un modèle client-serveur. Les bibliothèques sont
+installé au niveau du projet. Cela implique que plusieurs projet qui
+utilise la même version de la bibliothèque vont avoir la même exemplaire
+de la bibliothèque.
+
+La structure d'une bibliothèque dans NodeJS est décrit par un fichier
+\texttt{package.json} qui contient plusieurs les métadonnées comme
+le nom, la version, le nom des dépendances, la version des dépendances,
+la licence sous laquelle la bibliothèque est publié, \dots.
+%L'écosystème des bibliothèques
+
+
+\todo{}
+\subsubsection{Organisation de Go}
+L'organisation des bibliothèques dans Go est plus dans un
+context environnement dont la racine est lié à la variable d'environnement \texttt{GOPATH}
+avec un répertoire pour les exécutable compilé (\texttt{bin}),
+un répertoire contenant le code source des différent projets (\texttt{src}) et un
+répertoire pour les objets des modules installé (\texttt{pkg}). Chaque paire de système
+d'exploitation et d'architecture a son propre répertoire dans \texttt{pkg}.
+
+\todo{Refer to go help golang}
+\begin{verbatim}
+$GOPATH/
+  - bin
+    - ... binaries
+  - src
+    - github.com
+      - UserName1
+        - project1
+        - project2
+      - UserName2
+        - projectA
+        - projectB
+  - pkg
+    - linux_amd64
+      - pkglist
+        - objets
+\end{verbatim}
+
+
+%\subsubsection{Organisation dans Gambit Scheme}
+%\todo{}
+% exemple coexistence sur un système de fichier
+
+\subsection{Coexistence au sein d'un processus}
+L'autre type de coexistence entre les bibliothèques est durant l'exécution d'un
+processus.  La coexistence entre des bibliothèques peuvent être positive ou
+néfaste.  Un coexistence positive entre des bibliothèques est marqué par une
+bonne répartition des appels de fonctions parmi ces bibliothèque.  Un appel à
+la fonction \verb|foo| de la bibliothèque \verb|libA.so| ne va pas être
+effectué dans la bibliothèque \verb|libB.so|. Deux bibliothèques ne coexiste
+pas correctement au sein d'un processus si les appels de fonctions sont
+réparties incorrectement parmi les bibliothèques. Le chargement des bibliothèques
+diffère d'un langage interprété à un langage compilé nativement.
+
+\subsubsection{Contexte interptété}
+Les bibliothèques dans les langages interpretés utilisent leur propre procédure
+de chargement de bibliothèque. Ce processus permet de charger directement les
+fonctionnalité d'une bibliothèque à partir du code source.
+
+La façon de charger le code source peut être effectué par une lecture de la
+bibliothèque suivit d'un evaluation du code.
+
+\begin{verbatim}
+class Module(object):
+    def __init__(self, members):
+        for k in members.keys():
+            setattr(self, k, members[k])
+
+def importFile(name):
+    with open(name, 'r') as fd:
+        code=fd.read()
+    env = {}
+    exec(code, env)
+    return Module(env)
+
+\end{verbatim}
+
+\subsubsection{Contexte natif}
+
+%\section{Chargement dynamique}
+Un des cas probables de deux bibliothèque avec les mêmes noms de fonctionnalité
+sont deux versions différente de la même bibliothèque. Il existe des situations
+dans lesquelles il serait intéressant d'avoir la possibilité de charger plusieurs
+versions d'une bibliothèque.
+
+Il y a dans un système dynamique qui permet de faire une mise à jour du
+code sans nécessité un redémarrage du processus. Cet procédure ce nomme
+\textit{hot-code-swapping}.
+
+Il y a aussi dans un contexte ou le processus doit supporté plusieurs versions
+d'un protocole fournit par une bibliothèque. Par exemple, un application qui migre
+le format \textit{sqlite} au format \textit{sqlite3} doit pouvoir charge le fichier
+dans le premier format et exporter toutes les tables dans le deuxième format.
+
+\newpage
+
+% Utilité d'avoir plus d'une version d'une bibliothèque en mémoire.
+% - Update dynamique d'un service sans avoir à redémarrer le processus
+% - Support de plusieurs version d'un protocole non backward compatible
+%   (i.e. format de fichier de sqlite et sqlite3)
+% - Threads avec un des dépendances
+
+% C'est quoi une bibliothèque partagé
 
 % Définition sommaire d'une bibliothèque de code
-Une bibliothèque est le regroupement de plusieurs types de données
-identifié de façon unique dans le contexte de la bibliothèque.
-Les types de données qu'une bibliothèque
-peut exporté sont des nombres, des chaînes de caractères des
-structure composite, des procédures et des fonctions.
-L'ensemble de ces données constitue les fonctionnalités de la
-bibliothèque de code. Les fonctionnalités d'une bibliothèque peut être copié dans l'exécutable
+Une bibliothèque de code est le regroupement de plusieurs types
+de données, des entiers, des nombres à virgule flottant, des chaînes
+de caractères, des fonctions et des données composites. L'ensemble
+de ces données constitue les fonctionnalités de la bibliothèque.
+Les fonctionnalités d'une bibliothèque peut être copié dans l'exécutable
 (bibliothèque statique), cela facilité la distribution du binaire puisque
 que ses dépendances sont inclus dans l'exécutable.
 Les fonctionnalités d'une bibliothèque peuvent aussi être chargé
@@ -329,9 +666,8 @@ Les fonctionnalités d'une bibliothèque peuvent aussi être chargé
 commune entre plusieurs processus (programme en exécution). Les données de
 la bibliothèque, par contre, ne sont partagé, chaque processus réfère à
 sa propre version des données.
-
 Le format d'une bibliothèque de code varie d'un langage à l'autre et aussi d'un
-système d'exploitation à un autre. Pour les langages interprétés utilise plus
+système d'exploitation à un autre. Les langages interprétés utilisent plus
 souvent le code source directement ou une représentation intermédiaire comme format pour
 les bibliothèques de code.
 Pour les langages compilés, c'est le format natif correspondant au système d'exploitation
@@ -340,8 +676,21 @@ format ELF (Extensible Linking Format), Microsoft Window utilise le format PE (P
 et MacOSX utilise le format Mach-O (Mach object) pour les exécutables et les bibliothèques.
 % XXX: bytecodes aussi pour les langage compilé.
 
+%Les langages
+%de programmation interprétés fournisse leurs bibliothèques directement
+%en code source. Dans cette catégorie, il y a Ruby, Python, Perl, Lua et
+%Scheme -- dont le code des bibliothèques est écrit et frounit dans le
+%langage respectif. Les langages compilés -- comme C, C++, C\# et Java --
+%utilisent plutôt des formats binaires destiné, soit à une machine virtuelle
+%(e.g. la \textit{Java Virtual Machine} JVM ou un architecture
+%physique (e.g. i686, x86\_64, ARM). Les bibliothèques natives peuvent
+%être utilisé
+
+
+
+
 Une application qui utilise une bibliothèque partagés ne contient pas le
-code de la bibliothèque, mais plutôt le nom des fonctionnalités utilisés
+code de la bibliothèque, mais plutôt le nom des fonctionnalités utilisés.
 La routine qui permet de récupérer la fonctionnalité
 à partir du nom est la résolution qui est effectué par le \textit{dynamic loader}.
 Lorsqu'un programme lié dynamiquement
@@ -419,20 +768,20 @@ Gambit Scheme utilise un mécanisme équivalent. Il permet le chargement de ces 
 en bibliothèque partagé (DLL) avec la fonction \textit{(\textbf{load} "libname")}. Le chargements de la
 bibliothèque ressemble à celui de Lua.
 
-\begin{center}
-% Python
-\begin{figure}[ht]
-\begin{lstlisting}[language=python,frame=single]
-# From https://docs.python.org/2/library/ctypes.html
-from ctypes import *
-# Chargement d'une bibliotheque native.
-lib = cdll.LoadLibrary("./libFoo.so")
-# Appel de la fonction foo.
-lib.foo()
-\end{lstlisting}
-\caption{Code d'importation de la fonction \textbf{foo} de la bibliothèque \textit{libFoo.so} en Python}
-\end{figure}
+%% Python
+%\begin{figure}[ht]
+%\begin{lstlisting}[language=python,frame=single]
+%# From https://docs.python.org/2/library/ctypes.html
+%from ctypes import *
+%# Chargement d'une bibliotheque native.
+%lib = cdll.LoadLibrary("./libFoo.so")
+%# Appel de la fonction foo.
+%lib.foo()
+%\end{lstlisting}
+%\caption{Code d'importation de la fonction \textbf{foo} de la bibliothèque \textit{libFoo.so} en Python}
+%\end{figure}
 
+\begin{center}
 % Ruby
 \begin{figure}[ht]
 \begin{lstlisting}[language=ruby,frame=single]
@@ -454,22 +803,51 @@ La résolution des fonctionnalités effectué par le \textit{dynamic linker} uti
 définit. Cet ordre de recherche inclut l'exécutable courant, les dépendances de l'exécutable, la bibliothèque
 passé à \textit{dlsym}. La résolution d'une fonctionnalité par \textit{dlsym} qui n'engendre pas la résolution
 d'un autre fonctionnalité externe n'utilise pas le programme principale dans l'ordre de recherche qui alors
-commence par la bibliothèque passé à \textit{dlsym} suivit de ses dépendances. Les résolution de fonctionnalité
+commence par la bibliothèque passé à \verb|dlsym| suivit de ses dépendances. Les résolution de fonctionnalité
 provenant d'appels indirecte au \textit{dynamic linker} inclut le programme principal et ses dépendances avant
-la bibliothèque passé à \textit{dlsym}.
+la bibliothèque passé à \verb|dlsym|.
 
 \begin{center}
     \begin{figure}[ht]
         \includegraphics{figures/libdeps-ex1.pdf}
-        \caption{Exemple de dépendance dans un application simple fictive.
-            Les ellipses sont les fonctionnalités exportées par les bibliothèques}
+        \caption{Un exemple de dépendance de bibliothèques au sein d'un application simple fictive.
+            La bibliothèque \textit{libA.so} est chargé dans l'application \texttt{main} via
+            les appels au procédure \textit{dlopen} et \textit{dlsym}. Le fonctionnalités utilisés
+            dans l'exemple sont marqué par un ellipse.
+        }
+        \label{fig:deps-ex1}
     \end{figure}
-
 \end{center}
 
-% TODO: exemple de résolution indirect
-% TODO: exemple de résolution direct
+Dans la situation situation présenté dans la figure-\ref{fig:deps-ex1}, quels sont les étapes inclut
+dans l'exécution de ce programme qui ne fait qu'appeler la fonctionnalité \texttt{start} de la
+bibliothèque \textit{libA.so}. La fonctionnalité \texttt{start} est résolu de façon direct par
+un appel à \verb|dlsym(libA, "start")|, qui commence la recherche de la procédure \texttt{start} dans
+la bibliothèque spécifier dans \texttt{dlsym}. Le programme, une fois la procédure trouvé, l'exécute.
+L'appel à une procédure non résolue (e.g.\ la procédure \texttt{foo} invoqué dans \texttt{start})
+déclenche une procédure automatique de résolution des fonctionnalités. Cette procédure de résolution
+commence sa recherche à partir de l'exécutable, puis itère la liste des dépendances directe. Si la
+fonctionnalité n'est pas encore trouvé, la recherche continuera à partir de la bibliothèque passé à
+\texttt{dlsym}.
 
+% Stub
+
+% TODO: exemple de résolution direct
+Connaissant l'ordre de recherche du \textit{dynamic linker}, il est facile de construire un application avec des bibliothèques
+qui cause un masquage de fonctionnalité. Deux possibilité facilement exploitable, faire que l'exécutable main fournisse
+directement la fonctionnalité à masquer, ou avoir une des dépendances de l'exécutable contenant cette fonctionnalité. La figure-\ref{fig:deps-ex2}
+en est l'exemple qui utilise la seconde méthode. La première consisterait à transformer l'exécutable main est bibliothèque
+exécutable qui ne pourrait pas être supporté sur certaine plateforme. Sous Linux, il est possible de créer une bibliothèque qui
+exécutable en passant le paramètre \texttt{-rdynamic} à \textit{gcc} lors de la construction.
+
+\begin{center}
+    \begin{figure}[ht]
+        \includegraphics{figures/libdeps-ex2.pdf}
+        \caption{Exemple de dépendance dans un application cause le masquage de la fonctionnalité \texttt{foo}
+        de la bibliothèque \textit{libfoo.so.1.0} par la bibliothèque \textit{libfoo.so.1.1}}
+        \label{fig:deps-ex2}
+    \end{figure}
+\end{center}
 %% BEGIN
 % D'autre langage compilé comme C/C++
 % ne le permette pas directement, la liste des bibliothèques de code utilisé par un
@@ -483,10 +861,8 @@ la bibliothèque passé à \textit{dlsym}.
 % - Les bibliothèques coexistent dans les application de tous les jours.
 Analyser les interactions entre des bibliothèques au sein d'un même programme permet de
 mieux comprendre quels sont les circonstance qui peuvent conduire à des comportements
-non défini. L'interaction entre deux bibliothèques peut se produire, par un chargement
-dynamique causé par le code. En quoi cela pourrait entrainer des problèmes? Quels
-genres de problème cela peut causé.
-
+non désirés, par exemple le masquage démontré dans la figure-\ref{fig:deps-ex2}.
+Cela permet aussi d'établir les conditions qui inhibe ces comportements non désirés.
 
 %Cela implique que ils possible de retrouvé une dépendance en diamant tel que représenter
 %dans la figure-\ref{fig:dep1} qui peut causer un problème. % Détailler
@@ -845,9 +1221,11 @@ sans causer des problèmes d'exécution.
 \subsection{Bibliothèque Scheme}
 La compatibilité entre version a été testé sur la partie cryptographique
 RSA de OpenSSL, SDL et un générateur aléatoire qui possède un état global.
-Pour testé les bibliothèques natives en Scheme, il a fallut écrire des
-bibliothèque Scheme contenant des déclarations de type et des déclarations de
-fonctions qui lient le code natif au monde Scheme.
+Pour observer le comportement de bibliothèque Scheme liant des fonctionnalités
+implémenté dans un autre langage, dans ces exemple C. Ces tests montrent le problème
+de masquage décrit précédemment dans des bibliothèques réelle.
+Pour tester les bibliothèques natives en Scheme, il a fallut écrire des
+un code spécial pour lier les types et les fonction au monde Scheme. Ces
 
 Par hypothèse la partie cryptographique des deux versions de OpenSSL peuvent
 coexister. Chacune des fonctions cryptographique de OpenSSL1.0 et OpenSSL1.1
@@ -876,14 +1254,14 @@ cryptogramme avec la clé privée et comparer le message original avec le messag
 pour les deux versions de OpenSSL chargé dans le même processus. Pour vérifier la bonne
 invocation des fonctions de OpenSSL1.0 et OpenSSL1.1 respectif le débogueur \textbf{gdb}
 a été utilisé. Les bibliothèques d'OpenSSL consiste en deux fichier \url{libssl.so} et \url{libcrypto.so}.
-En déboguant la répartition des appels avec \textit{gdb}, il y a eu l'observation que 
+En déboguant la répartition des appels avec \textit{gdb}, il y a eu l'observation que
 la bibliothèque \url{libcrypto.so} de OpenSSL1.1 masquait la version de OpenSSL1.0 s'il
 n'est pas spécifié explicitement lors de la création de la bibliothèque Scheme \textit{rsa.scm}
 comme à la figure-\ref{fig:scm_masq1}. Les raisons sont liées à plusieurs facteurs qui étaient présents
 durant l'expérience. L'ordre de recherche des symboles qui inclue les symboles des bibliothèques lié à
 l'exécutable qui sont prioritaire qui contenait \url{libssl.so} et \url{libcrypto.so} de OpenSSL1.1.
 Dans ce cas, il était possible de résoudre ce problème en ajoutant une
-dépendance directe à \texttt{libcrypto} lors de la construction des bibliothèques Scheme \verb+RSA+
+dépendance directe à \textit{libcrypto} lors de la construction des bibliothèques Scheme \verb+RSA+
 comme montré dans la figure-\ref{fig:scm_masq_fix1}.
 
 \begin{center}
@@ -923,15 +1301,14 @@ avec la spécification de \textit{libcrypto.so}}
 \begin{center}
 \begin{figure}[ht]
 \includegraphics{figures/libssl_masking.pdf}
-\caption{Schéma qui montre les dépendances entre les bibliothèques au sein du processus.
+\caption{Schéma des dépendances entre les bibliothèques au sein d'un processus.
 Les dépendances qui ont été lié dynamiquement lors la création de l'application sont représenté par une flèche avec
-trait plein sans annotation. Ceux qui représente les chargement de bibliothèque dynamique manuellement ont
+trait plein sans annotation. Ceux qui représente les chargement de bibliothèque dynamique via \texttt{dlopen} ont
 l'annotation \textit{dl}. La flèche en pointillé indique un masquage des symboles de la bibliothèque
 source par celle pointée.}
 \label{fig:scm_masq_schema}
 \end{figure}
 \end{center}
-
 
 TODO: rng générator
 
@@ -1149,8 +1526,8 @@ la politique lié au module (\url{https://docs.npmjs.com/cli/unpublish}).
 %%         références --- bibliographie             %
 %%------------------------------------------------- %
 
-%\bibliographystyle{plain-fr}
-%\bibliography{<fichier.bib>}
+\bibliographystyle{plain-fr}
+\bibliography{references.bib}
 
 %\begin{thebibliography}{DDDD}
 %
