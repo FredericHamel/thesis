@@ -183,8 +183,14 @@ Il est à noté que le nombre de bibliothèques qu'un langage possède est lié 
 d'utilisateur. Aussi le nombre de bibliothèques n'est pas représentatif du nombre
 réellement utilisé.
 
-% En supposant que chaque bibliothèque prend environ 5MB de mémoire de masse, il faudrait
-% au minimum 500GB de mémoire pour entreposer une version de chaque package.
+\begin{tabular}{|r|c|c|c|c|}
+  \hline & Environnement virtuel & Environnement séparé & Multiple versions & Latest     \\\hline
+  OCaml  & \xmark                & \checkmark           & \checkmark        & default    \\\hline
+  Python & \checkmark            & \xmark               & \xmark            & \checkmark \\\hline
+  NodeJS & \xmark                & \checkmark           & \xmark            &            \\\hline
+  Go     & \xmark                & \checkmark           &                   &            \\\hline
+\end{tabular}
+
 
 \subsubsection{Organisation de OCaml}
 Le système de gestion de bibliothèques d'OCaml se nomme OPAM. Ce système permet d'avoir
