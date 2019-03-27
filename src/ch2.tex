@@ -1,0 +1,87 @@
+
+\chapter{Bibliothèque Scheme}
+La structure des bibliothèque définit dans le depuis le standard
+R4RS\cite{Scheme:R4RS} et R5RS\cite{Scheme:R5RS} consistait simplement de
+fichier Scheme qui sont chargé par la procédure \texttt{load} ou inclut par la
+macro \texttt{include}.  Lors d'un chargement de bibliothèque par \texttt{load}
+les macros sont expansé et le code résultant exécuté. Pour avoir accès aux
+macros, il faut utiliser la macros \texttt{include} qui est remplacé par l3
+contenu du fichier sans effectuer l'expansion de macros.
+
+En Scheme, les macros sont utilisé comme outil pour étendre les forme spécial du
+language, ils sont définit par le mot-clef
+\texttt{define-macro}. L'expansion des macros est la effectué avant
+l'évaluation des définition globales (constante, procédure).
+
+%\begin{figure}[ht]
+%  \begin{center}
+%    \begin{minipage}{0.4\textwidth}
+%\begin{lstlisting}[language=Scheme]
+%(define-macro (while test . body)
+%  (let ((loop-sym (gensym)))
+%    `(let ,loop-sym ()
+%      (if ,test
+%        (begin
+%          ,@body
+%          (,loop-sym))))))
+%\end{lstlisting}
+%\end{minipage}
+%\end{center}
+%\caption{Une exemple de macro Scheme qui ajoute la structure \texttt{while}
+%qui n'est pas supporté de base par le langage.}
+%\end{figure}
+
+Le modèle de bibliothèque utilisé dans les standard Scheme antérieur au
+R6RS\cite{Scheme:R6RS} a comme désavantage qu'une bibliothèque peut masquer les
+fonctionnalités d'une autre bibliothèque puisque le chargement effectué par la
+procédure \texttt{load} est dans le contexte global. Bref, les procédures de la
+bibliothèque \textbf{A} peuvent rentrer en conflit de nom avec les procédures
+de la bibliothèque \textbf{B} s'ils sont chargé dans le même contexte.  Pour
+évité ces conflit, il faut que chaque nom utilisé au sein des bibliothèques
+soit distinct, ce qui rajoute une tâche au programmeur.
+
+Le standard R6RS raffine le concept de bibliothèque pour facilité le partage
+de fonctionnalité entre programmeur. Le R6RS enlève la procédure \texttt{load} et
+ajoute une forme spéciale \texttt{library} pour définir des bibliothèques et une autre
+forme spécial \texttt{import} pour gérer
+
+Les bibliothèques ainsi définit associe les procédures au nom de la bibliothèque
+et permet à deux bibliothèque de réutilisé les même identificateurs. Les conflits de
+nom sont gérés lors de l'importation des la bibliothèques. La syntaxe des imports dans
+un programme principale est équivalente au import utilisé dans la définition de
+bibliothèque.
+
+\begin{center}
+  \begin{figure}[h]
+  \begin{tabular}{|l|l|}
+\hline
+\begin{mplisting}{0.5}
+;; Library
+(library (math)
+  (export fact)
+  (import (rnrs base))
+  (define (fact n)
+    (if (< n 2)
+      1
+      (* n (fact (- n 1))))))
+\end{mplisting} &
+\begin{mplisting}{0.5}
+;; Main program
+(import
+  (rnrs base)
+  (rnrs io simple)
+  (math))
+
+(display (fact 5))
+(newline)
+\end{mplisting}\\\hline
+  \end{tabular}
+\caption{À gauche, il y a un exemple d'une bibliothèque mathématique dans le format R6RS qui implémente
+la fonction factoriel. À droite, un exemple d'importation de la bibliothèques qui utilise la forme
+spéciale \texttt{import}.}
+\end{figure}
+\end{center}
+
+
+L'implémentation des bibliothèques Scheme est basé sur le standard R7RS qui conserve
+la procédure \texttt{load} que le R6RS enlève et remplace la structure des bibliothèques.

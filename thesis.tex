@@ -7,11 +7,22 @@
 \usepackage[utf8]{inputenc} %Obligatoires
 \usepackage[T1]{fontenc}    %
 
-\usepackage{xcolor}
 \usepackage{listings}
 \lstset{basicstyle=\ttfamily,
   columns=fullflexible,
   keepspaces=true,}
+
+\newcommand\lstcode[1]{\lstinline{#1}}
+\lstnewenvironment{mplisting}[1]
+{\minipage[t]{#1\linewidth}\vspace{-1.5em}}
+{\endminipage}
+
+\usepackage{pifont}
+\newcommand{\xmark}[0]{\ding{55}}
+
+\usepackage[nounderscore]{syntax}
+
+\usepackage{xcolor}
 
 \francais %Pour un document en français ou
 %\anglais{}
@@ -314,6 +325,7 @@ Système de module pour Gambit Scheme.
 %\chapter[]{Coexistence entre bibliothèques}% TODO: maybe rename.
 \include{ch1}
 
+\include{ch2}
 \newpage
 
 % Utilité d'avoir plus d'une version d'une bibliothèque en mémoire.
