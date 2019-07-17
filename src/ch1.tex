@@ -1,57 +1,67 @@
 
-\chapter[]{Bibliothèques}% TODO: maybe rename.
-%%
+\chapter[]{Histoire}% TODO: maybe rename.
 %%% - Programme/Processus
 %%% - Exécutable
-La création d'exécutable inclut deux étapes importantes, la compilation et
-l'édition des liens. La première étape consiste à prendre un fichier de code
-source et de le traduire en fichier objet, que l'on retrouve souvent avec
-l'extension \verb|.o| ou \verb|.obj|, qui contient la représentation des
-procédures compréhensible par le processeur. Ces fichiers objets ne sont pas
-encore exécutable pour autant, il faut tout d'abord effectuer la seconde étape,
-qui va les regrouper en un exécutable. Le programme qui s'occupe de l'édition
-des liens est le \textit{linker}, la version GNU se nomme \verb|ld|.  Voici
-l'exemple de la création d'un exécutable composé des fichier source
-\verb|main.c| et \verb|foo.c|:
+
+Dans les systèmes comme DOS, les programmes ou modules devaient contenir toutes les
+informations nécessaire pour s'exécuter. De tels programmes sont dit lié
+statiquement dans le sens qu'il ne dépende que de l'architecture sur laquel il
+a été construit. La construction des modules requière deux étapes. La compilation
+de fichier source en fichier object contenant le nom et le code des fonction.
+L'édition des liens qui réunit un plusieurs fichiers objets en un module exécutable.
 
 \begin{figure}[ht]
-    \begin{minipage}[t]{0.5\textwidth}
-\begin{verbatim}
-# Compilation
-gcc -c main.c -o main.o
-gcc -c foo.c -o foo.o
-# Édition de liens
-ld -o main.exe main.o foo.o
-\end{verbatim}
-    \end{minipage}
-
-    \caption{Exemple de création d'un exécutable}
+  \includegraphics[width=0.20\linewidth]{figures/basic_module_compilation.pdf}
+  \caption{Construction du module A à partir des sources.}
 \end{figure}
 
-Dans les systèmes comme DOS, les programmes devaient contenir toutes les
-informations nécessaire pour s'exécuter. De tels programmes sont dit lié
-statiquement dans le sens qu'il ne dépende de rien. Pour permettre la
-réutilisation de code et faciliter l'écriture de programme plus complexe,
-le concept de bibliothèque de code est apparu. Par la contraint des
-système, le premier type de bibliothèques utilisé étaient dit statique.
-Elles consistaient en un regroupement logique de plusieurs fichiers objets en
-un archive (.a). La création d'une bibliothèque statique peut s'effectuer avec
-l'utilitaire \verb|ar|. Lorsque que programme se lie à une bibliothèque
-statique, il inclut tout simplement l'ensemble des procédures contenu dans les
-fichiers objets. L'avantage des bibliothèques statiques est de regrouper
-plusieurs fonctionnalité commune en un seul concept, par exemple la
-bibliothèque mathématique \verb|libm.a| qui contient les fonctions mathématique
-(i.e. \verb|cos|, \verb|sin|).  En plus,  fait que le processus d'édition des
-liens, qui consiste à associer les noms des fonctionnalités avec leur valeur (AMBIGU), n'est
-effectué juste une fois. Une liaison avec une bibliothèque statique
-\verb|libfoo.a| qui contient le fichier objet \verb|foo.o| est équivalent à une
-liaison directe avec le fichier \verb|foo.o|.
+%La création d'exécutable inclut deux étapes importantes, la compilation et
+%l'édition des liens. La première étape consiste à prendre un fichier de code
+%source et de le traduire en fichier objet, que l'on retrouve souvent avec
+%l'extension \verb|.o| ou \verb|.obj|, qui contient la représentation des
+%procédures compréhensible par le processeur. Ces fichiers objets ne sont pas
+%encore exécutable pour autant, il faut tout d'abord effectuer la seconde étape,
+%qui va les regrouper en un exécutable. Le programme qui s'occupe de l'édition
+%des liens est le \textit{linker}, la version GNU se nomme \verb|ld|.  Voici
+%l'exemple de la création d'un exécutable composé des fichiers sources C
+%\verb|main.c| et \verb|foo.c|:
+%
+%\begin{figure}[ht]
+%    \begin{minipage}[t]{0.5\textwidth}
+%\begin{verbatim}
+%# Compilation
+%gcc -c main.c -o main.o
+%gcc -c foo.c -o foo.o
+%# Édition de liens
+%ld -o main.exe main.o foo.o
+%\end{verbatim}
+%    \end{minipage}
+%
+%    \caption{Exemple de création d'un exécutable}
+%\end{figure}
+
+Pour permettre la réutilisation de code et faciliter
+l'écriture de programme plus complexe, le concept de bibliothèque de code est
+apparu. Par la contrainte des systèmes, le premier type de bibliothèques utilisé
+étaient dit statique.  Elles consistaient en un regroupement logique de
+plusieurs fichiers objets en un archive (.a). La création d'une bibliothèque
+statique peut s'effectuer avec l'utilitaire \verb|ar|. Lorsque que programme se
+lie à une bibliothèque statique, il inclut tout simplement l'ensemble des
+procédures contenu dans les fichiers objets. L'avantage des bibliothèques
+statiques est de regrouper plusieurs fonctionnalité commune en un seul concept,
+par exemple la bibliothèque mathématique \verb|libm.a| qui contient les
+fonctions mathématique (i.e. \verb|cos|, \verb|sin|).  En plus,  fait que le
+processus d'édition des liens, qui consiste à associer les noms des
+fonctionnalités avec leur valeur (AMBIGU), n'est effectué juste une fois. Une
+liaison avec une bibliothèque statique \verb|libfoo.a| qui contient le fichier
+objet \verb|foo.o| est équivalent à une liaison directe avec le fichier
+\verb|foo.o|.
 
 \begin{figure}[ht]
     \begin{minipage}[t]{0.5\textwidth}
 \begin{verbatim}
 # Création de la bibliothèque statique libfoo.a
-ar cr libfoo.a foo.o
+ar rcs libfoo.a foo.o
 # Création de l'exécutable main.exe
 ld -o main.exe main.o libfoo.a
 \end{verbatim}
@@ -62,7 +72,7 @@ ld -o main.exe main.o libfoo.a
 \end{figure}
 
 \todo{Citation}
-Un des problèmes des bibliothèques statiques le coût lié à la maintenance.  Les
+Un des problèmes des bibliothèques statiques le coût est lié à la maintenance.  Les
 programmes qui utilise des bibliothèques statiques ne permettent pas une
 construction modulaire. La mise à niveau d'une des bibliothèques statiques
 nécessite la recompilation du programme au complet. En plus, cela n'est pas
@@ -96,9 +106,38 @@ des autres. Puisque la résolution d'une fonctionnalité retourne la première
 occurrence trouvée, il n'y a rien qui empêche d'avoir plus d'une fonctionnalité
 associée au même nom.
 
+Gambit permet de l'utilisation de bibliothèques statiques et dynamiques.
+Chaque fichier Scheme peuvent être compilé et lié module exécutable ou
+en bibliothèque dynamique.
+
+\begin{center}
+\begin{figure}[ht]
+  \begin{tabular}{l}
+    \begin{mplisting}{0.5}
+;; fib.scm
+(define (fib n)
+  (if (< n 2)
+      n
+      (+ (fib (- n 1))
+         (fib (- n 2)))))
+\end{mplisting}
+  \end{tabular}
+  \caption{Un module qui implémente la fonction mathématique \texttt{fib}.}
+  \label{fig:basic_fib_module}
+\end{figure}
+\end{center}
+
+\vspace{-20pt}
+La construction d'un bibliothèque dynamique à partir du fichier \texttt{fib.scm}
+de la figure \ref{fig:basic_fib_module} s'effectue par le compilateur de Gambit
+qui nomme \texttt{gsc}. Cela produit un fichier avec l'extension \texttt{.oN}
+où le \texttt{N} correspond à la version généré de la bibliothèque qui commence à 1.
+
+% NOTE: distingué version .oN et version du code.
+
 \section{Coexistence entre bibliothèque}
 Les bibliothèques coexistent de deux façon principales, de façon passive dans
-un système fichier et et de façon active durant l'exécution d'un programme.  Un
+un système fichier et de façon active durant l'exécution d'un programme.  Un
 système de fichier contient un arborescence hiérarchique de répertoires et de
 fichiers avec une seule racine. Un fichier est l'entité dans un système de
 fichier qui contient les données, c'est dans cette entité que le code des
@@ -174,22 +213,33 @@ d'une même bibliothèques.
 La caractéristique que le système de bibliothèque doit avoir pour permettent
 plusieurs version d'une bibliothèque est un organisation qui permet de distinguer
 les différentes versions de la bibliothèque par un chemin unique.
-Le nombre de bibliothèque moyen dans un langage est d'environ 90000 \colorbox{red}{ref}
-en prennant en compte les gestionnaire de modules (bibliothèques) suivant:
+La plupart des système de module ne distinguer pas les version d'un même module
+et ne permette l'installation que d'une seul version. Les systèmes de module permettent
+la gestion de différent préfixe dans lequel les modules sont installés. Chaque préfix peut
+contenir une version différente d'un mème module. Pour avoir une nouvelle version d'un module,
+il faut créer un nouveau préfix.
 
-\todo{Include number of module in pm from www.modulecounts.com}
 
-Il est à noté que le nombre de bibliothèques qu'un langage possède est lié au nombre
-d'utilisateur. Aussi le nombre de bibliothèques n'est pas représentatif du nombre
-réellement utilisé.
+%Le nombre de bibliothèque moyen dans un langage est d'environ 90000 \colorbox{red}{ref}
+%en prennant en compte les gestionnaire de modules (bibliothèques) suivant:
 
+% \todo{Include number of module in pm from www.modulecounts.com}
+
+% Il est à noté que le nombre de bibliothèques qu'un langage possède est lié au nombre
+% d'utilisateur. Aussi le nombre de bibliothèques n'est pas représentatif du nombre
+% réellement utilisé.
+
+\begin{figure}[h]
 \begin{tabular}{|r|c|c|c|c|}
-  \hline & Environnement virtuel & Environnement séparé & Multiple versions & Latest     \\\hline
-  OCaml  & \xmark                & \checkmark           & \checkmark        & default    \\\hline
-  Python & \checkmark            & \xmark               & \xmark            & \checkmark \\\hline
-  NodeJS & \xmark                & \checkmark           & \xmark            &            \\\hline
-  Go     & \xmark                & \checkmark           &                   &            \\\hline
+  \hline  & Environnement séparé & Multiple versions & Latest     \\\hline
+  OCaml   & \checkmark           & \xmark            & default    \\\hline
+  Python  & \checkmark           & \xmark            & default    \\\hline
+  NodeJS  & \checkmark           & \xmark            & default    \\\hline
+  Go      & \checkmark           & \xmark            & default    \\\hline
+%  Gambit Scheme & \checkmark & \checkmark & default \\\hline
 \end{tabular}
+\caption{Comparaison de différent système de module.}
+\end{figure}
 
 
 \subsubsection{Organisation de OCaml}
@@ -255,7 +305,6 @@ méta données lié à la bibliothèque. Sous NodeJS les bibliothèques sont gé
 par projet plutôt que globalement cela à comme avantage que chaque projet
 fonctionne avec ses versions des bibliothèques.
 
-\todo{}
 \subsubsection{Organisation de Go}
 L'organisation des bibliothèques dans Go est plus dans un
 contexte environnement dont la racine est spécifier par la variable d'environnement \texttt{GOPATH}
@@ -264,6 +313,7 @@ un répertoire contenant le code source des différent projets (\texttt{src}) et
 répertoire pour les objets des modules installé (\texttt{pkg}). Chaque paire de système
 d'exploitation et d'architecture a son propre répertoire dans \texttt{pkg}.
 
+La structure du répertoire dans go
 \todo{Refer to go help golang}
 \begin{verbatim}
 $GOPATH/
@@ -299,8 +349,8 @@ pas correctement au sein d'un processus si les appels de fonctions sont
 réparties incorrectement parmi les bibliothèques. Le chargement des bibliothèques
 diffère d'un langage interprété à un langage compilé nativement.
 
-\subsubsection{Contexte interptété}
-Les bibliothèques dans les langages interpretés utilisent leur propre procédure
+\subsubsection{Contexte interprété}
+Les bibliothèques dans les langages interprétés utilisent leur propre procédure
 de chargement de bibliothèque. Ce processus permet de charger directement les
 fonctionnalité d'une bibliothèque à partir du code source.
 
@@ -339,3 +389,4 @@ d'un protocole fournit par une bibliothèque. Par exemple, un application qui mi
 le format \textit{sqlite} au format \textit{sqlite3} doit pouvoir charge le fichier
 dans le premier format et exporter toutes les tables dans le deuxième format.
 
+\todo{Ajouté plus d'exemple}
