@@ -40,10 +40,12 @@ exécutable.
 
 Dans les systèmes comme DOS, les programmes ou modules devaient contenir toutes les
 informations nécessaire pour s'exécuter. De tels programmes sont dit lié
-statiquement dans le sens qu'il ne dépende que de l'architecture sur laquel il
+statiquement dans le sens qu'il ne dépende que de l'architecture sur laquelle il
 a été construit. La construction des modules requière deux étapes. La compilation
-de fichier source en fichier object contenant le nom et le code des fonction.
+de fichier source en fichier objet contenant le nom et le code des fonction.
 L'édition des liens qui réunit un plusieurs fichiers objets en un module exécutable.
+Dans le cas d'un seul fichier l'édition des liens ne fait que transformer le fichier
+objet en fichier exécutable.
 
 \begin{figure}[ht]
   \includegraphics[width=0.20\linewidth]{figures/basic_module_compilation.pdf}
@@ -226,7 +228,7 @@ système d'exploitation, sauf que l'ensemble est juste au sein d'un seul process
 Étant donnée que les \textit{threads} vivent tous au sein d'un même processus,
 il est donc facile de partagé des informations d'un \textit{thread} à un autre.
 Ce qui est plus difficile avec le modèle de processus, cela nécessite l'utilisation
-méchanisme comme la mémoire partagé.
+mécanisme comme la mémoire partagé.
 
 %\todo{picture: Thread as Light process}
 
@@ -250,9 +252,9 @@ plusieurs version d'une bibliothèque est un organisation qui permet de distingu
 les différentes versions de la bibliothèque par un chemin unique.
 La plupart des système de module ne distinguer pas les version d'un même module
 et ne permette l'installation que d'une seul version. Les systèmes de module permettent
-la gestion de différent préfixe dans lequel les modules sont installés. Chaque préfix peut
-contenir une version différente d'un mème module. Pour avoir une nouvelle version d'un module,
-il faut créer un nouveau préfix.
+la gestion de différent préfixe dans lequel les modules sont installés. Chaque préfixe peut
+contenir une version différente d'un même module. Pour avoir une nouvelle version d'un module,
+il faut créer un nouveau préfixe.
 
 
 %Le nombre de bibliothèque moyen dans un langage est d'environ 90000 \colorbox{red}{ref}
@@ -390,7 +392,7 @@ de chargement de bibliothèque. Ce processus permet de charger directement les
 fonctionnalité d'une bibliothèque à partir du code source.
 
 La façon de charger le code source peut être effectué par une lecture de la
-bibliothèque suivit d'un evaluation du code.
+bibliothèque suivit d'un évaluation du code.
 
 \begin{verbatim}
 class Module(object):
