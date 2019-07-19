@@ -3,6 +3,41 @@
 %%% - Programme/Processus
 %%% - Exécutable
 
+Les programmes modernes ont une structure \textit{modulaire},
+c'est-à-dire que leur code se décompose logiquement en différentes
+parties relativement indépendantes, les \textit{modules}.  Cette
+structure a de nombreux avantages, entre autres sur le plan du
+développement et de la maintenance.  La structure d'un programme en
+vue de son \textit{déploiement}, c'est-à-dire comment son code
+exécutable est stocké sur disque, chargé en mémoire, etc peut prendre
+plusieurs formes.
+
+Un programme sous forme \textit{monolithique} contient dans son code
+exécutable toutes les instructions exécutées par l'ordinateur.  Cette
+forme était la norme dans les premiers systèmes informatiques, et
+l'est toujours pour les systèmes embarqués qui n'ont pas de système
+d'exploitation indépendant.  Lorsqu'un système d'exploitation est
+disponible sur l'ordinateur on peut le considérer comme étant un
+module puisqu'il offre des services précis avec une interface
+standardisée.  Dans ce cas, un programme peut prendre la forme d'un
+seul fichier de code qui, à son exécution, communiquera avec le
+système d'exploitation pour accéder à ses services.  Ce genre de
+fichier exécutable est obtenu par une \textit{édition de lien
+  statique} qui combine en un seul fichier tous les modules (à
+l'exception du système d'exploitation).  Par rapport à la forme
+monolithique, cette organisation simplifie le développement car le
+programmeur n'a pas à se soucier du développement des services de base
+comme l'accès aux fichiers, la gestion des processus et de la mémoire,
+etc.  Le programme peut être distribué à d'autres ordinateurs ayant le
+même système d'exploitation simplement en y transférant le fichier
+exécutable.
+
+==> motiver (quels problèmes ça cause le link statique) et expliquer le chargement dynamique, etc
+
+
+--------------------------------------------------------
+
+
 Dans les systèmes comme DOS, les programmes ou modules devaient contenir toutes les
 informations nécessaire pour s'exécuter. De tels programmes sont dit lié
 statiquement dans le sens qu'il ne dépende que de l'architecture sur laquel il
