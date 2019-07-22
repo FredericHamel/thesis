@@ -54,12 +54,37 @@ individuelle d'un module sans avoir a lié le programme principale; dans le
 modèle statique le programme principal doit être lié à nouveau avec les modules.
 Les modules chargés dynamiquement par le système d'exploitation peuvent être partagé entre différent
 programme. Ce type de module porte le nom de \textit{bibliothèque partagée} ils sont décrit dans
-chapitre \ref{bibliotheque}.
+le chapitre \ref{bibliotheque}.
 
-Dans un contexte distribué, le programme principal peut être amené à exécuter
-du code d'un module absent localement. Cela nécessite un téléchargement du
-module et possiblement une compilation. Une fois le module installé, il faut le
-charger dynamiquement.
+% % Migration de code dans un système distribué.
+% - Transmission de tâche entre des machines d'un système distribué.
+%   - Un module absent sur la machine distante nécessaire à l'exécution
+%   de la tâche transmise.
+%     - Télécharger le module d'un serveur dédié.
+%     - Revient au chargement dynamique de ce module.
+
+Dans un système distribué, il est possible de transmettre des tâches entre les
+différents systèmes. C'est ce qu'on appelle, \textit{migration de tâche}.  Un
+programme distribué est séparé sur plusieurs systèmes. Qu'est-ce qui se passe
+si une tâche transmit réfère à un module absent sur le système distant?  Le
+système distant peut soit lancé une exception, ou tenté de résoudre la
+fonctionnalité manquante. La première solution est la plus simple et aussi la
+plus restrictive, car elle inhibe la capacité de migrer une tâche. Le chapitre
+\ref{task_migration} traite de la seconde solution mentionné.
+
+%\section{Linkage statique}
+%Le linkage
+
+%\section{Linkage dynamique}
+
+--------------------------END---------------------------
+
+% TODO: move to chapter task_migration
+Un programme sur une des machine du système distribué qui se fait transmettre
+une tâche peut devoir exécuter une fonctionnalité d'un module absent
+localement. Cela nécessite un téléchargement du module contenant la
+fonctionnalité demandé d'un serveur dédié. Une fois le module installé, il faut
+le charger dynamiquement.
 
 ==> motiver (quels problèmes ça cause le link statique) et expliquer le chargement dynamique, système distribué, etc
 % TODO lien => liens
