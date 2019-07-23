@@ -1,41 +1,119 @@
 
 \chapter{Bibliothèque Scheme}
 %% Bonne place???
-Le langage Scheme supporte plusieurs paradigme de programmation comme
-la programmation fonctionnel et impérative. La syntaxe de ce langage
-est basé sur les s-expressions, qui consiste en des listes parenthésés.
-Un programme Scheme est donc une séquence de listes. Les listes sont
-aussi une structure principale du langage. Le langage Scheme peut facilement
-manipuler dynamiquement du code puisque le code utilise principalement des listes.
+Le langage Scheme\cite{Scheme} supporte plusieurs paradigme de programmation
+comme la programmation fonctionnel, impérative et méta. Il a été conçu en 1975
+par Guy L. Steele et Gerald Jay Sussman. C'est un langage de programmation à
+avec typage dynamique basé sur les \textit{s-expression}s, qui consiste en des listes
+parenthésés. Contrairement aux langages comme Javascript, C/C++ qui utilisent une
+forme infixe pour les expressions, Scheme utilise une forme préfixé. Cela
+signifie que l'opération est le premier élément de la listes suivie des
+arguments. Un programme Scheme est donc une séquence de listes préfixés.  Chaque
+\textit{s-expression} correspond soit à une application de procédure ou à une
+application de macro.
 
-\subsection{Fonction et Procédure}
-Les procédures en Scheme sont définit par la forme spécial \lstcode{(lambda args body)}.
-Les éléments \lstcode{args} et \lstcode{body} correspondent respectivement à la liste
-d'arguments et au corps de la procédure. Pour définir une procédure globalement il faut
-ajouter une définition avec la forme \lstcode{(define sym val)} qui permet d'associer le
-symbole \lstcode{sym} à la valeur \lstcode{val}.
+\begin{table}[htbp]
+\begin{center}
+\begin{tabular}{|l|l|}
+  \hline
+  \textbf{Préfixe}& \textbf{Infixe}\\\hline
+  \begin{mplisting}{0.1}
+(+ 1 2)
+\end{mplisting}&
+  \begin{mplisting}{0.1}
+1 + 2;
+\end{mplisting}\\
+\hline
+  \begin{mplisting}{0.25}
+(proc a1 a2 a3)
+\end{mplisting}&
+  \begin{mplisting}{0.25}
+proc(a1, a2, a3);
+\end{mplisting}\\
+\hline
+%    \begin{mplisting}{0.25}
+%(if e1
+%    e2
+%    e3)
+%\end{mplisting}&
+%    \begin{mplisting}{0.25}
+%if(e1)
+%  e2;
+%else
+%  e3;
+%\end{mplisting}\\
+%\hline
+\end{tabular}
+\end{center}
+  \caption{Comparaison entre syntaxe préfixe et infixe.}
+\end{table}
 
-\begin{figure}[ht]
-  \begin{center}
-    \begin{mplisting}{0.25}
-(define abs
-  (lambda (x)
-    (if (< x 0)
-      (- x)
-      x)))
-\end{mplisting}
-  \end{center}
-  \caption{Exemple d'utilisation des forme spécial \lstcode{define} et \lstcode{lambda} dans
-  la définition d'une fonction qui retourne le résultat de la valeur absolue d'un nombre.}
-\end{figure}
+La définition des associations globales est effectuée avec \lstcode{define}.  Cette
+forme spécial associe un nom avec une valeur qui a un type quelconque.  Les types de
+donnée disponible en Scheme sont \lstcode{boolean}, \lstcode{pair},
+\lstcode{symbol}, \lstcode{number}, \lstcode{char}, \lstcode{string},
+\lstcode{vector}, \lstcode{port} et \lstcode{procedure}.
+
+Les procédures sont des objets de premier classe, cela signifie qu'ils peuvent
+être manipulé comme les autres types de donnée. Ils peuvent
+être passés en paramètre d'un procédure et retournés comme résultat.
+Certaines fonctions -- tel que \lstcode{map}, \lstcode{fold}, etc. -- bénéficie
+que les procédures sont des objets de premier classe.
+
+\section{Fonction et Procédure}
+
+Les procédures et les fonctions sont définit par le constructeur
+\lstcode{lambda}.  La syntaxe pour un lambda est \lstcode{(lambda args
+body...)}.  Les éléments \lstcode{args} et \lstcode{body...} correspondent
+respectivement à la liste d'arguments et au corps de la procédure, qui est
+composé d'au moins une \textit{s-expression}. Le mode de passage de paramètre
+utilisé lors de l'application d'une procédure est par valeur.  Cela signifie
+que chaque argument est évalué avant d'être passé à la procédure.
+
+% \begin{figure}[ht]
+%   \begin{center}
+%     \begin{tabular}{|l|}
+%       \hline
+%     \begin{mplisting}{0.55}
+% (define fact
+%   (lambda (n) (if (= n 0) 1
+%                   (* n (fact (- n 1))))))
+% \end{mplisting}\\\hline
+%     \end{tabular}
+%   \end{center}
+%   \label{fig:fact1}
+%   \caption{Voici une implémentation de la fonction factoriel en Scheme.
+%   Cela montre un exemple de récursion.}
+% \end{figure}
 
 % READ Distinguer macro procedure.
-En Scheme les procédure sont des objet de première classe, cela signifie qu'il
-peuvent être passé en argument ou retourné d'une fonction. Ils manipulent des
-valeurs.  Les procédure et les fonction définit par la forme spéciale
-\lstcode{define} sont accessible à la phase d'exécution.
+\begin{figure}[ht]
+  \begin{center}
+    \begin{tabular}{|l|}
+      \hline
+    \begin{mplisting}{0.8}
+(define map
+  (lambda (f lst) (if (pair? lst)
+                      (cons (f (car lst)) (map f (cdr lst)))
+                      lst)))
+\end{mplisting}\\\hline
+    \end{tabular}
+  \end{center}
+  \label{fig:fact1}
+  \caption{Voici une implémentation de la fonction d'ordre supérieur \lstcode{map} en Scheme.
+  Cela montre un exemple utilise les procédure comme des objets de première classe et
+  aussi un exemple d'application récursive.}
+\end{figure}
 
-\subsection{Macro}
+
+\section{Les Macros}
+\label{sec:ch2_macro}
+
+Les listes sont une structure principale du langage,
+Scheme peut facilement manipuler les liste, donc Scheme peut manipuler du code.
+
+%% XXX: suite 1.
+
 Le langage Scheme offre des constructions qui permettent la transformation
 du code source. Ce sont les macros, certain langage comme C et C++ offre un système
 de préprocesseur qui ce limite à une simple substitution textuelle. Les macros en Scheme
@@ -44,9 +122,20 @@ sont des procédure Scheme avec toute les capacités de calcule.
 Les macros sont une forme de procédure qui manipule la structure du code
 plutôt que des valeurs. Il sont définit soit par la forme \lstcode{define-macro}
 où \lstcode{define-syntax}.
+\begin{figure}[ht]
+  \begin{tabular}{|l|}\hline
+\begin{mplisting}{0.65}
+(define-macro (include filename)
+  (with-input-from-file
+    filename
+    (lambda ()
+      (cons 'begin
+        (read-all (current-input-port) read)))))
+\end{mplisting}\\\hline
+\end{tabular}
+\end{figure}
 
-%% XXX: suite.
-
+%% XXX: suite 2.
 La structure des bibliothèque définit dans le depuis le standard
 R4RS\cite{Scheme:R4RS} et R5RS\cite{Scheme:R5RS} consistait simplement de
 fichiers Scheme qui sont importés dans le module courant. Cette importation est
