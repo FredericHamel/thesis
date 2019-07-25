@@ -60,15 +60,18 @@ Les procédures sont des objets de premier classe, cela signifie qu'ils peuvent
 Certaines fonctions -- tel que \lstcode{map}, \lstcode{fold}, etc. -- bénéficie
 que les procédures sont des objets de premier classe.
 
-\section{Fonction et Procédure}
+\section{Procédure et Macro}
 
-Les procédures et les fonctions sont définit par le constructeur
-\lstcode{lambda}.  La syntaxe pour un lambda est \lstcode{(lambda args
-body...)}.  Les éléments \lstcode{args} et \lstcode{body...} correspondent
-respectivement à la liste d'arguments et au corps de la procédure, qui est
-composé d'au moins une \textit{s-expression}. Le mode de passage de paramètre
-utilisé lors de l'application d'une procédure est par valeur.  Cela signifie
-que chaque argument est évalué avant d'être passé à la procédure.
+Les procédures et les fonctions sont définis par le constructeur
+\lstcode{lambda} qui prend une liste d'arguments et une séquence d'au moins une
+\textit{s-expression} comme corps. Lors de l'application d'une procédure chacun
+des arguments est évalué puis les résultats des évaluations sont passés à la
+procédure. C'est un mode de passage de paramètre par valeur.
+
+Le langage n'offre pas de syntaxe spécial pour les boucle; il offre une forme
+de récursion sans coût mémoire, c'est la récursion en position terminal. Les
+procédures utilisent la récursion pour effectué les boucle.
+
 
 % \begin{figure}[ht]
 %   \begin{center}
@@ -106,22 +109,25 @@ que chaque argument est évalué avant d'être passé à la procédure.
 \end{figure}
 
 
-\section{Les Macros}
-\label{sec:ch2_macro}
 
-Les listes sont une structure principale du langage,
-Scheme peut facilement manipuler les liste, donc Scheme peut manipuler du code.
+% La récursion est la façon dont les boucle sont faites.
 
-%% XXX: suite 1.
+Plusieurs langages offre des constructions pour transformer le code.  Ces
+constructions sont les macros. Ils sont utilisés pour ajouter des raccourcis de
+programmation dans le langage.   En C et C++, les macros sont non récursives et
+limités au remplacement textuel simple. Un appel à la macro est remplacer par
+le corps de celle-ci. En Scheme, les macros ont toute la puissance des
+procédures. La différence est le mode de passage de paramètre durant
+l'application de la macro. Les paramètres sont passés à la macro sans être
+évalués, c'est ce qu'on appelle le passage par nom.
 
-Le langage Scheme offre des constructions qui permettent la transformation
-du code source. Ce sont les macros, certain langage comme C et C++ offre un système
-de préprocesseur qui ce limite à une simple substitution textuelle. Les macros en Scheme
-sont des procédure Scheme avec toute les capacités de calcule.
+Le résultat d'une macro est le code qui est exécuté. Le code est une
+\textit{s-expression} donc une simple liste. La plupart des implémentation
+de Scheme offre la formee \lstcode{define-macro} qui est l'équivalent du
+\lstcode{defmacro} de LISP.
 
-Les macros sont une forme de procédure qui manipule la structure du code
-plutôt que des valeurs. Il sont définit soit par la forme \lstcode{define-macro}
-où \lstcode{define-syntax}.
+% Cette forme souffre d'un problème d'hygiène.
+
 \begin{figure}[ht]
   \begin{tabular}{|l|}\hline
 \begin{mplisting}{0.65}
@@ -129,10 +135,11 @@ où \lstcode{define-syntax}.
   (with-input-from-file
     filename
     (lambda ()
-      (cons 'begin
-        (read-all (current-input-port) read)))))
+      `(begin
+        ,@(read-all (current-input-port) read)))))
 \end{mplisting}\\\hline
 \end{tabular}
+
 \end{figure}
 
 %% XXX: suite 2.
