@@ -1,16 +1,44 @@
 
 \chapter{Bibliothèque Scheme}
 %% Bonne place???
-Le langage Scheme\cite{Scheme} supporte plusieurs paradigme de programmation
-comme la programmation fonctionnel, impérative et méta. Il a été conçu en 1975
-par Guy L. Steele et Gerald Jay Sussman. C'est un langage de programmation à
-avec typage dynamique basé sur les \textit{s-expression}s, qui consiste en des listes
-parenthésés. Contrairement aux langages comme Javascript, C/C++ qui utilisent une
-forme infixe pour les expressions, Scheme utilise une forme préfixé. Cela
-signifie que l'opération est le premier élément de la listes suivie des
-arguments. Un programme Scheme est donc une séquence de listes préfixés.  Chaque
-\textit{s-expression} correspond soit à une application de procédure ou à une
+
+Le langage Scheme\cite{Scheme} à été conçu en 1975 par Guy L. Steele et Gerald
+Jay Sussman.  Ces un langage de programmation avec un système de type
+dynamique, cela signifie que les variables peuvent contenir n'importe quels
+types. Il supporte plusieurs paradigme de programmation comme fonctionnel,
+impérative et méta.
+
+Le paradigme impératif se retrouve dans des langage comme C, dans lequel chacune
+des instructions est un ordre donnée à la machine. C'est langage supporte
+l'assignation de variable dans l'initialisation et dans la modification.
+
+Dans la programmation fonctionnelle, il y a une distinction entre les opérations
+pures et les opérations qui ont des effets de bord. Les opérations dite pure ont
+la caractéristique que leurs résultats ne varient pas pour des mêmes entrées.
+Des exemples d'opérations pures sont les opérations mathématiques. Les effets
+de bord sont souvent lié aux assignation et au opération d'entrée/sortie. La programmation
+méta est un paradigme relatif à l'utilisation de macro.
+
+Une expression en syntaxe infixe place l'opérateur entre les opérande. Cette
+forme est souvent utilisé  dans les langages impératif. La syntaxe préfixé
+commence par l'opérateur suivie des opérandes. Cette forme est plus utilisé dans les
+langages de la famille LISP.
+
+Un programme Scheme est une séquence de liste parenthésé en forme préfixé, ce sont des \textit{s-expresssions}.
+Chaque \textit{s-expression} correspond soit à une constante, une application de procédure ou une
 application de macro.
+
+\begin{verbatim}
+- Scheme
+  - Langage dynamique
+  - Supporte plusieurs paradigmes:
+    - fonctionnel
+    - impérative
+    - méta (programmation de macro)
+  - Préfixé / ~Infixe
+  - S-expression
+\end{verbatim}
+
 
 \begin{table}[htbp]
 \begin{center}
@@ -45,7 +73,7 @@ proc(a1, a2, a3);
 %\hline
 \end{tabular}
 \end{center}
-  \caption{Comparaison entre syntaxe préfixe et infixe.}
+  \caption{Voici des example qui montre une comparaison entre une syntaxe infixe et préfixe.}
 \end{table}
 
 La définition des associations globales est effectuée avec \lstcode{define}.  Cette
@@ -68,9 +96,9 @@ Les procédures et les fonctions sont définis par le constructeur
 des arguments est évalué puis les résultats des évaluations sont passés à la
 procédure. C'est un mode de passage de paramètre par valeur.
 
-Le langage n'offre pas de syntaxe spécial pour les boucle; il offre une forme
-de récursion sans coût mémoire, c'est la récursion en position terminal. Les
-procédures utilisent la récursion pour effectué les boucle.
+Le langage n'offre pas de syntaxe spéciale pour les boucles, il offre une forme
+de récursion sans coût mémoire, c'est la récursion en position terminale. La récursion
+est utilisé pour effectué des boucles.
 
 
 % \begin{figure}[ht]
@@ -94,60 +122,109 @@ procédures utilisent la récursion pour effectué les boucle.
   \begin{center}
     \begin{tabular}{|l|}
       \hline
-    \begin{mplisting}{0.8}
+    \begin{mplisting}{0.65}
 (define map
-  (lambda (f lst) (if (pair? lst)
-                      (cons (f (car lst)) (map f (cdr lst)))
-                      lst)))
+  (lambda (f lst)
+    (if (pair? lst)
+        (cons (f (car lst)) (map f (cdr lst)))
+        lst)))
 \end{mplisting}\\\hline
     \end{tabular}
   \end{center}
   \label{fig:fact1}
   \caption{Voici une implémentation de la fonction d'ordre supérieur \lstcode{map} en Scheme.
-  Cela montre un exemple utilise les procédure comme des objets de première classe et
+  Cela montre un exemple utilise les procédure en objets de première classe et
   aussi un exemple d'application récursive.}
 \end{figure}
 
 
 
 % La récursion est la façon dont les boucle sont faites.
-
-Plusieurs langages offre des constructions pour transformer le code.  Ces
-constructions sont les macros. Ils sont utilisés pour ajouter des raccourcis de
-programmation dans le langage.   En C et C++, les macros sont non récursives et
-limités au remplacement textuel simple. Un appel à la macro est remplacer par
-le corps de celle-ci. En Scheme, les macros ont toute la puissance des
-procédures. La différence est le mode de passage de paramètre durant
-l'application de la macro. Les paramètres sont passés à la macro sans être
-évalués, c'est ce qu'on appelle le passage par nom.
+La programmation méta est présente dans plusieurs langage comme C, C++, LISP,
+Scheme, etc. Elle est basé sur des constructions qui transforment le code
+appelé macro.  Ils sont utilisés pour ajouter des raccourcis au langage.  En C
+et C++, les macros ne permettent pas de récursion se référant à elle-même.  Ils
+sont limités au remplacement textuel simple. Un appel à la macro est remplacer
+par le corps de celle-ci. Les macros de style LISP ont l'avantage d'avoir accès
+à l'ensemble des procédure. La différence est le mode de passage de paramètre
+durant l'application de la macro. Les paramètres sont passés à la macro sans
+être évalués, c'est ce qu'on appelle le passage par nom.
 
 Le résultat d'une macro est le code qui est exécuté. Le code est une
 \textit{s-expression} donc une simple liste. La plupart des implémentation
-de Scheme offre la formee \lstcode{define-macro} qui est l'équivalent du
+de Scheme offre la forme \lstcode{define-macro} qui est l'équivalent du
 \lstcode{defmacro} de LISP.
 
 % Cette forme souffre d'un problème d'hygiène.
 
 \begin{figure}[ht]
   \begin{tabular}{|l|}\hline
-\begin{mplisting}{0.65}
+\begin{mplisting}{0.7}
 (define-macro (include filename)
   (with-input-from-file
     filename
     (lambda ()
       `(begin
-        ,@(read-all (current-input-port) read)))))
+        ,@(read-all (current-input-port))))))
 \end{mplisting}\\\hline
 \end{tabular}
 
+  \caption{Implémentation de la macro \texttt{include} qui permet l'inclusion
+  d'un fichier dans un autre fichier avec la syntax \texttt{define-macro}.  La
+  macro lit le contenu de fichier \textit{filename} et retourne le contenu de
+  se fichier.}
+
+  \label{fig:macro_include}
 \end{figure}
+
+Certaines implémentations de Scheme n'ont pas la forme
+\lstcode{define-macro}. Il est possible d'écrire la macro
+\lstcode{include} en utilisant la \lstcode{define-syntax}
+et \lstcode{syntax-case} qui est standard au R5RS
+\cite{Scheme:R5RS}.
+
+\begin{figure}[ht]
+  \begin{tabular}{|l|}\hline
+\begin{mplisting}{0.8}
+(define-syntax include
+  (lambda (stx)
+    (define (read-all port)
+      (let loop ((rev-lst '()))
+        (let ((expr (read port)))
+          (if (eof-object? expr)
+            (reverse rev-lst)
+            (loop (cons expr rev-lst))))))
+    (syntax-case stx ()
+      ((_ fn)
+       (let ((filename (syntax->datum #'fn)))
+         (let ((content
+                 (with-input-from-file
+                    filename
+                    (lambda ()
+                      (cons
+                        'begin
+                        (read-all (current-input-port)))))))
+           (datum->syntax stx content)))))))
+
+\end{mplisting}\\\hline
+\end{tabular}
+
+  \caption{Implémentation de la macro \texttt{include} qui permet l'inclusion
+  d'un fichier dans un autre fichier avec la syntax \texttt{define-syntax}.
+  Cette macro effectue la même action que celle définit dans la figure
+  \ref{fig:macro_include}.}
+
+\end{figure}
+
+
 
 %% XXX: suite 2.
 La structure des bibliothèque définit dans le depuis le standard
 R4RS\cite{Scheme:R4RS} et R5RS\cite{Scheme:R5RS} consistait simplement de
 fichiers Scheme qui sont importés dans le module courant. Cette importation est
-effectué soit par la procédure \texttt{load} ou par la forme spéciale
-\texttt{include}. Ce modèle de bibliothèque possède plusieurs lacunes.
+effectué soit par la procédure \texttt{load}. La plupart des implémentation de
+Scheme on la forme spéciale \texttt{include} qui peut
+Ce modèle de bibliothèque possède plusieurs lacunes.
 
 %% Gambit doc
 \begin{itemize}
