@@ -1,62 +1,97 @@
 
 \chapter{Bibliothèque Scheme}
-%% Bonne place???
 
 Le langage Scheme\cite{Scheme} à été conçu en 1975 par Guy L. Steele et Gerald
-Jay Sussman.  Ces un langage de programmation avec un système de type
+Jay Sussman.  C'est un langage de programmation avec un système de type
 dynamique, cela signifie que les variables peuvent contenir n'importe quels
-types. Il supporte plusieurs paradigme de programmation comme fonctionnel,
-impérative et méta.
+types. Il supporte plusieurs paradigmes de programmation comme fonctionnelle,
+impérative et méta. Chaque expression est représenté sous forme préfixé et
+fortement parenthésé.  Un programme Scheme est une séquence de liste parenthésé
+en forme préfixé, ce sont des \textit{s-expresssions}.  Chaque
+\textit{s-expression} correspond soit à une constante, une application de
+procédure ou une application de macro. Les macros sont lié au paradigme de
+programmation méta qui manipulent les expressions.
 
-Le paradigme impératif se retrouve dans des langage comme C, dans lequel chacune
-des instructions est un ordre donnée à la machine. C'est langage supporte
-l'assignation de variable dans l'initialisation et dans la modification.
+Le paradigme impératif se retrouve dans des langages comme C. Un programme
+impératif est composé d'une séquence d'instruction que la machine doit exécuté.
+Des exemples d'instructions sont la création de variables, le changement du
+contenu de variables, un appel de procédure, etc. Il y aussi des déclaration
+qui permet de modifier le flot de contrôle du programme comme le \lstcode{if}.
+Le \lstcode{while} et \lstcode{for} sont utilisés pour les boucles. Ces
+déclarations ne retournent aucun résultat.  Dans des programmes impératifs, il est
+courant d'avoir des états globaux et des variables qui sont
+modifiés. Scheme a la forme \lstcode{begin} qui permet l'exécution
+séquentielle des expressions et la forme \lstcode{set!} pour réassigner une
+variable.qqqqqq
 
-Dans la programmation fonctionnelle, il y a une distinction entre les opérations
-pures et les opérations qui ont des effets de bord. Les opérations dite pure ont
-la caractéristique que leurs résultats ne varient pas pour des mêmes entrées.
-Des exemples d'opérations pures sont les opérations mathématiques. Les effets
-de bord sont souvent lié aux assignation et au opération d'entrée/sortie. La programmation
-méta est un paradigme relatif à l'utilisation de macro.
+%read from here
 
-Une expression en syntaxe infixe place l'opérateur entre les opérande. Cette
-forme est souvent utilisé  dans les langages impératif. La syntaxe préfixé
-commence par l'opérateur suivie des opérandes. Cette forme est plus utilisé dans les
-langages de la famille LISP.
+Dans la programmation fonctionnelle, les problèmes sont traités comme
+l'évaluation d'une fonction mathématique en évitant de modifier des états
+globaux ou le contenu des variables. Le langage est composé d'expressions qui
+retournent des valeurs au lieu de déclarations qui ne retournent rien. En
+fonctionnel, le \lstcode{if} est une expression qui retourne le résultat de la
+branche associée à la valeur de vérité de la condition. C'est l'équivalent de
+l'opérateur ternaire présent dans certain langage impératif comme  le C. Les
+langages fonctionnels ont la notion de pureté fonctionnelle, cela signifie que
+les opérations ne changent pas d'états globaux ou le contenu des variables. Une
+opération retourne toujours le même résultat lorsque invoqué avec les mêmes
+paramètres. Les opérations qui ont un effet de bord change un état global
+(affichage à l'écran) ou modifie le contenu d'une variable.  Des exemples
+d'opérations pures sont les fonctions mathématiques. Les effets de bord sont
+liés aux opérations de lecture et écriture.
 
-Un programme Scheme est une séquence de liste parenthésé en forme préfixé, ce sont des \textit{s-expresssions}.
-Chaque \textit{s-expression} correspond soit à une constante, une application de procédure ou une
-application de macro.
+La programmation méta est un paradigme lié à l'utilisation de macro qui sont
+des entités qui manipulent la structure du programme. Elle est utilisé pour
+ajouter des abréviations dans le langage qui simplifie l'écriture du code.  La
+section \ref{sec:proc_and_macro} détaille de la programmation méta en Scheme.
 
-\begin{verbatim}
-- Scheme
-  - Langage dynamique
-  - Supporte plusieurs paradigmes:
-    - fonctionnel
-    - impérative
-    - méta (programmation de macro)
-  - Préfixé / ~Infixe
-  - S-expression
-\end{verbatim}
+Une expression peut être organisé de plusieurs façons, infixe, préfixe ou
+suffixe.  La différence entre ces organisations est l'emplacement de
+l'opération et des opérandes dans l'expression.  Une expression en syntaxe
+infixe place l'opération entre les opérandes.  Cette forme est souvent utilisé
+dans les langages impératif. La forme préfixe commence par l'opérateur suivie
+des opérandes. Cette forme est plus utilisé dans les langages de la famille
+LISP.  La forme suffixe place les opérations après les opérandes.  Le tableau
+\ref{tab:prefix_vs_infix} donne des exemples d'expression préfixe avec
+l'équivalent infixes.
+
+
+% \begin{verbatim}
+% - Scheme
+%    - Langage dynamique
+%   - Supporte plusieurs paradigmes:
+%     - fonctionnel
+%     - impérative
+%     - méta (programmation de macro)
+%   - Préfixé / ~Infixe
+%   - S-expression
+% \end{verbatim}
 
 
 \begin{table}[htbp]
 \begin{center}
-\begin{tabular}{|l|l|}
+\begin{tabular}{|l|l|l|}
   \hline
-  \textbf{Préfixe}& \textbf{Infixe}\\\hline
+  \textbf{Préfixe}& \textbf{Infixe}& \textbf{Suffixe}\\\hline
   \begin{mplisting}{0.1}
 (+ 1 2)
 \end{mplisting}&
   \begin{mplisting}{0.1}
 1 + 2;
+\end{mplisting}&
+  \begin{mplisting}{0.1}
+1 2 +
 \end{mplisting}\\
 \hline
-  \begin{mplisting}{0.25}
+  \begin{mplisting}{0.22}
 (proc a1 a2 a3)
 \end{mplisting}&
-  \begin{mplisting}{0.25}
+  \begin{mplisting}{0.22}
 proc(a1, a2, a3);
+\end{mplisting}&
+  \begin{mplisting}{0.22}
+a1 a2 a3 proc
 \end{mplisting}\\
 \hline
 %    \begin{mplisting}{0.25}
@@ -73,32 +108,34 @@ proc(a1, a2, a3);
 %\hline
 \end{tabular}
 \end{center}
-  \caption{Voici des example qui montre une comparaison entre une syntaxe infixe et préfixe.}
+  \caption{Voici des example qui montre une comparaison entre une syntaxe préfixe, infixe et suffixe.}
+  \label{tab:prefix_vs_infix}
 \end{table}
 
-La définition des associations globales est effectuée avec \lstcode{define}.  Cette
-forme spécial associe un nom avec une valeur qui a un type quelconque.  Les types de
-donnée disponible en Scheme sont \lstcode{boolean}, \lstcode{pair},
-\lstcode{symbol}, \lstcode{number}, \lstcode{char}, \lstcode{string},
-\lstcode{vector}, \lstcode{port} et \lstcode{procedure}.
-
-Les procédures sont des objets de premier classe, cela signifie qu'ils peuvent
-être manipulé comme les autres types de donnée. Ils peuvent
-être passés en paramètre d'un procédure et retournés comme résultat.
-Certaines fonctions -- tel que \lstcode{map}, \lstcode{fold}, etc. -- bénéficie
-que les procédures sont des objets de premier classe.
+La définition des associations globales en Scheme est effectuée avec \lstcode{define}.
+Cette forme spécial associe un nom avec une valeur d'un type quelconque.
+C'est l'équivalent d'une variable. Les types de donnée disponible en Scheme sont
+\lstcode{boolean}, \lstcode{pair}, \lstcode{symbol}, \lstcode{number},
+\lstcode{char}, \lstcode{string}, \lstcode{vector}, \lstcode{port} et
+\lstcode{procedure}.
 
 \section{Procédure et Macro}
+\label{sec:proc_and_macro}
+
+Les procédures sont des objets de premier classe, cela signifie qu'elles
+peuvent être manipulée comme n'importe quels types de donnée. Elles peuvent
+être passées en en tant que paramètre à une procédure et retourné en tant que
+résultat.  Certaines fonctions -- telles que \lstcode{map}, \lstcode{fold}, etc.
+-- bénéficie que les procédures sont des objets de premier classe.
 
 Les procédures et les fonctions sont définis par le constructeur
 \lstcode{lambda} qui prend une liste d'arguments et une séquence d'au moins une
 \textit{s-expression} comme corps. Lors de l'application d'une procédure chacun
-des arguments est évalué puis les résultats des évaluations sont passés à la
-procédure. C'est un mode de passage de paramètre par valeur.
-
-Le langage n'offre pas de syntaxe spéciale pour les boucles, il offre une forme
-de récursion sans coût mémoire, c'est la récursion en position terminale. La récursion
-est utilisé pour effectué des boucles.
+des arguments est évalué puis passés à la procédure. C'est un mode de passage
+de paramètre par valeur.  Le langage utilise la récursion pour effectuer les
+boucles. Puisque la récursion permet d'implémenter les boucle, il n'y a pas de syntaxe
+spécifique dans le langage. Il est possible d'ajouté une syntaxe pour les
+boucle en utilisant la programmation méta.
 
 
 % \begin{figure}[ht]
@@ -118,73 +155,89 @@ est utilisé pour effectué des boucles.
 % \end{figure}
 
 % READ Distinguer macro procedure.
-\begin{figure}[ht]
-  \begin{center}
-    \begin{tabular}{|l|}
-      \hline
-    \begin{mplisting}{0.65}
-(define map
-  (lambda (f lst)
-    (if (pair? lst)
-        (cons (f (car lst)) (map f (cdr lst)))
-        lst)))
-\end{mplisting}\\\hline
-    \end{tabular}
-  \end{center}
-  \label{fig:fact1}
-  \caption{Voici une implémentation de la fonction d'ordre supérieur \lstcode{map} en Scheme.
-  Cela montre un exemple utilise les procédure en objets de première classe et
-  aussi un exemple d'application récursive.}
-\end{figure}
+% \begin{figure}[ht]
+%   \begin{center}
+%     \begin{tabular}{|l|}
+%       \hline
+%     \begin{mplisting}{0.65}
+% (define map
+%   (lambda (f lst)
+%     (if (pair? lst)
+%         (cons (f (car lst)) (map f (cdr lst)))
+%         lst)))
+% \end{mplisting}\\\hline
+%     \end{tabular}
+%   \end{center}
+%   \label{fig:fact1}
+%   \caption{Voici une implémentation de la fonction d'ordre supérieur \lstcode{map} en Scheme.
+%   Cela montre un exemple utilise les procédure en objets de première classe et
+%   aussi un exemple d'application récursive.}
+% \end{figure}
 
 
 
 % La récursion est la façon dont les boucle sont faites.
 La programmation méta est présente dans plusieurs langage comme C, C++, LISP,
-Scheme, etc. Elle est basé sur des constructions qui transforment le code
-appelé macro.  Ils sont utilisés pour ajouter des raccourcis au langage.  En C
-et C++, les macros ne permettent pas de récursion se référant à elle-même.  Ils
-sont limités au remplacement textuel simple. Un appel à la macro est remplacer
-par le corps de celle-ci. Les macros de style LISP ont l'avantage d'avoir accès
-à l'ensemble des procédure. La différence est le mode de passage de paramètre
-durant l'application de la macro. Les paramètres sont passés à la macro sans
-être évalués, c'est ce qu'on appelle le passage par nom.
+Haskell, Scheme, etc. Elle est basé sur la capacité d'un programme de manipuler
+d'autre programme comme des données. Cela implique qu'il est possible de
+générer, analyser et modifier le code d'un autre programme s'incluant.  Les
+constructions utilisées pour manipuler le code du programme et
+ajouter des extensions au langage sont les macros.
 
-Le résultat d'une macro est le code qui est exécuté. Le code est une
-\textit{s-expression} donc une simple liste. La plupart des implémentation
-de Scheme offre la forme \lstcode{define-macro} qui est l'équivalent du
-\lstcode{defmacro} de LISP.
+En C et C++, les macros ne permettent pas de récursion se référant à elle-même.
+Ils sont basés sur un modèle de remplacement textuel simple. Un appel à la
+macro est remplacer par le corps de celle-ci. Les macros de style LISP ont
+accès à l'ensemble des procédure, ce qui leurs donne plus de flexibilité.  La
+différence entre les procédures et les macros est le mode de passage de
+paramètres.  Les paramètres sont passés à la macro sans être évalués, c'est ce
+qu'on appelle le passage par nom.  Certain Scheme offre la forme
+\lstcode{define-macro} pour définir les macros.  Cette forme est équivalente au
+\lstcode{defmacro} de LISP. Elle accepte en entré des \textit{s-expression}s et
+retourne une \textit{s-expression} (soit une liste ou une constante).  Le
+problème de cette forme spéciale est l'hygiène qui est traité dans le chapitre
+\ref{XXX}.
 
-% Cette forme souffre d'un problème d'hygiène.
-
-\begin{figure}[ht]
+\begin{figure}[htbp]
   \begin{tabular}{|l|}\hline
 \begin{mplisting}{0.7}
 (define-macro (include filename)
-  (with-input-from-file
+  (call-with-input-file
     filename
-    (lambda ()
+    (lambda (port)
       `(begin
-        ,@(read-all (current-input-port))))))
+        ,@(read-all port)))))
 \end{mplisting}\\\hline
 \end{tabular}
 
   \caption{Implémentation de la macro \texttt{include} qui permet l'inclusion
-  d'un fichier dans un autre fichier avec la syntax \texttt{define-macro}.  La
-  macro lit le contenu de fichier \textit{filename} et retourne le contenu de
-  se fichier.}
+  d'un fichier dans un autre fichier avec la syntax \texttt{define-macro}.}
 
   \label{fig:macro_include}
 \end{figure}
 
-Certaines implémentations de Scheme n'ont pas la forme
-\lstcode{define-macro}. Il est possible d'écrire la macro
-\lstcode{include} en utilisant la \lstcode{define-syntax}
-et \lstcode{syntax-case} qui est standard au R5RS
-\cite{Scheme:R5RS}.
+Un exemple qui montre les capacité des macros Scheme est la macro
+\lstcode{include}.  Cette macro permet l'inclusion du contenu d'un fichier au
+point d'application.  Pour inclure un fichier dans un autre, il faut tout
+d'abord lire le contenu du fichier à inclure. Ensuite, il suffit de retourné le
+code lu. La figure \ref{fig:macro_include} montre une implémentation de cette
+macro avec \lstcode{define-macro}.  Pour les implémentation de Scheme ne
+supportant pas la forme \lstcode{define-macro}, il est possible d'implémenter
+la forme \lstcode{include} avec \lstcode{define-syntax} qui est l'alternative à
+\lstcode{define-macro}. L'implémentation de cette macro est donnée à la figure
+\ref{fig:macro_include_def_syntax}. Les particularité de
+\lstcode{define-syntax} ne sont pas mentionnées dans ce mémoire.
+
+% --------------------------------------MOVE--------------------------------------
+
+% Certaines implémentations de Scheme n'ont pas la forme
+% \lstcode{define-macro}. Il est possible d'écrire la macro
+% \lstcode{include} en utilisant la \lstcode{define-syntax}
+% et \lstcode{syntax-case} qui fait partie du standard R5RS
+% \cite{Scheme:R5RS}. La figure \ref{fig:macro_include_def_syntax}
+% montre implémentation possible de cette macro.
 
 \begin{figure}[ht]
-  \begin{tabular}{|l|}\hline
+\begin{tabular}{|l|}\hline
 \begin{mplisting}{0.8}
 (define-syntax include
   (lambda (stx)
@@ -196,63 +249,78 @@ et \lstcode{syntax-case} qui est standard au R5RS
             (loop (cons expr rev-lst))))))
     (syntax-case stx ()
       ((_ fn)
-       (let ((filename (syntax->datum #'fn)))
+       (let ((filename (syntax->datum (syntax fn))))
          (let ((content
-                 (with-input-from-file
+                 (call-with-input-file
                     filename
-                    (lambda ()
-                      (cons
-                        'begin
-                        (read-all (current-input-port)))))))
+                    (lambda (port)
+                      (cons 'begin (read-all port))))))
            (datum->syntax stx content)))))))
-
 \end{mplisting}\\\hline
+
 \end{tabular}
+   \caption{Implémentation de la macro \texttt{include} qui permet l'inclusion
+   d'un fichier dans un autre fichier avec la syntaxe \texttt{define-syntax}.
+   Cette macro effectue la même action que celle définit dans la figure
+   \ref{fig:macro_include}.}
 
-  \caption{Implémentation de la macro \texttt{include} qui permet l'inclusion
-  d'un fichier dans un autre fichier avec la syntax \texttt{define-syntax}.
-  Cette macro effectue la même action que celle définit dans la figure
-  \ref{fig:macro_include}.}
-
+   \label{fig:macro_include_def_syntax}
 \end{figure}
 
+\section{Structure des Bibliothèque}
 
-
-%% XXX: suite 2.
-La structure des bibliothèque définit dans le depuis le standard
-R4RS\cite{Scheme:R4RS} et R5RS\cite{Scheme:R5RS} consistait simplement de
-fichiers Scheme qui sont importés dans le module courant. Cette importation est
-effectué soit par la procédure \texttt{load}. La plupart des implémentation de
-Scheme on la forme spéciale \texttt{include} qui peut
+Les bibliothèques, aussi appelées modules, facilitent le partage de
+fonctionnalités entre plusieurs programmes. Dans le standard
+R4RS\cite{Scheme:R4RS} et R5RS\cite{Scheme:R5RS} les modules consistent en des
+fichiers Scheme qui contiennent des définitions de procédures. Il sont chargés dans
+le module courant par la procédure \lstcode{load}. Certaines
+implémentations de Scheme ont la forme spéciale \lstcode{include} qui peut s'ajouter
+facilement au langage (voir la figure \ref{fig:macro_include_def_syntax}).
 Ce modèle de bibliothèque possède plusieurs lacunes.
 
 %% Gambit doc
 \begin{itemize}
   \item Ce modèle de chargement n'est pas à l'abri des chargements multiples
-    d'un module qui amène soit la duplication de code ou la réévaluation
-    non désiré d'un code.
+    d'un module qui mène soit de la duplication de code (dans le cas de \lstcode{include})
+    ou la réévaluation d'un code (dans le cas de \lstcode{load}).
 
   \item Toutes les déclarations dans un module sont ajoutés à l'environnement
-    global lors de l'importation. Cela amène des conflits de nom entre les
-    symboles du module principale et les modules importés.
+    global lors de l'importation. Cela mène à des conflits de nom entre les
+    symboles du module principal et les modules importés.
 
-  \item L'importation d'un module par \texttt{load} nécessite le chemin exacte
-    du module à importer qui peut être soit relatif ou absolu.  Un chemin
-    relatif prend comme origine le répertoire présent.  L'importation d'un
-    module par \texttt{include}, contrairement au \texttt{load}, le chemin
-    relatif prend comme origine l'emplacement du fichier dans lequel la forme
-    spécial \texttt{include} ce situe.
+  \item L'importation d'un module par \lstcode{load} ou \lstcode{include} nécessite la connaissance
+    de son emplacement dans le système de fichier. L'emplacement spécifier est soit relatif ou
+    absolu.
 
 \end{itemize}
 
+% \begin{verbatim}
+% +-----------------------------------+
+% | - Analyse lexicale                |
+% | - Analyse syntaxique              |
+% | - Expansion macro                 |
+% | - Evaluation                      |
+% +-----------------------------------+
+% \end{verbatim}
 
-Lors d'un chargement de bibliothèque par \texttt{load} les macros sont expansé
-et le code résultant est exécuté. Pour avoir accès aux macros, il faut utiliser la
-forme spécial \texttt{include} qui est expansé par le contenu du fichier.
-L'expression \lstcode{(include "foo#.scm")} est remplacé par le contenu du fichier
-\lstcode{foo#.scm}. L'inclusion tout comme un \lstcode{load} nécessite le chemin
-absolu ou relatif du fichier. L'exemple \ref{fig:r4rs_fact} montre un exemple
-de module simple n'utilisant que \lstcode{load}.
+Le chargement d'un module dans Gambit Scheme par \lstcode{load} se fait en plusieurs
+phases: l'analyse lexicale, l'analyse syntaxique, l'expansion de macro et
+l'évaluation. L'analyse lexicale brise l'expression en mots. La séquence de
+mots est associé à un contexte par l'analyse syntaxique dans laquelle il y a aussi
+une expansion des macros. Le \lstcode{include} d'un fichier n'effectue qu'un
+analyse lexicale qui est effectué par la procédure \lstcode{read}. L'évaluation
+est effectué après l'analyse syntaxique et l'expansion des macros. D'autres systèmes
+Scheme permettent le chargement des macros par \lstcode{load}.
+
+Dans un module, il y a du code qui est exécuté à l'expansion (les macros) et à
+l'évaluation. La procédure \lstcode{load} donne accès au
+procédure définit dans le module, mais pas au macros.  Après un
+\lstcode{load}, il ne reste que les procédures et variables globales qui
+résultent de l'expansion des macros.  Pour avoir accès aux macros, il faut
+utiliser la forme spécial \lstcode{include} qui est expansé par le contenu du
+fichier.  L'expression \lstcode{(include "foo#.scm")} est remplacé par le
+contenu du fichier \lstcode{foo#.scm}. L'exemple \ref{fig:r4rs_fact}
+montre un exemple de module simple n'utilisant que \lstcode{load}.
 
 \begin{figure}[ht]
   \begin{center}
@@ -272,22 +340,29 @@ de module simple n'utilisant que \lstcode{load}.
 \end{mplisting} \\\hline
     \end{tabular}
   \end{center}
+
   \caption{Le fichier \texttt{fact.scm} est un exemple de module R4RS exposant
   la fonction mathématique \lstcode{fact}. Le fichier \texttt{main.scm} est un
   programme principal qui utilise le module \texttt{fact.scm}.}
   \label{fig:r4rs_fact}
 \end{figure}
 
-Le modèle de bibliothèque utilisé dans les standard Scheme prior au
-R6RS\cite{Scheme:R6RS} a comme désavantage qu'une bibliothèque peut masquer les
+--------------------------------------END---------------------------------------\\
+
+Le standard R6RS\cite{Scheme:R6RS} introduit la notion de modules avec la
+syntaxe \lstcode{library}. Ce modèle introduit le concept d'espace de nom,
+. Cela permet de réglé
+
+Le modèle de bibliothèque utilisé dans les standards Scheme antérieur au
+R6RS\cite{Scheme:R6RS} a comme désavantage qu'un module externe peut redéfinir
+une association globale.
+que toutes les procédurepeut masquer les
 fonctionnalités d'une autre bibliothèque puisque le chargement effectué par la
 procédure \texttt{load} est dans le contexte global. Bref, les procédures de la
 bibliothèque \textbf{A} peuvent rentrer en conflit de nom avec les procédures
 de la bibliothèque \textbf{B} s'ils sont chargé dans le même contexte.  Pour
-évité ces conflit, il faut que chaque nom utilisé au sein des bibliothèques
-soit distinct, ce qui rajoute une tâche au programmeur.
-
-\todo{Citation to gambit}
+évité ces conflit, il faut que tous les noms utilisés au sein des bibliothèques
+soit distinct, ce qui ajoute une tâche au programmeur.
 
 Gambit offre un mécanisme pour aider a minimiser les conflits de nom. Ce
 méchanisme permet d'associer un identifiant à un autre avec la forme spécial
