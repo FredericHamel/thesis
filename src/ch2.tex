@@ -22,7 +22,7 @@ déclarations ne retournent aucun résultat.  Dans des programmes impératifs, i
 courant d'avoir des états globaux et des variables qui sont
 modifiés. Scheme a la forme \lstcode{begin} qui permet l'exécution
 séquentielle des expressions et la forme \lstcode{set!} pour réassigner une
-variable.qqqqqq
+variable.
 
 %read from here
 
@@ -350,22 +350,60 @@ montre un exemple de module simple n'utilisant que \lstcode{load}.
 --------------------------------------END---------------------------------------\\
 
 Le standard R6RS\cite{Scheme:R6RS} introduit la notion de modules avec la
-syntaxe \lstcode{library}. Ce modèle introduit le concept d'espace de nom,
-. Cela permet de réglé
+syntaxe \lstcode{library}. Cette syntaxe associe les définition dans le module
+dans l'espace de nom du module. Ce modèle introduit le concept d'espace de nom
+qui donne l'appartenance des fonctionnalités à un module. Cela règle le
+problème que module redéfinisse les fonctionnalités d'un autre module.  Un
+module R6RS est séparé en 4 parties: le nom, une sous forme \lstcode{export}, une
+sous forme \lstcode{import} et le corps du module. Le nom du module peut contenir
+un numéro de version. La sous forme \lstcode{export} spécifie la liste des
+associations définit ou importé dans le module. La sous forme \lstcode{import}
+spécifie une liste de dépendances dans laquelle chaque dépendance spécifie:
 
-Le modèle de bibliothèque utilisé dans les standards Scheme antérieur au
-R6RS\cite{Scheme:R6RS} a comme désavantage qu'un module externe peut redéfinir
-une association globale.
-que toutes les procédurepeut masquer les
-fonctionnalités d'une autre bibliothèque puisque le chargement effectué par la
-procédure \texttt{load} est dans le contexte global. Bref, les procédures de la
-bibliothèque \textbf{A} peuvent rentrer en conflit de nom avec les procédures
-de la bibliothèque \textbf{B} s'ils sont chargé dans le même contexte.  Pour
-évité ces conflit, il faut que tous les noms utilisés au sein des bibliothèques
-soit distinct, ce qui ajoute une tâche au programmeur.
+\begin{itemize}
+  \item le nom du module importé et de façon optionnelle un contrainte de
+    version;
+  \item le niveau d'import (temps d'expansion ou évaluation);
+  \item un sous ensemble du \lstcode{export} du module et le nom local
+    utilisé au sein du module courant pour chaque exportation du module.
+\end{itemize}
+
+Le corps du module contient une séquence de définition suivit par une séquence
+d'expressions. Une définition peut être soit local ou exportée. Les expressions
+initialisent le module lors de l'exécution.  Le R6RS ajoute aussi la forme
+\lstcode{import} pour l'importation d'un module et enlève la procédure
+\lstcode{load}.  Contrairement au \lstcode{load}, la forme \lstcode{import}
+empêche le chargement multiple d'un module.  La syntaxe d'un module permet de
+manipuler les noms des symboles importés et exportés dans le importe et
+l'exporte.
+
+\begin{mplisting}{0.5}
+(library <library name>
+  (export <export spec> ...)
+  (import <import spec> ...)
+  <library body>)
+\end{mplisting}
+
+Le concept de bibliothèque a été raffiné  dans le R6RS.  Le R6RS rend le
+support de la procédure \texttt{load} optionnel et ajoute une forme spéciale
+\texttt{library} pour définir des bibliothèques et une autre forme spéciale
+\texttt{import} pour gérer la inclure une bibliothèque.  Les noms utilise
+pour nommer une bibliothèque peuvent seulement contenir des symboles et des
+numéros de versions à la fin. Les expression import et export doivent seulement
+apparaître une seul fois dans le définition de la bibliothèques.
+
+Les bibliothèques ainsi définit, lie chaque définitions à la bibliothèque.  Cela
+permet la réutilisation des mêmes identificateurs dans deux bibliothèque
+différente.  Les conflits de nom sont gérés lors de l'importation des la
+bibliothèques. L'importation d'un module est permit au sein d'une bibliothèque
+comme dans un programme principale. La syntaxe d'un import reste identique dans
+ces deux cas.
+
+% Pour évité ces conflit, il faut que tous les noms utilisés au sein des
+% bibliothèques soit distinct, ce qui ajoute une tâche au programmeur.
 
 Gambit offre un mécanisme pour aider a minimiser les conflits de nom. Ce
-méchanisme permet d'associer un identifiant à un autre avec la forme spécial
+mécanisme permet d'associer un identifiant à un autre avec la forme spécial
 \lstcode{##namespace}.  L'appel à \lstcode{(##namespace ("foo#" A B))} indique
 qu'une référence succécante à \lstcode{A} devient une référence à
 \lstcode{foo#A} et l'un à \lstcode{B} devient une à \lstcode{foo#B}. Le espace
@@ -399,22 +437,6 @@ de nom dans lequel \lstcode{A} et \lstcode{B} est \lstcode{foo#}.
   \label{fig:math_module1}
 \end{figure}
 \end{center}
-
-
-Le concept de bibliothèque a été raffiné  dans le R6RS.  Le R6RS rend le
-support de la procédure \texttt{load} optionnel et ajoute une forme spéciale
-\texttt{library} pour définir des bibliothèques et une autre forme spéciale
-\texttt{import} pour gérer la inclure une bibliothèque.  Les noms utilise
-pour nommer une bibliothèque peuvent seulement contenir des symboles et des
-numéros de versions à la fin. Les expression import et export doivent seulement
-apparaître une seul fois dans le définition de la bibliothèques.
-
-Les bibliothèques ainsi définit, lie chaque procédure à la bibliothèque.  Cela
-permet la réutilisation des mêmes identificateurs dans deux bibliothèque
-différente.  Les conflits de nom sont gérés lors de l'importation des la
-bibliothèques. L'importation d'un module est permit au sein d'une bibliothèque
-comme dans un programme principale. La syntaxe d'un import reste identique dans
-ces deux cas.
 
 
 %\begin{center}
