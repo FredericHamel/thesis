@@ -350,15 +350,12 @@ montre un exemple de module simple n'utilisant que \lstcode{load}.
 --------------------------------------END---------------------------------------\\
 
 Le standard R6RS\cite{Scheme:R6RS} introduit la notion de modules avec la
-syntaxe \lstcode{library}. Cette syntaxe associe les définition dans le module
-dans l'espace de nom du module. Ce modèle introduit le concept d'espace de nom
-qui donne l'appartenance des fonctionnalités à un module. Cela règle le
-problème que module redéfinisse les fonctionnalités d'un autre module.  Un
-module R6RS est séparé en 4 parties: le nom, une sous forme \lstcode{export}, une
-sous forme \lstcode{import} et le corps du module. Le nom du module peut contenir
-un numéro de version. La sous forme \lstcode{export} spécifie la liste des
-associations définit ou importé dans le module. La sous forme \lstcode{import}
-spécifie une liste de dépendances dans laquelle chaque dépendance spécifie:
+syntaxe \lstcode{library}.  Un module R6RS est séparé en 4 parties: le nom, une
+sous forme \lstcode{export}, une sous forme \lstcode{import} et le corps du
+module. Le nom du module peut contenir un numéro de version. La sous forme
+\lstcode{export} spécifie la liste des associations définit ou importé dans le
+module. La sous forme \lstcode{import} spécifie une liste de dépendances dans
+laquelle chaque dépendance spécifie:
 
 \begin{itemize}
   \item le nom du module importé et de façon optionnelle un contrainte de
@@ -368,7 +365,21 @@ spécifie une liste de dépendances dans laquelle chaque dépendance spécifie:
     utilisé au sein du module courant pour chaque exportation du module.
 \end{itemize}
 
-Le corps du module contient une séquence de définition suivit par une séquence
+Les déclarations d'un module R6RS sont dans espace distinct de l'espace global et
+d'autre module. Les déclarations d'un module ne peuvent pas être en conflit avec
+des déclaration global ou d'autre module. L'élément qui distingue deux module est
+son nom avec sa version. Le nom du module correspond à l'espace de nom du module.
+C'est ce qui lie les déclarations au module.
+
+
+%Cette syntaxe 
+%est fortement lié à ce module. Chaque module a son propre
+%espace de environnement. sdans l'espace de nom du module sert d'espace de nom pour les associations
+%du module. Ce modèle introduit le concept d'espace de nom
+%qui donne l'appartenance des fonctionnalités à un module. Cela règle le
+%problème que module redéfinisse les fonctionnalités d'un autre module.
+
+Le corps du module contient une séquence de définitions suivit par une séquence
 d'expressions. Une définition peut être soit local ou exportée. Les expressions
 initialisent le module lors de l'exécution.  Le R6RS ajoute aussi la forme
 \lstcode{import} pour l'importation d'un module et enlève la procédure
