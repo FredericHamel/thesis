@@ -10,51 +10,79 @@ fortement parenthésé.  Un programme Scheme est une séquence de liste parenth�
 en forme préfixé, ce sont des \textit{s-expresssions}.  Chaque
 \textit{s-expression} correspond soit à une constante, une application de
 procédure ou une application de macro. Les macros sont lié au paradigme de
-programmation méta qui manipulent les expressions.
+méta programmation qui manipulent les expressions.
 
-Le paradigme impératif se retrouve dans des langages comme C. Un programme
-impératif est composé d'une séquence d'instruction que la machine doit exécuté.
-Des exemples d'instructions sont la création de variables, le changement du
-contenu de variables, un appel de procédure, etc. Il y aussi des déclaration
-qui permet de modifier le flot de contrôle du programme comme le \lstcode{if}.
-Le \lstcode{while} et \lstcode{for} sont utilisés pour les boucles. Ces
-déclarations ne retournent aucun résultat.  Dans des programmes impératifs, il est
-courant d'avoir des états globaux et des variables qui sont
-modifiés. Scheme a la forme \lstcode{begin} qui permet l'exécution
-séquentielle des expressions et la forme \lstcode{set!} pour réassigner une
-variable.
+Les formes de base usuelles en Scheme sont \lstcode{define}, \lstcode{lambda},
+\lstcode{let}, \lstcode{if} and \lstcode{set!}.
+\begin{itemize}
+  \item La forme \lstcode{(define <name> <val>)} associe le nom \lstcode{<name>} avec
+    la valeur \lstcode{<val>}. Il est utilisé pour définir des variables globales.
+
+  \item La forme \lstcode{(lambda <args> <body>)} permet la définition de
+    procédures anonymes. Les arguments sont \lstcode{<args>} et le corps
+    de procédure \lstcode{<body>}.
+
+  \item La forme \lstcode{(let <bindings> <body>)} permet de créer des
+    associations (\lstcode{<bindings}) visible seulement dans le contexte de
+    \lstcode{<body>}. Les associations sont sous la forme d'une liste
+    associative nom et valeur.
+
+  %% XXX: Too much???
+  \item Les conditions sont géré par la forme \lstcode{(if <e1> <e2> <e3>)}.
+    La branche \lstcode{<e1>} est exécutée si la condition \lstcode{<e2>} est
+    vrai sinon \lstcode{<e3>}.
+
+  \item La forme \lstcode{(set! <name> <val>)} modifie le contenu de la variable
+    \lstcode{<name>} avec la valeur \lstcode{<val>}.
+\end{itemize}
+
+% Le paradigme impératif se retrouve dans des langages comme C. Un programme
+% impératif est composé d'une séquence d'instruction que la machine doit exécuté.
+% Des exemples d'instructions sont la création de variables, le changement du
+% contenu de variables, un appel de procédure, etc. Il y aussi des déclaration
+% qui permet de modifier le flot de contrôle du programme comme le \lstcode{if}.
+% Le \lstcode{while} et \lstcode{for} sont utilisés pour les boucles. Ces
+% déclarations ne retournent aucun résultat.  Dans des programmes impératifs, il est
+% courant d'avoir des états globaux et des variables qui sont
+% modifiés. Scheme a la forme \lstcode{begin} qui permet l'exécution
+% séquentielle des expressions et la forme \lstcode{set!} pour réassigner une
+% variable.
 
 %read from here
 
-Dans la programmation fonctionnelle, les problèmes sont traités comme
-l'évaluation d'une fonction mathématique en évitant de modifier des états
-globaux ou le contenu des variables. Le langage est composé d'expressions qui
-retournent des valeurs au lieu de déclarations qui ne retournent rien. En
-fonctionnel, le \lstcode{if} est une expression qui retourne le résultat de la
-branche associée à la valeur de vérité de la condition. C'est l'équivalent de
-l'opérateur ternaire présent dans certain langage impératif comme  le C. Les
-langages fonctionnels ont la notion de pureté fonctionnelle, cela signifie que
-les opérations ne changent pas d'états globaux ou le contenu des variables. Une
-opération retourne toujours le même résultat lorsque invoqué avec les mêmes
-paramètres. Les opérations qui ont un effet de bord change un état global
-(affichage à l'écran) ou modifie le contenu d'une variable.  Des exemples
-d'opérations pures sont les fonctions mathématiques. Les effets de bord sont
-liés aux opérations de lecture et écriture.
+% Dans la programmation fonctionnelle, les problèmes sont traités comme
+% l'évaluation d'une fonction mathématique en évitant de modifier des états
+% globaux ou le contenu des variables. Le langage est composé d'expressions qui
+% retournent des valeurs au lieu de déclarations qui ne retournent rien. En
+% fonctionnel, le \lstcode{if} est une expression qui retourne le résultat de la
+% branche associée à la valeur de vérité de la condition. C'est l'équivalent de
+% l'opérateur ternaire présent dans certain langage impératif comme  le C. Les
+% langages fonctionnels ont la notion de pureté fonctionnelle, cela signifie que
+% les opérations ne changent pas d'états globaux ou le contenu des variables. Une
+% opération retourne toujours le même résultat lorsque invoqué avec les mêmes
+% paramètres. Les opérations qui ont un effet de bord change un état global
+% (affichage à l'écran) ou modifie le contenu d'une variable.  Des exemples
+% d'opérations pures sont les fonctions mathématiques. Les effets de bord sont
+% liés aux opérations de lecture et écriture.
 
-La programmation méta est un paradigme lié à l'utilisation de macro qui sont
+La méta programmation est un paradigme lié à l'utilisation de macro qui sont
 des entités qui manipulent la structure du programme. Elle est utilisé pour
 ajouter des abréviations dans le langage qui simplifie l'écriture du code.  La
-section \ref{sec:proc_and_macro} détaille de la programmation méta en Scheme.
+section \ref{sec:proc_and_macro} détaille de la méta programmation en Scheme.
 
-Une expression peut être organisé de plusieurs façons, infixe, préfixe ou
-suffixe.  La différence entre ces organisations est l'emplacement de
-l'opération et des opérandes dans l'expression.  Une expression en syntaxe
-infixe place l'opération entre les opérandes.  Cette forme est souvent utilisé
-dans les langages impératif. La forme préfixe commence par l'opérateur suivie
-des opérandes. Cette forme est plus utilisé dans les langages de la famille
-LISP.  La forme suffixe place les opérations après les opérandes.  Le tableau
-\ref{tab:prefix_vs_infix} donne des exemples d'expression préfixe avec
-l'équivalent infixes.
+Les expressions Scheme sont en forme préfixe. Cela signifie que l'opération
+précède les opérandes. Cette forme est plus utilisé dans les langage de la famille
+LISP.
+
+% Une expression peut être organisé de plusieurs façons, infixe, préfixe ou
+% suffixe.  La différence entre ces organisations est l'emplacement de
+% l'opération et des opérandes dans l'expression.  Une expression en syntaxe
+% infixe place l'opération entre les opérandes.  Cette forme est souvent utilisé
+% dans les langages impératif. La forme préfixe commence par l'opérateur suivie
+% des opérandes. Cette forme est plus utilisé dans les langages de la famille
+% LISP.  La forme suffixe place les opérations après les opérandes.  Le tableau
+% \ref{tab:prefix_vs_infix} donne des exemples d'expression préfixe avec
+% l'équivalent infixes.
 
 
 % \begin{verbatim}
@@ -112,19 +140,19 @@ a1 a2 a3 proc
   \label{tab:prefix_vs_infix}
 \end{table}
 
-La définition des associations globales en Scheme est effectuée avec \lstcode{define}.
-Cette forme spécial associe un nom avec une valeur d'un type quelconque.
-C'est l'équivalent d'une variable. Les types de donnée disponible en Scheme sont
-\lstcode{boolean}, \lstcode{pair}, \lstcode{symbol}, \lstcode{number},
-\lstcode{char}, \lstcode{string}, \lstcode{vector}, \lstcode{port} et
-\lstcode{procedure}.
+% La définition des associations globales en Scheme est effectuée avec \lstcode{define}.
+
+Les différents types que les valeurs peuvent prendre sont Les types de donnée
+disponible en Scheme sont \lstcode{boolean}, \lstcode{pair}, \lstcode{symbol},
+\lstcode{number}, \lstcode{char}, \lstcode{string}, \lstcode{vector},
+\lstcode{port} et \lstcode{procedure}.
 
 \section{Procédure et Macro}
 \label{sec:proc_and_macro}
 
 Les procédures sont des objets de premier classe, cela signifie qu'elles
 peuvent être manipulée comme n'importe quels types de donnée. Elles peuvent
-être passées en en tant que paramètre à une procédure et retourné en tant que
+être passées en tant que paramètre à une procédure et retourné en tant que
 résultat.  Certaines fonctions -- telles que \lstcode{map}, \lstcode{fold}, etc.
 -- bénéficie que les procédures sont des objets de premier classe.
 
@@ -132,10 +160,11 @@ Les procédures et les fonctions sont définis par le constructeur
 \lstcode{lambda} qui prend une liste d'arguments et une séquence d'au moins une
 \textit{s-expression} comme corps. Lors de l'application d'une procédure chacun
 des arguments est évalué puis passés à la procédure. C'est un mode de passage
-de paramètre par valeur.  Le langage utilise la récursion pour effectuer les
-boucles. Puisque la récursion permet d'implémenter les boucle, il n'y a pas de syntaxe
-spécifique dans le langage. Il est possible d'ajouté une syntaxe pour les
-boucle en utilisant la programmation méta.
+de paramètre par valeur. Il n'y a de forme spéciale pour les boucle, car elle
+peuvent construite par la récursion. Le langage offre une récursion sans coût
+avec l'appel terminal.  Il est possible d'ajouté une syntaxe pour les boucle en
+utilisant la méta programmation.
+% forme spéciale pour les boucle -> Les boucles sont faite par la récursion
 
 
 % \begin{figure}[ht]
@@ -381,8 +410,8 @@ d'expressions. Une définition peut être soit local ou exportée. Les expressio
 initialisent le module lors de l'exécution.  Le R6RS ajoute aussi la forme
 \lstcode{import} pour l'importation d'un module et enlève la procédure
 \lstcode{load}.  Contrairement au \lstcode{load}, la forme \lstcode{import}
-empêche le chargement multiple d'un module.  La syntaxe du \lstcode{import} et
-\lstcode{import} permet de manipuler les noms des symboles importés et exportés.
+empêche le chargement multiple d'un module.  La syntaxe du \lstcode{import}
+permet de manipuler les noms des symboles importés et exportés.
 
 \begin{figure}[ht]
   \begin{center}
@@ -397,7 +426,8 @@ empêche le chargement multiple d'un module.  La syntaxe du \lstcode{import} et
 \end{figure}
 
 La forme \lstcode{import} de R6RS permet l'importation d'un ensemble de module.
-Chaque spécification d'import permet un niveau d'importation qui peut être soit:
+Chaque spécification d'import \lstcode{<import spec>} peut être soit une simple importation
+ou un importation avec un niveau. Le niveau d'importation est soit:
 \begin{center}
   \begin{mplisting}{0.9}
 run
@@ -407,7 +437,23 @@ expand
 \end{center}
 où \lstcode{<level>} est un entier exacte. Un niveau d'importation 0
 correspond à \lstcode{run} et un niveau d'importation de 1 correspond
-\lstcode{expand}. La syntaxe pour l'importation est décrit dans la
+\lstcode{expand}. L'importation d'un module contient les sous formes suivantes:
+\begin{center}
+\begin{mplisting}{0.7}
+  <libref>
+  (library <libref>)
+  (only <import set> <identifier_1> ...)
+  (except <import set> <identifier_1> ...)
+  (prefix <import set> <identifier>)
+  (rename <import set> (<identifier_1> <identifier_2>))
+\end{mplisting}
+\end{center}
+
+% \begin{itemize}
+%   \item \lstcode{(rename  (<identifier1> <identifier_2>))}
+% \end{itemize}
+
+La syntaxe pour l'importation est décrit dans la
 spécification R6RS\cite{Scheme:R6RS}. Cela permet un grand contrôle sur le mode
 d'importation au prix d'une sémantique plus complexe.
 
@@ -445,76 +491,6 @@ les modules.
 % Pour évité ces conflit, il faut que tous les noms utilisés au sein des
 % bibliothèques soit distinct, ce qui ajoute une tâche au programmeur.
 
-% XXX: Implémentation
---------------------------------------SKIP---------------------------------------\\
-Gambit offre un mécanisme pour aider a minimiser les conflits de nom. Ce
-mécanisme permet d'associer un identifiant à un autre avec la forme spécial
-\lstcode{##namespace}.  L'appel à \lstcode{(##namespace ("foo#" A B))} indique
-qu'une référence succécante à \lstcode{A} devient une référence à
-\lstcode{foo#A} et l'un à \lstcode{B} devient une à \lstcode{foo#B}. Le espace
-de nom dans lequel \lstcode{A} et \lstcode{B} est \lstcode{foo#}.
-
-\begin{center}
-  \begin{figure}[h]
-  \begin{tabular}{|l|}
-\hline
-\begin{mplisting}{0.5}
-;; math#.scm
-(##namespace ("math#" fact fib))
-\end{mplisting} \\\hline
-\begin{mplisting}{0.6}
-;; math.scm
-(##namespace ("math#" fact fib))
-(define (fib n)
-  (if (< n 2)
-    n
-    (+ (fib (- n 1)) (fib (- n 2)))))
-(define (fact n)
-  (if (< n 2)
-    1
-    (* n (fact (- n 1)))))
-\end{mplisting}\\\hline
-  \end{tabular}
-  \caption{Écriture d'un petit module mathématique qui implémente les fonctions \lstcode{fact}
-    et \lstcode{fib}. Ce module est séparé en 2 fichiers, \texttt{math\#.scm} est un fichier
-    contenant les déclarations de l'espace de noms et des définitions de macros que le module
-    exporte.}
-  \label{fig:math_module1}
-\end{figure}
-\end{center}
-% XXX: END implementation
-
-%\begin{center}
-%  \begin{figure}[h]
-%  \begin{tabular}{|l|l|}
-%\hline
-%\begin{mplisting}{0.5}
-%;; Library
-%(library (math)
-%  (export fact)
-%  (import (rnrs base))
-%  (define (fact n)
-%    (if (< n 2)
-%      1
-%      (* n (fact (- n 1))))))
-%\end{mplisting} &
-%\begin{mplisting}{0.5}
-%;; Main program
-%(import
-%  (rnrs base)
-%  (rnrs io simple)
-%  (math))
-%
-%(display (fact 5))
-%(newline)
-%\end{mplisting}\\\hline
-%  \end{tabular}
-%\caption{À gauche, il y a un exemple d'une bibliothèque mathématique dans le format R6RS qui implémente
-%la fonction factoriel. À droite, un exemple d'importation de la bibliothèques qui utilise la forme
-%spéciale \texttt{import}.}
-%\end{figure}
-%\end{center}
---------------------------------------END---------------------------------------\\
 
 Le standard R7RS\cite{Scheme:R7RS} simplifie la syntaxe des modules
 R6RS\cite{Scheme:R6RS}.  L'importation d'un module fait abstraction du niveau
@@ -551,7 +527,6 @@ bloque \lstcode{begin}.
 \end{itemize}
 
 --------------------------------------END---------------------------------------\\
-
 
 L'implémentation des bibliothèques Scheme est basé sur le standard R7RS qui
 conserve la procédure \texttt{load} que le R6RS enlève et remplace la structure

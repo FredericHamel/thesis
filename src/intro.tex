@@ -1,10 +1,74 @@
-
 \chapter*{Introduction}
 
-Dans ce mémoire, il est présenté un système de module
-pour le langage de programmation Scheme dans le but
-de pouvoir transmettre du code exécutable dans un système
-distribué.
 
+Dans ce mémoire, il est présenté un système de module pour le langage Termite
+Scheme conçu par Guillaume Germain. Ce langage permet d'implémenter des
+applications distribués qui sont réparti sur plusieurs nœuds.  Les applications
+distribués ont un aspect dynamique au moment de la construction.  Il y a un
+incertitude sur le code qui est exécuté, car il peut changer dynamiquement.
+Par exemple, il y a la mise de code chaud (code en cours d'exécution) et
+aussi un serveur de calcul générique.
+
+Dans le but d'avoir un maximum de performance on veut que le code diffusé et exécuté
+soit compilé. Il y a le problème lié à l'encodage utilisé pour transmettre
+le code compilé qui doit fonctionné indépendamment l'architecture des systèmes.
+
+
+Il y a un problème de sécurité, le code obtenu par un nœud doit venir d'une source
+de confiance.
+
+Le langage Termite Scheme permet de migrer des processus d'un nœud à un autre
+par la sérialisation de leur continuation (qui contient des adresses de retour
+et des pointeur de fonction vers du code compilé).
+% Il règle certains problèmes, un programme compilé sur un
+% nœud ne connait pas l'intégralité du code exécuté.
+
+% Un autre problème abordé est la transmission
+% de code compilé entre les nœuds d'un système distribué.
+% Il y a plusieurs problèmes comme:
+% \begin{itemize}
+%   \item incompatibilité entre les architecture;
+%   \item l'état de la mémoire différent;
+% \end{itemize}
+
+% \begin{itemize}
+%   \item Ignorance du code réellement exécuté.
+%   \item Exécution de code à distance
+%   \item Sécurité
+
+%   \item Stabilité/Versionnement des module.
+
+% \end{itemize}
+
+% \noindent
+% - Programme dynamique\\
+% - Contexte distribué\\
+% - Exécution de code à distance\\
+% - Échange de code chaud (en cours d'exécution)\\
+
+% Un programme dans un système distribué ne connait pas l'intégralité du code qui
+% va rouler. Lors de la construction d'un programme sur un nœud d'un système
+% distribué, on ne connait pas toute les modules chargés dynamiquement durant
+% l'exécution.  Des exemples de programme distribué ne connaissant pas 100\% le
+% code à être exécuté sont un serveur de calcul générique et un serveur évolutif
+% qui utilise l'échange de code chaud (en cours d'exécution). Pour maximisé la
+% performance, on veut que les code diffusés entre les nœuds du système distribué
+% soit compilés.
+
+
+
+
+% Tu devrais expliquer dans ton introduction les éléments importants du problème auquel tu t'es attaqué pour le système
+% de module développé.  Soit :
+% 1) aspect "dynamique": au moment du "build" du programme sur un noeud on ne connait pas à 100% le code qui va y
+% rouler (exemple de "hot code update" et aussi un serveur de calcul générique)
+% 2) code compilé: pour maximiser la performance on veux que le code diffusé soit compilé
+% 3) en Termite Scheme on a la possibilité de migrer des processus d'un noeud à un autre par sérialisation de leur
+% continuation (qui contient des adresses de retour et des pointeurs de fonction vers du code compilé)
+% 4) sécurité de l'exécution: le code obtenu par un noeud doit venir d'une source sûre (ce qu'on obtient en utilisant
+% https vers les repo)
+% 5) versionnement des modules pour la stabilité du système
+% N'oublie pas la technique de l'onion, donc dans l'introduction tu peux expliquer brièvement ces points et aller plus
+% en détail dans les chapitres suivants
 
 
