@@ -67,19 +67,37 @@ et est spécifier par l'option \lstcode{-to}.  La racine par défaut est
 \section{Désinstallation}
 
 La désinstallation d'un module consiste à supprimer les fichier
-de ce module.
-
-Cette commande efface les fichiers liés au module spécifier.
-Par défaut, elle affecte les modules installés dans le répertoire
-utilisateur. Pour désinstaller un module installé dans un autre
-répertoire, il faut le spécifier par l'option \lstcode{-to}. Cette option
-est la même que dans l'installation.
-
+de ce module. Le module \lstcode{gambit/pkg} offre la procédure
+\lstcode{uninsall} qui accepte deux arguments: le nom du module
+et de façon optionnelle le répertoire dans lequel les modules
+sont situé. Les valeurs retournées par cette procédure sont
+similaire à la procédure.
+\begin{center}
+  \begin{mplisting}{0.4}
+(uninstall mod #!optional to)
+\end{mplisting}
+\end{center}
+La désinstallation peut être fait en passant l'option \lstcode{-uninstall}
+à l'interprète Gambit. Cette option requière le nom du module et le
+répertoire  des module à désinstaller.
 \begin{center}
   \begin{mplisting}{0.8}
 > gsi -uninstall [-to <path>] module
 \end{mplisting}
 \end{center}
+Le répertoire \lstcode{<path>} est l'emplacement des module
+à désinstallé. Le format des arguments pour la désinstallation
+est le même que pour l'installation. Le répertoire par défaut
+est le répertoire \lstcode{\~\~userlib}.
+
+La désinstallation du module \lstcode{semver} dans installé dans le
+répertoire \lstcode{/tmp/exemple} est fait par la commande suivante:
+\begin{center}
+  \begin{mplisting}{1}
+> gsi -uninstall -to /tmp/exemple github.com/frederichamel/semver/tree/1.0.1
+\end{mplisting}
+\end{center}
+
 
 \section{Mise à jour}
 Cette opération actualise la branche \lstcode{master} du module.
