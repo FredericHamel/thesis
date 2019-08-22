@@ -18,9 +18,21 @@ arguments de ligne de commande passé à Gambit.
 %   \item \lstcode{test} exécute les tests unitaires des modules spécifiés.
 % \end{itemize}
 
+L'organisation des répertoires des modules permet l'installation de plusieurs
+versions d'un même module. Cela garantie que tous les modules qui utilise une
+version antérieur de modules fonctionne toujours. Certains systèmes de module
+ne conserve qu'une seul version de chaque module. La mise à jour d'un module
+peut briser le fonctionnement de ses dépendances.
+
+Les versions des modules sont lié au publications des module sur les serveurs
+de version tels que que github, gitlab, bitbucket, etc. Une versions est soit
+une branche ou un étiquette.
+
+% TODO: test if branch work
+
 \section{Installation}
 
-Les modules sont hébergés sur des serveur de version tel que github, gitlab,
+Les modules sont hébergés sur des serveurs de version tel que github, gitlab,
 bitbucket, etc. L'installation des modules s'effectue par l'intermédiaire de
 \lstcode{git}. Un module est installé en plusieurs étapes. Tout d'abord, la
 branche \lstcode{master} dépôt du module est cloné. Ensuite un archive de la

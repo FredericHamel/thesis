@@ -588,212 +588,215 @@ de la bibliothèque à collecter en plus des information sur les composante
 % - macros
 % - (##namespace (""))
 
-\section{Chargement des bibliothèques}
 
 
-Un système est composé d'un ensemble d'éléments (modules) qui interagissent
-entre eux.  Une bibliothèque fait office de module au sein d'un système simple
-ou complexe.
-%La collection des modules s'effectue au sein d'un
+%% ---- MOVED to chapter 4 ----
 
-% TODO: voir chargé
-Le chargement d'une bibliothèque Scheme (ou module) est séparé en plusieurs niveaux.
-% TODO: now
-Les bibliothèques sont soit lu du disque vers la mémoire durant l'exécution
-ou déjà dans la mémoire du processus. Durant la compilation les modules sont
-collecté pour construire un exécutable. Le chargement
-d'une bibliothèque inclut une phase de recherche sur le système de fichier pour valider
-l'existence de la bibliothèque et des fonctionnalités demandés. L'emplacement des
-bibliothèques sur le système de fichier est lié par défaut aux chemin spécifié par
-le \lstinline{##module-search-order} a comme défaut \lstinline{~~lib} et \lstinline{~~userlib}.
+%\section{Chargement des bibliothèques}
 
+%Un système est composé d'un ensemble d'éléments (modules) qui interagissent
+%entre eux.  Une bibliothèque fait office de module au sein d'un système simple
+%ou complexe.
+%%La collection des modules s'effectue au sein d'un
 
-La procédure exacte de chargement des bibliothèques par \verb|import|
-n'est pas spécifier par le standard R7RS. Le standard spécifie seulement la syntaxe
-à utilisé et le de comportement principal qui est
-requis. L'importation d'une bibliothèque doit chargé la bibliothèque
-et rendre c'est fonctionnalité disponible dans le contexte
-l'importation a eu lieu qui peut soit ovenir d'un programme principale
-ou d'une bibliothèque.
-
-Le chargement d'une bibliothèque peut-être effectuée à l'exécution par
-l'utilisation de \texttt{eval} (par \texttt{load}) pour les fichiers source et
-\texttt{load-objcet-file} pour les bibliothèques compilées. Cette recherche
-peut aussi avoir lieu durant l'édition des lien en utilisant les méta-infos
-contenus dans les \textbf{.c} qui sont chacun compilé par le compilateur C
-en \textbf{.o} et lié par le \textit{linker}.
-
-\section{Modèle dynamique}
-Dans ce modèle les bibliothèques sont lié au programme durant l'exécution. Cela
-nécessite que les bibliothèques soit organisé sur le système de fichier d'une façon
-distingable. Chaque module doit posséder un nom unique qui permet d'y référer.
-Ce nom unique va être utilisé lors de la collection des dépendances.
+%% TODO: voir chargé
+%Le chargement d'une bibliothèque Scheme (ou module) est séparé en plusieurs niveaux.
+%% TODO: later
+%Les bibliothèques sont soit lu du disque vers la mémoire durant l'exécution
+%ou déjà dans la mémoire du processus. Durant la compilation les modules sont
+%collecté pour construire un exécutable. Le chargement
+%d'une bibliothèque inclut une phase de recherche sur le système de fichier pour valider
+%l'existence de la bibliothèque et des fonctionnalités demandés. L'emplacement des
+%bibliothèques sur le système de fichier est lié par défaut aux chemin spécifié par
+%le \lstinline{##module-search-order} a comme défaut \lstinline{~~lib} et \lstinline{~~userlib}.
 
 
-%Les bibliothèques
-%sont soit en code source ou compilé nativement avec l'extension (\textit{.oN})
-%où le N correspond à la version du binaire qui commence à 1.
+%La procédure exacte de chargement des bibliothèques par \verb|import|
+%n'est pas spécifier par le standard R7RS. Le standard spécifie seulement la syntaxe
+%à utilisé et le de comportement principal qui est
+%requis. L'importation d'une bibliothèque doit chargé la bibliothèque
+%et rendre c'est fonctionnalité disponible dans le contexte
+%l'importation a eu lieu qui peut soit ovenir d'un programme principale
+%ou d'une bibliothèque.
+
+%Le chargement d'une bibliothèque peut-être effectuée à l'exécution par
+%l'utilisation de \texttt{eval} (par \texttt{load}) pour les fichiers source et
+%\texttt{load-objcet-file} pour les bibliothèques compilées. Cette recherche
+%peut aussi avoir lieu durant l'édition des lien en utilisant les méta-infos
+%contenus dans les \textbf{.c} qui sont chacun compilé par le compilateur C
+%en \textbf{.o} et lié par le \textit{linker}.
+
+%\section{Modèle dynamique}
+%Dans ce modèle les bibliothèques sont lié au programme durant l'exécution. Cela
+%nécessite que les bibliothèques soit organisé sur le système de fichier d'une façon
+%distingable. Chaque module doit posséder un nom unique qui permet d'y référer.
+%Ce nom unique va être utilisé lors de la collection des dépendances.
 
 
-La recherche des bibliothèques est effectué dans un ordre spécifique
-indépendant de la spécification.  L'algorithme de recherche les bibliothèques
-prend entré le nom de la bibliothèque et retourne le chemin absolu
-correspondant à sont emplacement dans l'arborescence du système de fichier. Les
-bibliothèques sont situées dans différents répertoires l'origine du programme,
-le répertoire des bibliothèques système (\lstinline{~~lib}) et le
-répertoire de bibliothèque utilisateur (\lstinline{~~userlib}).
-
-% \begin{itemize}
-%   %% XXX: directory where the executable is located (usefull for devel no need to install the module). collecté
-%   \item \verb|origin/dummy.sld|
-%   \item \verb|origin/dummy/dummy.sld|
-%   \item \verb|~~userlib/dummy.sld|
-%   \item \verb|~~userlib/dummy/dummy.sld|
-%   \item \verb|~~lib/dummy.sld|
-%   \item \verb|~~lib/dummy/dummy.sld|
-% \end{itemize}
-
-Chaque module possède trois niveau d'initialisation dans le système numéroté de
-0 à 2. Le niveau 0 indique que le module n'a pas été initialisé. Ces les niveau
-des module qui ont juste été collecté par le système. Le niveau 1 indique que
-le descripteur du module à été récupéré. L'étape 2 est utilisé pour indiquer
-les module chargé.
-
-Soit un système avec les dépendance suivante:
-\begin{figure}[ht]
-  \includegraphics{figures/system-example}
-  \caption{Un exemple d'un système fictif composé de différents modules.
-  Le module principale se nomme utilise l'extension \textbf{.scm}
-  et les bibliothèques porte l'extension \textbf{.sld}}
-\end{figure} % TODO: use yed for that graph
+%%Les bibliothèques
+%%sont soit en code source ou compilé nativement avec l'extension (\textit{.oN})
+%%où le N correspond à la version du binaire qui commence à 1.
 
 
-Le démarrage du module principal Main.scm déclenche la collection des modules X
-et Y, qui récursivement déclenche la collection de W et Z. L'algorithme de
-collection des modules ignore les module qui apparaisse plusieurs fois au sein
-du graphe.
+%La recherche des bibliothèques est effectué dans un ordre spécifique
+%indépendant de la spécification.  L'algorithme de recherche les bibliothèques
+%prend entré le nom de la bibliothèque et retourne le chemin absolu
+%correspondant à sont emplacement dans l'arborescence du système de fichier. Les
+%bibliothèques sont situées dans différents répertoires l'origine du programme,
+%le répertoire des bibliothèques système (\lstinline{~~lib}) et le
+%répertoire de bibliothèque utilisateur (\lstinline{~~userlib}).
 
-Une fois la collection de tous ces modules est complété le descripteur de
-module est récupéré par un appels à \verb|dlopen| et \verb|dlsym| dans le cas
-compilé.
+%% \begin{itemize}
+%%   %% XXX: directory where the executable is located (usefull for devel no need to install the module). collecté
+%%   \item \verb|origin/dummy.sld|
+%%   \item \verb|origin/dummy/dummy.sld|
+%%   \item \verb|~~userlib/dummy.sld|
+%%   \item \verb|~~userlib/dummy/dummy.sld|
+%%   \item \verb|~~lib/dummy.sld|
+%%   \item \verb|~~lib/dummy/dummy.sld|
+%% \end{itemize}
 
+%Chaque module possède trois niveau d'initialisation dans le système numéroté de
+%0 à 2. Le niveau 0 indique que le module n'a pas été initialisé. Ces les niveau
+%des module qui ont juste été collecté par le système. Le niveau 1 indique que
+%le descripteur du module à été récupéré. L'étape 2 est utilisé pour indiquer
+%les module chargé.
 
-\section{Module hébergé}
-
-Un module qui est hébergé est un module qui dont son contenu
-se retrouve sur un domain comme \url{github.com}.
-
-
-\begin{figure}[ht]
-\begin{lstlisting}
-hostname      = +( domainlabel "." ) toplabel
-domainlabel   = alphanum | alphanum *( alphanum | "-" ) alphanum
-toplabel      = alpha | alpha *( alphanum | "-" ) alphanum
-alphanum      = alpha | digit
-alpha         = [a-zA-Z]
-digit         = [0-9]
-\end{lstlisting}
-  \caption{Grammaire BNF représentant un hostname selon un sous
-  ensemble du RFC-2396.}
-\end{figure}
-
-La différence avec la spécification du hostname dans le RFC-2396
-est que le hostname ne peut pas finir par un point et doit contenir
-au moins un \verb|domainlabel|. C'est pour permettre de distingué
-un module local et un module hébergé.
-
-\subsection{Module gambit/git}
-
-Ce module offre un interface pour utiliser interagir avec les des dépôts git.
-Il permet de cloner un dépôts qui est hébergé sur \url{github.com}. Un clone du
-dépôts est simplement un copie qui contient les informations suffisantes pour
-passer d'une version d'un module à un autre. L'opération qui permet de changer
-de version est \emph{checkout}.
+%Soit un système avec les dépendance suivante:
+%\begin{figure}[ht]
+%  \includegraphics{figures/system-example}
+%  \caption{Un exemple d'un système fictif composé de différents modules.
+%  Le module principale se nomme utilise l'extension \textbf{.scm}
+%  et les bibliothèques porte l'extension \textbf{.sld}}
+%\end{figure} % TODO: use yed for that graph
 
 
-%-------------------------------------------------------------------------------
-%
-%Modèle "link dynamique" :
-%  recherche des libs au run time, utilisation de eval (par load) et
-%  load-object-file
-%
-%  % gsi main.scm      ou      % gsc main.scm ; gsi main.o1
-%
-%    origin/main.scm    : (import X Y)
-%          /X/X.sld     : (import)
-%
-% ~~userlib/Y/Y.sld     : (import Z)
-%
-%     ~~lib/Z/Z.sld     : (import)
-%          /Z.o1
-%
-%-------------------------------------------------------------------------------
-%
-%Modèle "link statique" :
-%  recherche des libs au link time en utilisant les méta-infos
-%  dans les .c (demand-lib et supply-lib), chaque .c compilé en
-%  un .o séparément et les .o linkés par le compilateur C
-%
-%  % gsc -obj -keep-c X.sld      ;; créer .c et .o
-%  % gsc -obj -keep-c Y.sld      ;; créer .c et .o
-%  % gsc -obj -keep-c Z.sld      ;; créer .c et .o
-%  % gsc -obj -keep-c main.scm   ;; créer .c et .o
-%  % gsc -exe main.c             ;; combine les .o pour créer main.exe
-%
-%    origin/main.scm    : (import X Y)
-%          /main.c      : (demand-lib X Y)
-%          /main.o
-%          /X/X.sld     : (import)
-%            /X.c       : (demand-lib) (supply-lib X)
-%            /X.o
-%
-% ~~userlib/Y/Y.sld     : (import Z)
-%          /Y/Y.c       : (demand-lib Z) (supply-lib Y)
-%          /Y/Y.o
-%
-%     ~~lib/Z/Z.sld     : (import)
-%          /Z/Z.c       : (demand-lib) (supply-lib Z)
-%          /Z/Z.o
-%
-%-------------------------------------------------------------------------------
-%
-%Modèle "whole-program" :
-%  recherche des libs au compile time en utilisant les imports
-%  dans les fichiers sources, les AST de toutes les libs fusionnées
-%  en un seul AST compilé par gsc (donc un seul .c généré et compilé
-%  par le compilateur C pour créer main.exe)
-%
-%  % gsc -exe -whole-program main.scm
-%
-%    origin/main.scm    : (import X Y)
-%          /X/X.sld     : (import)
-%
-% ~~userlib/Y/Y.sld     : (import Z)
-%
-%     ~~lib/Z/Z.sld     : (import)
-%
-%-------------------------------------------------------------------------------
-% correction d’une petite coquille…
-% /Y.c       : (demand-lib Z) (supply-lib Y)
-% /Y.o
-%
-% ~~lib/Z/Z.sld     : (import)
-% /Z.c       : (demand-lib) (supply-lib Z)
-% ...
+%Le démarrage du module principal Main.scm déclenche la collection des modules X
+%et Y, qui récursivement déclenche la collection de W et Z. L'algorithme de
+%collection des modules ignore les module qui apparaisse plusieurs fois au sein
+%du graphe.
+
+%Une fois la collection de tous ces modules est complété le descripteur de
+%module est récupéré par un appels à \verb|dlopen| et \verb|dlsym| dans le cas
+%compilé.
 
 
-% (check-sld "/tmp/scheme/base/base.sld" "/tmp/scheme/base")
-% (check-sld "/tmp/scheme/base.sld" "/tmp/scheme")
-% (check-sld
-%  "/home/frederic/Documents/MasterResearch/gambit9/lib/cocolappin/scheme/base/base.sld"
-%  "/home/frederic/Documents/MasterResearch/gambit9/lib/cocolappin/scheme/base")
-% (check-sld
-%  "/home/frederic/Documents/MasterResearch/gambit9/lib/cocolappin/scheme/base.sld"
-%  "/home/frederic/Documents/MasterResearch/gambit9/lib/cocolappin/scheme")
-% (check-sld
-%  "/home/frederic/Documents/MasterResearch/g9/lib/scheme/base/base.sld"
-%  "/home/frederic/Documents/MasterResearch/g9/lib/scheme/base")
-% object-file-path: /home/frederic/Documents/MasterResearch/g9/lib/scheme/base/.gambit_409003@C/base.o1
-% ("/home/frederic/Documents/MasterResearch/g9/lib/scheme/base/base.sld"
-%  .
-%  #<input-port #2 "/home/frederic/Documents/MasterResearch/g9/lib/scheme/base/base.sld">)
+%\section{Module hébergé}
+
+%Un module qui est hébergé est un module qui dont son contenu
+%se retrouve sur un domain comme \url{github.com}.
+
+
+%\begin{figure}[ht]
+%\begin{lstlisting}
+%hostname      = +( domainlabel "." ) toplabel
+%domainlabel   = alphanum | alphanum *( alphanum | "-" ) alphanum
+%toplabel      = alpha | alpha *( alphanum | "-" ) alphanum
+%alphanum      = alpha | digit
+%alpha         = [a-zA-Z]
+%digit         = [0-9]
+%\end{lstlisting}
+%  \caption{Grammaire BNF représentant un hostname selon un sous
+%  ensemble du RFC-2396.}
+%\end{figure}
+
+%La différence avec la spécification du hostname dans le RFC-2396
+%est que le hostname ne peut pas finir par un point et doit contenir
+%au moins un \verb|domainlabel|. C'est pour permettre de distingué
+%un module local et un module hébergé.
+
+%\subsection{Module gambit/git}
+
+%Ce module offre un interface pour utiliser interagir avec les des dépôts git.
+%Il permet de cloner un dépôts qui est hébergé sur \url{github.com}. Un clone du
+%dépôts est simplement un copie qui contient les informations suffisantes pour
+%passer d'une version d'un module à un autre. L'opération qui permet de changer
+%de version est \emph{checkout}.
+
+
+%%-------------------------------------------------------------------------------
+%%
+%%Modèle "link dynamique" :
+%%  recherche des libs au run time, utilisation de eval (par load) et
+%%  load-object-file
+%%
+%%  % gsi main.scm      ou      % gsc main.scm ; gsi main.o1
+%%
+%%    origin/main.scm    : (import X Y)
+%%          /X/X.sld     : (import)
+%%
+%% ~~userlib/Y/Y.sld     : (import Z)
+%%
+%%     ~~lib/Z/Z.sld     : (import)
+%%          /Z.o1
+%%
+%%-------------------------------------------------------------------------------
+%%
+%%Modèle "link statique" :
+%%  recherche des libs au link time en utilisant les méta-infos
+%%  dans les .c (demand-lib et supply-lib), chaque .c compilé en
+%%  un .o séparément et les .o linkés par le compilateur C
+%%
+%%  % gsc -obj -keep-c X.sld      ;; créer .c et .o
+%%  % gsc -obj -keep-c Y.sld      ;; créer .c et .o
+%%  % gsc -obj -keep-c Z.sld      ;; créer .c et .o
+%%  % gsc -obj -keep-c main.scm   ;; créer .c et .o
+%%  % gsc -exe main.c             ;; combine les .o pour créer main.exe
+%%
+%%    origin/main.scm    : (import X Y)
+%%          /main.c      : (demand-lib X Y)
+%%          /main.o
+%%          /X/X.sld     : (import)
+%%            /X.c       : (demand-lib) (supply-lib X)
+%%            /X.o
+%%
+%% ~~userlib/Y/Y.sld     : (import Z)
+%%          /Y/Y.c       : (demand-lib Z) (supply-lib Y)
+%%          /Y/Y.o
+%%
+%%     ~~lib/Z/Z.sld     : (import)
+%%          /Z/Z.c       : (demand-lib) (supply-lib Z)
+%%          /Z/Z.o
+%%
+%%-------------------------------------------------------------------------------
+%%
+%%Modèle "whole-program" :
+%%  recherche des libs au compile time en utilisant les imports
+%%  dans les fichiers sources, les AST de toutes les libs fusionnées
+%%  en un seul AST compilé par gsc (donc un seul .c généré et compilé
+%%  par le compilateur C pour créer main.exe)
+%%
+%%  % gsc -exe -whole-program main.scm
+%%
+%%    origin/main.scm    : (import X Y)
+%%          /X/X.sld     : (import)
+%%
+%% ~~userlib/Y/Y.sld     : (import Z)
+%%
+%%     ~~lib/Z/Z.sld     : (import)
+%%
+%%-------------------------------------------------------------------------------
+%% correction d’une petite coquille…
+%% /Y.c       : (demand-lib Z) (supply-lib Y)
+%% /Y.o
+%%
+%% ~~lib/Z/Z.sld     : (import)
+%% /Z.c       : (demand-lib) (supply-lib Z)
+%% ...
+
+
+%% (check-sld "/tmp/scheme/base/base.sld" "/tmp/scheme/base")
+%% (check-sld "/tmp/scheme/base.sld" "/tmp/scheme")
+%% (check-sld
+%%  "/home/frederic/Documents/MasterResearch/gambit9/lib/cocolappin/scheme/base/base.sld"
+%%  "/home/frederic/Documents/MasterResearch/gambit9/lib/cocolappin/scheme/base")
+%% (check-sld
+%%  "/home/frederic/Documents/MasterResearch/gambit9/lib/cocolappin/scheme/base.sld"
+%%  "/home/frederic/Documents/MasterResearch/gambit9/lib/cocolappin/scheme")
+%% (check-sld
+%%  "/home/frederic/Documents/MasterResearch/g9/lib/scheme/base/base.sld"
+%%  "/home/frederic/Documents/MasterResearch/g9/lib/scheme/base")
+%% object-file-path: /home/frederic/Documents/MasterResearch/g9/lib/scheme/base/.gambit_409003@C/base.o1
+%% ("/home/frederic/Documents/MasterResearch/g9/lib/scheme/base/base.sld"
+%%  .
+%%  #<input-port #2 "/home/frederic/Documents/MasterResearch/g9/lib/scheme/base/base.sld">)

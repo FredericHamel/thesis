@@ -3,23 +3,43 @@
 
 Dans ce mémoire, il est présenté un système de module pour le langage Termite
 Scheme conçu par Guillaume Germain. Ce langage permet d'implémenter des
-applications distribués qui sont réparti sur plusieurs nœuds.  Les applications
-distribués ont un aspect dynamique au moment de la construction.  Il y a un
-incertitude sur le code qui est exécuté, car il peut changer dynamiquement.
-Par exemple, il y a la mise de code chaud (code en cours d'exécution) et
-aussi un serveur de calcul générique.
+applications distribués qui sont répartis sur plusieurs nœuds. Il est possible
+de diffuser des procédures entre les nœuds. Cela ajoute un facteur dynamique au
+niveau de la construction.  Il y a un incertitude sur le code qui est exécuté.
+Un nœud peut devoir exécuté du code qui fait partie d'une composante externe
+qui n'est pas lié avec l'application courante.  La mise à jour de code chaud
+(code en cours d'exécution) et aussi un serveur de calcul générique sont des
+exemple d'applications distribués dynamique.
 
-Dans le but d'avoir un maximum de performance on veut que le code diffusé et exécuté
-soit compilé. Il y a le problème lié à l'encodage utilisé pour transmettre
-le code compilé qui doit fonctionné indépendamment l'architecture des systèmes.
+Dans le but d'avoir un maximum de performance on veut que le code diffusé soit
+compilé. Il y a le problème lié à l'encodage utilisé pour diffusé le code
+compilé. Il faut qu'il fonctionne indépendamment de l'architecture du système
+système.
 
-
-Il y a un problème de sécurité, le code obtenu par un nœud doit venir d'une source
-de confiance.
+La sécurité du système de module est importante. Il faut que le code obtenu par
+un nœud provienne d'une source de confiance. On veut le contrôle sur le code
+qui est exécuté sur les nœuds du système. Le chapitre sur la migration
+de processus détaille comment utiliser des dépôts avec https et des politiques
+de diffusion, il est possible de garantir que le code diffusé est le bon.
 
 Le langage Termite Scheme permet de migrer des processus d'un nœud à un autre
 par la sérialisation de leur continuation (qui contient des adresses de retour
 et des pointeur de fonction vers du code compilé).
+
+Un système de module permet de gérer les versions des différents modules.
+Il y a plusieurs façons de gérer les modules.
+Les opérations sur les modules sont:
+\begin{itemize}
+  \item l'installation de modules,
+  \item la mise à jour des modules,
+  \item la désinstallation d'un module,
+  \item la gestion des dépendance.
+\end{itemize}
+Le chapitre sur la gestion des modules \ref{ch:module_management}
+détaille de l'implémentation de ces opérations et de l'organisation
+des modules sur le disque. Le choix de l'organisation prend en compte
+la stabilité des modules.
+
 % Il règle certains problèmes, un programme compilé sur un
 % nœud ne connait pas l'intégralité du code exécuté.
 

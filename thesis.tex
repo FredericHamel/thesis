@@ -197,17 +197,22 @@
 %%% mémoire.
 %%%
 
-\title{R7RS module system for Gambit Scheme}
+%\title{R7RS module system for Gambit Scheme}
+%\title{Système de module pour Gambit Scheme}
+%\title{Système de module pour Termite Scheme}
+%\title{Système de module pour le langage de programmation Termite Scheme}
+%\title{Système de module pour le langage distribué Termite Scheme}
+\title{Diffusion de module compilé pour le langage distribué Termite Scheme}
 
 \author{Frédéric Hamel}
 
 \copyrightyear{2018}
 
-\department{Département de mathématiques et de statistique}
+\department{Département d'informatique et Recherche Opérationnel}
 
 \president{Nom du président du jury}
 
-\directeur{Nom du directeur de recherche}
+\directeur{Marc Feeley}
 
 %%\codirecteur{Nom du co-directeur}         %optionel
 
@@ -269,8 +274,8 @@ summary and keywords in english
  % Pour un mémoire en anglais, changer pour
  % \anglais. Noter qu'il faut une permission
  % pour écrire son mémoire en anglais.
-\anglais%
-%%\francais
+%%\anglais%
+\francais
  % \cleardoublepage termine la page actuel et force TeX
  % a poussé les éléments flottant (fig., tables, etc.) sur
  % la page (normalement TeX les garde en suspend jusqu'à ce
@@ -314,9 +319,7 @@ remerciements
 %%                                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter*{Introduction}
-
-Système de module pour Gambit Scheme.
+\include{intro}
 
 %%------------------------------------------------- %
 %%                pages 1                           %
@@ -324,8 +327,11 @@ Système de module pour Gambit Scheme.
 
 %\chapter[]{Coexistence entre bibliothèques}% TODO: maybe rename.
 \include{ch1}
-
 \include{ch2}
+\include{ch3}
+\include{ch4}
+\include{ch5}
+\include{ch6}
 \newpage
 
 % Utilité d'avoir plus d'une version d'une bibliothèque en mémoire.

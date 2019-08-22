@@ -1,0 +1,122 @@
+
+\chapter{Implémentation des modules}
+
+Le format des modules nécessite plusieurs composantes.
+Chaque module doit avoir sont propre espace de nom
+disjoint des autres modules. Un liste d'importation
+qui indique les dépendances entre les modules et permet
+l'interaction entre les modules. Certaines formes spéciales
+ont été ajouté dans pour pouvoir exprimer les relation entre
+les modules.
+
+\section{Formes spéciale}
+
+Les espaces de nom sont gérer avec une forme spécial propre à Gambit. Cet forme
+se nomme \lstcode{##namespace}.  La seul restriction sur les espaces de nom
+dans Gambit est qu'ils doit se terminer par le caractère \lstcode{#}.
+La forme \lstcode{##namespace} permet de préfixer et renommé des identifiants
+dans un contexte.
+
+Cela permet de créer un espace distinct pour chaque module. Cela permet
+d'éviter les conflits de nom entre les modules tant que les espaces de nom sont
+différents. Chaque module commence par déclarer son espace de nom suivit des
+définitions des procédures du module. Une déclaration d'espace de nom à la forme
+suivante \lstcode{(##namespace ("<name>#"))}. La partie \lstcode{<name>} de la
+forme \lstcode{##namespace} doit être un chaine d'au moins un caractères.
+
+\begin{center}
+  \begin{tabular}{|l|}
+\hline
+\begin{mplisting}{0.6}
+;; example.scm
+(##namespace ("example#" hello))
+(define (hello)
+  (display "Hello, world!\n"))
+(hello)
+\end{mplisting}\\\hline
+  \end{tabular}
+\end{center}
+L'exemple ci-dessus est un exemple d'utilisation de la forme \lstcode{##namespace}
+
+
+
+
+
+
+
+
+
+
+
+Gambit offre un mécanisme pour aider a minimiser les conflits de nom. Ce
+mécanisme permet d'associer un identifiant à un autre avec la forme spécial
+\lstcode{##namespace}.  L'appel à \lstcode{(##namespace ("foo#" A B))} indique
+qu'une référence futur à \lstcode{A} devient une référence à
+\lstcode{foo#A} et l'un à \lstcode{B} devient une à \lstcode{foo#B}. Le espace
+de nom dans lequel \lstcode{A} et \lstcode{B} est \lstcode{foo#}.
+
+\begin{center}
+  \begin{figure}[h]
+  \begin{tabular}{|l|}
+\hline
+\begin{mplisting}{0.5}
+;; math#.scm
+(##namespace ("math#" fact fib))
+\end{mplisting} \\\hline
+\begin{mplisting}{0.6}
+;; math.scm
+(##namespace ("math#" fact fib))
+(define (fib n)
+  (if (< n 2)
+    n
+    (+ (fib (- n 1)) (fib (- n 2)))))
+(define (fact n)
+  (if (< n 2)
+    1
+    (* n (fact (- n 1)))))
+\end{mplisting}\\\hline
+  \end{tabular}
+  \caption{Écriture d'un petit module mathématique qui implémente les fonctions \lstcode{fact}
+    et \lstcode{fib}. Ce module est séparé en 2 fichiers, \texttt{math\#.scm} est un fichier
+    contenant les déclarations de l'espace de noms et des définitions de macros que le module
+    exporte.}
+  \label{fig:math_module1}
+\end{figure}
+\end{center}
+% XXX: END implementation
+
+%\begin{center}
+%  \begin{figure}[h]
+%  \begin{tabular}{|l|l|}
+%\hline
+%\begin{mplisting}{0.5}
+%;; Library
+%(library (math)
+%  (export fact)
+%  (import (rnrs base))
+%  (define (fact n)
+%    (if (< n 2)
+%      1
+%      (* n (fact (- n 1))))))
+%\end{mplisting} &
+%\begin{mplisting}{0.5}
+%;; Main program
+%(import
+%  (rnrs base)
+%  (rnrs io simple)
+%  (math))
+%
+%(display (fact 5))
+%(newline)
+%\end{mplisting}\\\hline
+%  \end{tabular}
+%\caption{À gauche, il y a un exemple d'une bibliothèque mathématique dans le format R6RS qui implémente
+%la fonction factoriel. À droite, un exemple d'importation de la bibliothèques qui utilise la forme
+%spéciale \texttt{import}.}
+%\end{figure}
+%\end{center}
+
+\section{Implémentation des modules systèmes}
+
+\section{Implémentation des modules R7RS}
+% XXX: Implémentation
