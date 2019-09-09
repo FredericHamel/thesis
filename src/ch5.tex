@@ -1,4 +1,183 @@
 
-\chapter{Migration de code}
+\chapter{Gestion des modules}
+\label{ch:module_management}
+
+% quicklisp.org
+Les gestionnaires de module permettent plusieurs opérations sur les modules
+comme l'installation, la mise à jour et la désinstallation. La gestion inclut
+l'organisation des versions des modules sur le système de fichier. Beaucoup de
+de langages ont au moins un gestionnaire de modules. Le langage Python a le
+gestionnaire de module \textbf{pip}. L'implémention NodeJS pour Javascript à
+le gestionnaire de module \textbf{npm}. Le langage Common Lisp a le gestionnaire
+\textit{quicklisp}.
+
+Les gestionnaires de module utilise un hiérarchie de répertoire pour
+organiser les modules. Il existe plusieurs façon pour gérer les modules.
+Certain permette plusieurs versions d'un module dans un même environement.
+
+Les module Gambit sont situés, par défaut, dans deux répertoires principaux.
+Un réperoire pour les modules systèmes et un répertoire pour les modules
+utilisateurs. Ces répertoires sont associés au répertoire d'installation de
+Gambit. Les répertoires d'installation sont dénotés par un préfixe
+\lstcode{\~\~}.  Le modules système utilise utilise par défaut le répertoire
+d'installation \lstcode{\~\~lib} alors que les modules utilisateurs utilise le
+répertoire \lstcode{\~\~userlib}. Chaque module peut être installé, désinstallé, testé
+et compilé. La plupart de ces opérations est faite par le module gambit \lstcode{gambit/pkg}.
+Il est possible d'invoquer ces opérations par des arguments de ligne de
+commande passé à Gambit.
+
+% \begin{itemize}
+%   \item \lstcode{install} effectue l'installation de modules.
+%   \item \lstcode{update} effectue la mise à jour de la cache des modules demandés. Cela
+%     permet d'actualiser les nouvelles versions disponible d'un module.
+%   \item \lstcode{uninstall} désinstalle les modules spécifié.
+%   \item \lstcode{test} exécute les tests unitaires des modules spécifiés.
+% \end{itemize}
+
+\section{Installation}
+
+Les modules sont organisés dans une hiérarchie de répertoire qui permet
+d'associer l'emplacement du module et sa version à un chemin.
+Chaque module et version d'un module est identifier par un chemin unique.
+
+L'organisation des répertoires des modules permet l'installation de plusieurs
+versions d'un même module. Cela garantie que tous les modules qui utilise une
+version antérieur de modules fonctionne toujours. Certains systèmes de module
+ne conserve qu'une seul version de chaque module. La mise à jour d'un module
+peut briser le fonctionnement de ses dépendances.
+
+Les versions des modules sont lié au publications des module sur les serveurs
+de version tels que que github, gitlab, bitbucket, etc. Une versions est soit
+une branche ou un étiquette. Les versions sont spécifier par un \lstcode{@}
+suivie de la version. Par exemple, la version \lstcode{1.0.0} est notée le
+suffixe \lstcode{@1.0.0}.
+
+% TODO: test if branch work
+
+
+Les modules sont hébergés sur des serveurs de version tel que github, gitlab,
+bitbucket, etc. Chaque version d'un module est installé dans un répertoire
+distinct. Il est donc possible d'avoir plus d'une version d'un module installé.
+L'installation des modules s'effectue par l'intermédiaire de
+\lstcode{git}. Le processus d'installation est séparé en plusieurs étapes.  Le
+contenu du module est installé dans un répertoire temporaire qui est ensuite
+rennomé au répertoire de destination. Cela permet d'installer le module de
+façon atomique.
+
+Tout d'abord, la
+branche \lstcode{master} dépôt du module est cloné. Ensuite un archive de la
+version est faite et extraite dans le préfixe des modules. Le préfixe est par
+défaut \lstcode{\~\~userlib}.  Il est possible de spécifier un préfixe
+d'installation dans lequel installer les modules. Plusieurs versions d'un même
+module coexistent dans le même préfixe d'installation.
+
+La branche \lstcode{master} est utilisé comme version de développement et
+comme cache pour installer les autres versions. Une version d'un module est soit
+un commit une branche ou un étiquette. L'installation d'une version
+spécifique utilise la cache pour récupérer l'archive de la version demandé
+et l'extraire dans l'espace des module.
+
+La procédure \lstcode{install} de \lstcode{gambit/pkg} accepte deux paramètres:
+le nom du module et de façon optionnelle le préfixe d'installation. Elle
+retourne la valeur de vérité vrai (\lstcode{#t}) si l'installation réussi,
+sinon faux (\lstcode{#f}).
+\begin{center}
+  \begin{mplisting}{0.4}
+(install mod #!optional to)
+\end{mplisting}
+\end{center}
+
+L'installation peut être effectué en passant l'option \lstcode{-install}
+à l'interprète gambit. Cette option requière le nom du module et
+de façon optionnelle le préfixe d'installation.
+\begin{center}
+  \begin{mplisting}{0.8}
+> gsi -install [-to <path>] module [...]
+\end{mplisting}
+\end{center}
+Le préfixe \lstcode{<path>} est la racine utilisée pour installer les modules
+et est spécifier par l'option \lstcode{-to}.  La racine par défaut est
+\lstcode{\~\~userlib}. Voici un exemple d'installation d'une version spécifique du module
+\lstcode{semver} qui implémente la logique du \textit{semantic versioning}.
+
+\begin{center}
+  \begin{mplisting}{1}
+> gsi -install -to /tmp/exemple github.com/frederichamel/semver/tree/1.0.1
+\end{mplisting}
+\end{center}
+
+\section{Désinstallation}
+
+La désinstallation d'un module consiste à supprimer les fichier
+de ce module. Le module \lstcode{gambit/pkg} offre la procédure
+\lstcode{uninsall} qui accepte deux arguments: le nom du module
+et de façon optionnelle le répertoire dans lequel les modules
+sont situé. Les valeurs retournées par cette procédure sont
+similaire à la procédure.
+\begin{center}
+  \begin{mplisting}{0.4}
+(uninstall mod #!optional to)
+\end{mplisting}
+\end{center}
+La désinstallation peut être fait en passant l'option \lstcode{-uninstall}
+à l'interprète Gambit. Cette option requière le nom du module et le
+répertoire  des module à désinstaller.
+\begin{center}
+  \begin{mplisting}{0.8}
+> gsi -uninstall [-to <path>] module
+\end{mplisting}
+\end{center}
+Le répertoire \lstcode{<path>} est l'emplacement des module
+à désinstallé. Le format des arguments pour la désinstallation
+est le même que pour l'installation. Le répertoire par défaut
+est le répertoire \lstcode{\~\~userlib}.
+
+La désinstallation du module \lstcode{semver} dans installé dans le
+répertoire \lstcode{/tmp/exemple} est fait par la commande suivante:
+\begin{center}
+  \begin{mplisting}{1}
+> gsi -uninstall -to /tmp/exemple github.com/frederichamel/semver/tree/1.0.1
+\end{mplisting}
+\end{center}
+
+
+\section{Mise à jour}
+Cette opération actualise la branche \lstcode{master} du module.
+Cela donne accès au nouvelle publication d'un module. Pour installer
+une nouvelle version d'un module, il suffit de faire la mise à jour
+de la branche master et d'installer la nouvelle version.
+
+\begin{center}
+  \begin{mplisting}{0.8}
+> gsi -update [-to <path>] module
+\end{mplisting}
+\end{center}
+
+\section{Tests unitaires}
+Les tests unitaires exécutés sont dans dans un fichier conjoint au module.
+Gambit offre un module de test unitaire nommé \lstcode{gambit/test}. Il
+contient plusieurs procédure pour tester le bon fonctionnement d'un module.
+Les tests unitaires pour un module nommé \lstcode{A} est un fichier
+\lstcode{A-test.scm} dans le répertoire du module.
+
+\begin{center}
+  \begin{mplisting}{0.8}
+> gsi -test [-to <path>] module
+\end{mplisting}
+\end{center}
+
+La commande de test ci-dessus réussi si l'exécution des teste termine sans
+lancer d'erreurs.
+
+% Exemple de tests.
+
+\section{Compilation d'un module}
+Il n'y a pas d'options spécial pour demander la compilation d'un module.
+Il suffit d'invoquer le compilateur de Gambit avec le nom du module
+à compiler. Le nom du module est le même que celui utilisé dans la
+l'importation.
+
+%% Module avec du C.
+
 
 

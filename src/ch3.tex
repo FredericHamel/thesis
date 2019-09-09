@@ -1,51 +1,57 @@
 
 \chapter{Implémentation des modules}
 
-Le format des modules nécessite plusieurs composantes.
-Chaque module doit avoir sont propre espace de nom
-disjoint des autres modules. Un liste d'importation
-qui indique les dépendances entre les modules et permet
-l'interaction entre les modules. Certaines formes spéciales
-ont été ajouté dans pour pouvoir exprimer les relation entre
-les modules.
+Les format des modules R7RS construit par \lstcode{define-library} contient
+plusieurs composantes. L'espace de nom du module qui regroupe toutes les
+fonctionnalité et permet de les distinguer des autre modules.  La liste des
+importations qui permet d'exprimer les dépendances entre les modules. La liste
+des symbole exporté par le module. Pour exprimé les relations entre les modules
+certaines forme spéciale plus simple ont été ajouté dans Gambit.  Les modules
+R7RS construit par \lstcode{define-library} permettent de spécifier les
+identifiants d'un module durant l'importation et aussi durant l'exportation.
 
-\section{Formes spéciale}
+
+% Le format des modules nécessite plusieurs composantes.
+% Chaque module a son propre espace de nom
+% disjoint des autres modules. Un liste d'importation
+% qui indique les dépendances entre les modules et permet
+% l'interaction entre les modules. Certaines formes spéciales
+% ont été ajouté dans pour pouvoir exprimer les relation entre
+% les modules. Les modules R7RS permette de spécifier les identifiant
+% d'un module et de les renommer. Les relations entre les modules doivent
+% pouvoir être exprimées.  La liste des modules requis par le module
+% courant et les modules publiés par le module courant.
+
+% - Créer un espace pour les modules.
+% - Spécifier les dépendence. (2)
+% - Spécifier les paramètre de compilation.
+
+\section{Formes spéciales}
 
 Les espaces de nom sont gérer avec une forme spécial propre à Gambit. Cet forme
-se nomme \lstcode{##namespace}.  La seul restriction sur les espaces de nom
-dans Gambit est qu'ils doit se terminer par le caractère \lstcode{#}.
-La forme \lstcode{##namespace} permet de préfixer et renommé des identifiants
-dans un contexte.
+se nomme \lstcode{##namespace} et permet associer des identifiant à un espace
+de nom.  Un espace de nom est composé de n'importe quel caractère, il doit
+seulement être terminé par le caractère \lstcode{#}.  La forme
+\lstcode{##namespace} permet aussi d'associer un identifiant à un autre
+identifiant dans un espace de nom donné.
 
-Cela permet de créer un espace distinct pour chaque module. Cela permet
-d'éviter les conflits de nom entre les modules tant que les espaces de nom sont
-différents. Chaque module commence par déclarer son espace de nom suivit des
-définitions des procédures du module. Une déclaration d'espace de nom à la forme
-suivante \lstcode{(##namespace ("<name>#"))}. La partie \lstcode{<name>} de la
-forme \lstcode{##namespace} doit être un chaine d'au moins un caractères.
 
+La liste des modules des requis par un module est donnée par plusieurs
+invocations de la forme spéciale \lstcode{##demand-module}. Cette forme
+accepte en argument le nom de la dépendance. Le fonctionnement de cette
+forme est similaire à la procédure \lstcode{load} sauf qu'elle gère le
+chargement multiple et est expression \textit{toplevel}.
 \begin{center}
-  \begin{tabular}{|l|}
-\hline
-\begin{mplisting}{0.6}
-;; example.scm
-(##namespace ("example#" hello))
-(define (hello)
-  (display "Hello, world!\n"))
-(hello)
-\end{mplisting}\\\hline
-  \end{tabular}
+  \begin{mplisting}{0.9}
+(##demand-module A)
+(##demand-module A)
+(##demand-module B)
+\end{mplisting}
 \end{center}
-L'exemple ci-dessus est un exemple d'utilisation de la forme \lstcode{##namespace}
 
-
-
-
-
-
-
-
-
+Les noms des modules exporté par une module est spécifier par la forme
+spéciale \lstcode{##supply-module}. Elle accepte comme paramètre le nom
+du module exporté.
 
 
 Gambit offre un mécanisme pour aider a minimiser les conflits de nom. Ce
@@ -117,6 +123,30 @@ de nom dans lequel \lstcode{A} et \lstcode{B} est \lstcode{foo#}.
 %\end{center}
 
 \section{Implémentation des modules systèmes}
+
+Cette forme est utilisé affin de créer un espace distinct pour chaque module.
+Cela permet d'éviter les conflits de nom entre les identifiants utilisé au sein
+des modules.  Chaque module commence par déclarer son espace de nom suivit des
+définitions des procédures du module.  Une déclaration d'espace de nom à la
+forme suivante \lstcode{(##namespace ("<name>#"))}. La partie \lstcode{<name>}
+de la forme \lstcode{##namespace} doit être un chaine d'au moins un caractères.
+Toutes les caractères sont permis.
+
+\begin{center}
+  \begin{tabular}{|l|}
+\hline
+\begin{mplisting}{0.6}
+;; example.scm
+(##namespace ("example#" hello))
+(define (hello)
+  (display "Hello, world!\n"))
+(hello)
+\end{mplisting}\\\hline
+  \end{tabular}
+\end{center}
+L'exemple ci-dessus est un exemple d'utilisation de la forme \lstcode{##namespace}
+dans pour créer un espace pour le module \lstcode{example}. La procédure \lstcode{hello}
+est définit dans l'espace de nom \lstcode{example#}.
 
 \section{Implémentation des modules R7RS}
 % XXX: Implémentation
