@@ -36,7 +36,7 @@ de caractère terminé par un \lstcode{#}. Il y a seulement l'espace de nom vide
 qui ne termine pas par le caractère \lstcode{#}, c'est l'espace de nom par
 défaut.  Les associations de symbole donné par la forme \lstcode{##namespace}
 utilise une porté lexical. La syntaxe de la forme \lstcode{##namespace} qui
-inclus toutes les symboles dans l'espace de nom noté par \lstcode{<ns>} est:
+inclus toutes les symboles dans l'espace de nom marqué par \lstcode{<ns>} est:
 
 \begin{center}
   \begin{mplisting}{0.8}
@@ -85,17 +85,18 @@ module courant.  Le fonctionnement de cette forme est similaire à la procédure
 \lstcode{load} avec quelque différence. La forme \lstcode{##demand-module} est
 une macro qui génère une expression vide. L'effet de cette forme agit après la
 phase d'expansion des macros. Le paramètre passé à \lstcode{##demand-module}
-doit être un symbole.
+doit être un symbole qui correspond au nom du module. La procédure \lstcode{load}
+requière le chemin complet vers le fichier à charger.
 
 \begin{center}
   \begin{mplisting}{0.8}
-(##demand-module <module>)
+(##demand-module %\textit{<module>}*)
 \end{mplisting}
 \end{center}
 
 Il est à noter que l'ordre des \lstcode{##demand-module} correspond à l'ordre
 que les modules vont être visité. Cette forme agit peut importe sont emplacement
-dans le code qui soit expansé.
+ou l'expansion de macros est appliquée.
 
 %% Review.
 
@@ -108,26 +109,47 @@ dans le code qui soit expansé.
 % \end{center}
 
 Un forme spéciale conjointe au \lstcode{##demand-module} indique le nom
-des modules exporté par un unité. Cette forme spéciale est \lstcode{##supply-module}
+des modules exportés par un unité. Cette forme spéciale est \lstcode{##supply-module}
 Elle accepte comme paramètre le nom du module exporté par l'unité courant.
 La syntaxe est identique au \lstcode{##demand-module}.
 
 \begin{center}
   \begin{mplisting}{0.8}
-(##supply-module <module>)
+(##supply-module %*\textit{<module>}*)
 \end{mplisting}
 \end{center}
 
-\section{Implémentation des modules systèmes}
+\section{Implémentation des modules de base}
+
+Un module de base est constitué d'un fichier d'entête avec la déclaration
+de l'espace de nom et les définitions de macros et un fichier contenant
+les procédure. Dans Gambit les fichiers d'entête sont marqués par un \lstcode{#}
+juste avant l'extension.
+
+\begin{itemize}
+
+  \item \lstcode{<name>#.scm} est la structure du nom fichier d'entête.
+    Ce fichier contient des déclaration d'espace de nom et des
+    définitions de macros.
+
+  \item \lstcode{<name>.scm} est la structure du nom du fichier qui contient
+    les procédures du module.
+
+\end{itemize}
+
+Le nom \lstcode{<name>} représentante la dernière partie du nom du module. Par
+exemple, le module \lstcode{gambit/tar} utilise le nom \lstcode{tar} dans le
+nom du fichier d'entête et du fichier qui contient les définitions.
 
 \todo{Continuer ici}
 
-Gambit offre un mécanisme pour aider a minimiser les conflits de nom. Ce
-mécanisme permet d'associer un identifiant à un autre avec la forme spécial
-\lstcode{##namespace}.  L'appel à \lstcode{(##namespace ("foo#" A B))} indique
-qu'une référence futur à \lstcode{A} devient une référence à
-\lstcode{foo#A} et l'un à \lstcode{B} devient une à \lstcode{foo#B}. Le espace
-de nom dans lequel \lstcode{A} et \lstcode{B} est \lstcode{foo#}.
+% Gambit offre un mécanisme pour aider a minimiser les conflits de nom. Ce
+% mécanisme permet d'associer un identifiant à un autre avec la forme spécial
+% \lstcode{##namespace}.  L'appel à \lstcode{(##namespace ("foo#" A B))} indique
+% qu'une référence futur à \lstcode{A} devient une référence à
+% \lstcode{foo#A} et l'un à \lstcode{B} devient une à \lstcode{foo#B}. Le espace
+% de nom dans lequel \lstcode{A} et \lstcode{B} est \lstcode{foo#}.
+En utilisant cette structure, un module peut être écrit comme suit:
 
 \begin{center}
   \begin{figure}[h]
@@ -139,6 +161,7 @@ de nom dans lequel \lstcode{A} et \lstcode{B} est \lstcode{foo#}.
 \end{mplisting} \\\hline
 \begin{mplisting}{0.6}
 ;; math.scm
+(##supply-module math)
 (##namespace ("math#" fact fib))
 (define (fib n)
   (if (< n 2)
@@ -190,6 +213,26 @@ de nom dans lequel \lstcode{A} et \lstcode{B} est \lstcode{foo#}.
 %\end{figure}
 %\end{center}
 
+La forme \lstcode{##namespace} dans l'exemple du module \lstcode{math} est
+utilisé pour créer un espace de nom pour contenir les identifiant \lstcode{fact}
+et \lstcode{fib}. Le \lstcode{##supply-module} indique au système Gambit que
+le unité \lstcode{math.scm} fournit le module \lstcode{math}.
+
+Ce module peut être importé par la forme \lstcode{##import}. L'importation
+est fait en deux parties, l'inclusion du fichier \lstcode{<name>#.scm} et
+un chargement des définitions par \lstcode{##demand-module}. L'importation
+\lstcode{(##import math)} est équivalent à:
+
+\begin{center}
+  \begin{mplisting}{0.9}
+  (##include "math/math#.scm")
+  (##demand-module math)
+  \end{mplisting}
+\end{center}
+
+La forme \lstcode{##import} s'occupe de trouver l'emplacement du fichier
+d'entête à partir du nom du module. Elle génére le \lstcode{##include} du
+fichier d'entête s'il existe et un \lstcode{##demand-module} du module.
 
 Cette forme est utilisé affin de créer un espace distinct pour chaque module.
 Cela permet d'éviter les conflits de nom entre les identifiants utilisé au sein

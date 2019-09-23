@@ -1,2 +1,62 @@
 \chapter{Migration de code}
 
+Les systèmes distribués sont constitué d'un ensemble de nœuds interconnecter
+de calculs. Les nœuds interagissent par l'envoie et la réception de message
+au sein d'un réseau de communication. Chaque nœud a but spécifique. Le
+\textit{World Wide Web} est un exemple notable qui permet d'avoir un aperçu.
+Ils est composé de clients et de serveurs qui roulent des application
+clients et serveurs différent.
+
+L'implémentation d'un système distribué inclut le développement des applications
+installé sur les nœuds et la logique d'interaction entre les nœuds. Il est
+possible de voir l'ensemble des programme sur les nœuds comme un programme
+global. Les problèmes discutés dans ce chapitre sont les suivant:
+
+\begin{itemize}
+
+  \item {\bf RPC:} Comment l'appelle distant à une procédure (RPC)
+    implémenté quand l'envoyeur et le receveur ne sont pas conçut
+    ensemble?
+
+  \item {\bf Mise à jour de code:} Comment la mise à jour du programme d'un
+    nœud est effectué lors d'un \textit{bugfix} ou une nouvelle
+    version est disponible?
+
+  \item {\bf Migration de tâche:} Comment déplacer un service sur un nouveau
+    nœud quand le système sous-jacent est sur un système d'exploitation
+    différent, a un architecture différente, \dots?
+
+  \item {\bf Opération continue:} Comment éviter les interruptions dans les
+    situations précédentes?
+
+\end{itemize}
+
+Le langage Termite Scheme\cite{DBLP:conf/erlang/Germain06} a été conçut
+pour simplifier l'implémentation de systèmes distribués et fournit
+certaine solution au problèmes de ces système. Le langage Termite Scheme est
+fortement inspiré des concepts du langage de programmation d'Erlang avec la
+syntaxe et la sémantique de Scheme. Une fonctionnalité intéressante qui est
+absent en Erlang est la capacité d'envoyer une continuation en message.
+Termite Scheme est implémenté sur le système Gambit Scheme qui offre la
+une façon de sérialiser la plupart des objets Scheme incluant les
+procédures et les continuations.
+
+La sérialisation de procédures est un outil utile dans pour implémenter
+un protocole RPC. En plus des procédures, il est possible de sérialiser
+des continuations. Une continuation est une structure de donnée qui capture
+l'état d'un processus. Donc il est possible de transmettre l'état d'un
+processus sur un autre nœud.
+
+L'implémentation original de Termite avait certaines limitations
+lors de la sérialisation des procédures et des continuations. Dans
+le cas interprété les procédures et les continuations sont transmis
+sans problème entre les nœuds. Dans le cas compilé, il faut que
+chaque nœud possède la définition des procédures qui sont transmis.
+
+
+
+
+
+
+
+
