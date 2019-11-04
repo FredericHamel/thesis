@@ -1,30 +1,79 @@
 
 \chapter{Gestion des modules}
 \label{ch:module_management}
+% Installation, Désinstallation, Mise à jour, Compilation/Exécution
+La gestion des modules inclus généralement l'installation, la mise à jour et
+la désinstallation. L'organisation des modules est un élément important
+dans la gestion des modules. Les gestionnaires de modules sont présent dans
+beaucoup de langage telle que Python, Ruby, Javascript, Common Lisp, Go, etc.
+Un gestionnaire de module est inclus dans le système Gambit Scheme pour
+organiser les modules.
 
-% quicklisp.org
-Les gestionnaires de module permettent plusieurs opérations sur les modules
-comme l'installation, la mise à jour et la désinstallation. La gestion inclut
-l'organisation des versions des modules sur le système de fichier. Beaucoup de
-de langages ont au moins un gestionnaire de modules. Le langage Python a le
-gestionnaire de module \textbf{pip}. L'implémention NodeJS pour Javascript à
-le gestionnaire de module \textbf{npm}. Le langage Common Lisp a le gestionnaire
-\textit{quicklisp}.
+Le gestionnaire de module de Gambit Scheme fournit les opérations
+d'installation, de désinstallation, de mise à jour, de compilation
+d'un module et l'exécution des tests unitaires du module. Les modules
+sont versionnés par Git. L'emplacement des modules est spécifié par
+une liste de répertoires qui inclus les modules systèmes et les modules
+utilisateurs. La gestion des modules est effectuée par le module \lstcode{_pkg}
+qui offre les procédure d'installation d'installation et de désinstallation.
 
-Les gestionnaires de module utilise un hiérarchie de répertoire pour
-organiser les modules. Il existe plusieurs façon pour gérer les modules.
-Certain permette plusieurs versions d'un module dans un même environement.
 
-Les module Gambit sont situés, par défaut, dans deux répertoires principaux.
-Un réperoire pour les modules systèmes et un répertoire pour les modules
-utilisateurs. Ces répertoires sont associés au répertoire d'installation de
-Gambit. Les répertoires d'installation sont dénotés par un préfixe
-\lstcode{\~\~}.  Le modules système utilise utilise par défaut le répertoire
-d'installation \lstcode{\~\~lib} alors que les modules utilisateurs utilise le
-répertoire \lstcode{\~\~userlib}. Chaque module peut être installé, désinstallé, testé
-et compilé. La plupart de ces opérations est faite par le module gambit \lstcode{gambit/pkg}.
-Il est possible d'invoquer ces opérations par des arguments de ligne de
-commande passé à Gambit.
+% % quicklisp.org
+% Les gestionnaires de module permettent plusieurs opérations sur les modules
+% comme l'installation, la mise à jour et la désinstallation. La gestion inclut
+% l'organisation des versions des modules sur le système de fichier. Beaucoup de
+% de langages ont au moins un gestionnaire de modules. Le langage Python a le
+% gestionnaire de module \textbf{pip}. L'implémentation NodeJS pour Javascript à
+% le gestionnaire de module \textbf{npm}. Le langage Common Lisp a le gestionnaire
+% \textit{quicklisp}.
+
+% Les gestionnaires de module utilisent une hiérarchie de répertoires pour
+% organiser les modules. Il existe plusieurs façon pour gérer les modules.
+% Certain permette plusieurs versions d'un module dans un même environnement,
+% comme dans le langage Go.
+
+% Les module Gambit sont situés dans des répertoires spécifié dans le
+% \lstcode{search-order}. Par défaut, il y a un répertoire pour les modules
+% systèmes\ref{modules_systems} et un répertoire pour les modules
+% utilisateurs\ref{modules_utilisateurs}. Ces répertoires sont associés au
+% répertoire d'installation de Gambit. Les répertoires d'installation sont
+% dénotés par un préfixe \lstcode{\~\~}.  Le modules système utilise utilise par
+% défaut le répertoire d'installation \lstcode{\~\~lib} alors que les modules
+% utilisateurs utilise le répertoire \lstcode{\~\~userlib}. Chaque module peut
+% être installé, désinstallé, testé et compilé. La plupart de ces opérations est
+% faite par le module gambit \lstcode{_pkg}.  Il est possible d'invoquer ces
+% opérations par des arguments de ligne de commande passé à Gambit.
+
+\section{Organisation des modules}
+
+Un \lstcode{<module-ref>} est l'identifiant unique qui est utilisé pour référer
+à un module local ou hébergé. Une référence à un module hébergé commence par un
+nom de domaine[\ref{lst:hostname->grammar}] alors qu'une référence à un module
+local commence par un segment qui ne correspond pas à un nom de domaine.  Un
+\lstcode{<module-ref>} est séparé en trois parties: le \lstcode{hostname}, le
+\lstcode{path} et l'étiquette qui donne la version. Dans le cas d'un module
+hébergé le \lstcode{hostname} contient le nom de domaine du site. Dans le cas
+local, ce champs est vide.  La grammaire\ref{lst:module-ref->grammar} décrit la
+syntaxe formelle du \lstcode{<module-ref>} dans le cas hébergé et local.
+
+
+\begin{center}
+  \lstset{caption={Grammaire formelle},captionpos=b,frame=single}
+  \begin{mplisting}{0.8}
+<module-ref> := <local> | <hosted>
+<local>      := <id>(/<id>)*<tag>
+<hosted>     := <hostname>/<id>/<id>(/<id>)*(@<tag>)?
+\end{mplisting}
+  \label{lst:module-ref->grammar}
+\end{center}
+
+Le \lstcode{<tag>} spécifie la version du module avec une référence à
+un commit du système de révision Git. Un \lstcode{<tag>} vide réfère
+à la version de développement du module.
+
+L'emplacement des module est spécifié par le répertoire d'installation
+\lstcode{\~\~instlib}. Par défaut c'est le même que le répertoire des
+modules utilisateurs.
 
 % \begin{itemize}
 %   \item \lstcode{install} effectue l'installation de modules.
@@ -34,23 +83,34 @@ commande passé à Gambit.
 %   \item \lstcode{test} exécute les tests unitaires des modules spécifiés.
 % \end{itemize}
 
-\section{Installation}
+\subsection{Installation de module}
 
-Les modules sont organisés dans une hiérarchie de répertoire qui permet
-d'associer l'emplacement du module et sa version à un chemin.
-Chaque module et version d'un module est identifier par un chemin unique.
+L'installation des module peut être soit à partir d'un serveur de révision
+ou d'un répertoire local versionné par git. Dans les deux cas d'installation,
+le \lstcode{module-ref}  est utilisé pour déterminer l'emplacement du module
+dans le répertoire des modules. Chaque \lstcode{module-ref} est associé à un
+réperoire unique dans le répertoire des modules.
 
-L'organisation des répertoires des modules permet l'installation de plusieurs
-versions d'un même module. Cela garantie que tous les modules qui utilise une
-version antérieur de modules fonctionne toujours. Certains systèmes de module
-ne conserve qu'une seul version de chaque module. La mise à jour d'un module
-peut briser le fonctionnement de ses dépendances.
+% Les modules qui sont hébergés sur un serveur de révision comme github, gitlab, bitbucket,
+% etc ont un \lstcode{module-ref} distinct.
 
-Les versions des modules sont lié au publications des module sur les serveurs
-de version tels que que github, gitlab, bitbucket, etc. Une versions est soit
-une branche ou un étiquette. Les versions sont spécifier par un \lstcode{@}
-suivie de la version. Par exemple, la version \lstcode{1.0.0} est notée le
-suffixe \lstcode{@1.0.0}.
+% L'organisation des module doit permettre l'installation de plusieurs
+% version d'un même module. C'est pour cela qu'il sont organisés dans une
+% hiérarchie de répertoire lié au \lstcode{module-ref} du module.
+% Chaque version d'un module est identifié par un seul \lstcode{module-ref}
+% qui est associé à un seul emplacement sur le système de fichier.
+
+% L'organisation des répertoires des modules permet l'installation de plusieurs
+% versions d'un même module. Cela garantie que tous les modules qui utilise une
+% version antérieur de modules fonctionne toujours. Certains systèmes de module
+% ne conserve qu'une seul version de chaque module. La mise à jour d'un module
+% peut briser le fonctionnement de ses dépendances.
+
+% Les versions des modules sont lié au publications des module sur les serveurs
+% de version tels que que github, gitlab, bitbucket, etc. Une versions est soit
+% une branche ou un étiquette. Les versions sont spécifier par un \lstcode{@}
+% suivie de la version. Par exemple, la version \lstcode{1.0.0} est notée le
+% suffixe \lstcode{@1.0.0}.
 
 % TODO: test if branch work
 
@@ -61,7 +121,7 @@ distinct. Il est donc possible d'avoir plus d'une version d'un module installé.
 L'installation des modules s'effectue par l'intermédiaire de
 \lstcode{git}. Le processus d'installation est séparé en plusieurs étapes.  Le
 contenu du module est installé dans un répertoire temporaire qui est ensuite
-rennomé au répertoire de destination. Cela permet d'installer le module de
+renommé au répertoire de destination. Cela permet d'installer le module de
 façon atomique.
 
 Tout d'abord, la
@@ -77,7 +137,7 @@ un commit une branche ou un étiquette. L'installation d'une version
 spécifique utilise la cache pour récupérer l'archive de la version demandé
 et l'extraire dans l'espace des module.
 
-La procédure \lstcode{install} de \lstcode{gambit/pkg} accepte deux paramètres:
+La procédure \lstcode{install} de \lstcode{_pkg} accepte deux paramètres:
 le nom du module et de façon optionnelle le préfixe d'installation. Elle
 retourne la valeur de vérité vrai (\lstcode{#t}) si l'installation réussi,
 sinon faux (\lstcode{#f}).
@@ -178,6 +238,4 @@ Il suffit d'invoquer le compilateur de Gambit avec le nom du module
 l'importation.
 
 %% Module avec du C.
-
-
 
