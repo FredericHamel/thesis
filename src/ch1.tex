@@ -37,7 +37,7 @@ modules utilisé au moment de l'édition de liens est figée au sein du
 programme, ce qui empêche la mise à jour individuelle des modules. Il faut
 recompiler tous les modules qui ont subi une mise à jour et refaire l'édition de liens du
 programme principal. Le coût en temps et l'effort pour un changement minime
-est important.  Le chapitre \ref{XXX} va détailler plus en profondeur
+est important.  Le chapitre \ref{ch:loading-model} va détailler plus en profondeur
 ces problèmes.
 
 % Le même module est chargé plus d'une fois.
@@ -48,13 +48,13 @@ Chaque module est une composante séparée du programme principal.  Ces modules
 sont lu du disque et chargés en mémoire durant l'exécution du programme.  Ce
 chargement est effectué par \textit{éditeur de liens dynamique} qui s'occupe de
 lié les fonctionnalités des modules au programme principal. Le chapitre % chapter or section
-\ref{XXX} explique plus en profondeur le fonctionnement de éditeur de liens
+\ref{ch:loading-model} explique plus en profondeur le fonctionnement de éditeur de liens
 dynamique. L'avantage principal du chargement dynamique de module est la mise à jour
 individuelle d'un module sans avoir a lié le programme principale; dans le
 modèle statique le programme principal doit être lié à nouveau avec les modules.
 Les modules chargés dynamiquement par le système d'exploitation peuvent être partagé entre différent
 programme. Ce type de module porte le nom de \textit{bibliothèque partagée} ils sont décrit dans
-le chapitre \ref{bibliotheque}.
+le chapitre \ref{ch:loading-model}.
 
 % % Migration de code dans un système distribué.
 % - Transmission de tâche entre des machines d'un système distribué.
@@ -70,10 +70,11 @@ si une tâche transmit réfère à un module absent sur le système distant?  Le
 système distant peut soit lancé une exception, ou tenté de résoudre la
 fonctionnalité manquante. La première solution est la plus simple et aussi la
 plus restrictive, car elle inhibe la capacité de migrer une tâche. Le chapitre
-\ref{task_migration} traite de la seconde solution mentionné.
+\ref{ch:task_migration} traite de la seconde solution mentionné.
 
-%\section{Linkage statique}
-%Le linkage
+% \section{Linkage statique}
+% Cette forme d'édition de lien permet la création de binaire qui indépendant
+% qui facilite le déploiement.
 
 %\section{Linkage dynamique}
 

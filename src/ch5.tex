@@ -46,16 +46,35 @@ qui offre les procédure d'installation d'installation et de désinstallation.
 
 \section{Organisation des modules}
 
-Un \lstcode{<module-ref>} est l'identifiant unique qui est utilisé pour référer
-à un module local ou hébergé. Une référence à un module hébergé commence par un
-nom de domaine[\ref{lst:hostname->grammar}] alors qu'une référence à un module
-local commence par un segment qui ne correspond pas à un nom de domaine.  Un
-\lstcode{<module-ref>} est séparé en trois parties: le \lstcode{hostname}, le
-\lstcode{path} et l'étiquette qui donne la version. Dans le cas d'un module
-hébergé le \lstcode{hostname} contient le nom de domaine du site. Dans le cas
-local, ce champs est vide.  La grammaire\ref{lst:module-ref->grammar} décrit la
-syntaxe formelle du \lstcode{<module-ref>} dans le cas hébergé et local.
+Les modules sont organisés dans des répertoires données par le système Gambit.
+Ils contiennent l'ensemble des modules internes et actuellement installés sur
+le système. Il y a trois principaux répertoires spéciaux qui contiennent des
+modules.
 
+\begin{itemize}
+  \item \lstcode{\~\~userlib}: c'est le répertoire qui contient les modules
+    de l'utilisateur courant.
+
+  \item \lstcode{\~\~lib}: c'est le répertoire d'installation de Gambit
+    qui contient les modules système. Les modules dans ce répertoire sont
+    commun à tous les utilisateurs.
+
+  \item \lstcode{\~\~instlib}: c'est le répertoire d'installation des modules.
+    Par défaut, il correspond au répertoire \lstcode{\~\~userlib}.
+\end{itemize}
+
+Un module local ou hébergé est identifié de façon unique par un
+\lstcode{module-ref}.  Un \lstcode{module-ref} est séparé en trois parties: le
+\lstcode{hostname}, le \lstcode{path} et l'étiquette qui donne la version.  La
+différence entre une référence à un module local et hébergé est la première
+partie. Dans le cas hébergé, le champs \lstcode{hostname} contient
+l'information du nom de domaine qui, dans le cas local, est vide.
+Le \lstcode{<tag>} spécifie la version du module avec une référence à
+un commit du système de révision Git. Un \lstcode{<tag>} vide réfère
+à la version de développement du module.  La syntaxe du
+nom de domaine est donnée par la grammaire[\ref{lst:hostname->grammar}].  La
+grammaire formelle\ref{lst:module-ref->grammar} décrit la syntaxe du
+\lstcode{<module-ref>} dans le cas hébergé et local.
 
 \begin{center}
   \lstset{caption={Grammaire formelle},captionpos=b,frame=single}
@@ -67,13 +86,11 @@ syntaxe formelle du \lstcode{<module-ref>} dans le cas hébergé et local.
   \label{lst:module-ref->grammar}
 \end{center}
 
-Le \lstcode{<tag>} spécifie la version du module avec une référence à
-un commit du système de révision Git. Un \lstcode{<tag>} vide réfère
-à la version de développement du module.
-
-L'emplacement des module est spécifié par le répertoire d'installation
-\lstcode{\~\~instlib}. Par défaut c'est le même que le répertoire des
-modules utilisateurs.
+Le \lstcode{module-ref} \lstcode{github.com/gambit/hello} réfère
+au module \lstcode{hello} sur le serveur de révision \lstcode{github.com}
+dans l'espace \lstcode{gambit}. Le champs \lstcode{host} de est dans ce
+cas \lstcode{github.com/gambit} qui correspond au nom de domaine avec
+le nom de l'espace sur le le serveur.
 
 % \begin{itemize}
 %   \item \lstcode{install} effectue l'installation de modules.
@@ -85,11 +102,14 @@ modules utilisateurs.
 
 \subsection{Installation de module}
 
-L'installation des module peut être soit à partir d'un serveur de révision
+L'installation des modules peut être soit à partir d'un serveur de révision
 ou d'un répertoire local versionné par git. Dans les deux cas d'installation,
 le \lstcode{module-ref}  est utilisé pour déterminer l'emplacement du module
 dans le répertoire des modules. Chaque \lstcode{module-ref} est associé à un
 réperoire unique dans le répertoire des modules.
+
+
+
 
 % Les modules qui sont hébergés sur un serveur de révision comme github, gitlab, bitbucket,
 % etc ont un \lstcode{module-ref} distinct.
@@ -238,4 +258,9 @@ Il suffit d'invoquer le compilateur de Gambit avec le nom du module
 l'importation.
 
 %% Module avec du C.
+
+
+\section{Comparaison avec d'autre système}
+
+TODO: not done
 

@@ -8,9 +8,45 @@
 \usepackage[T1]{fontenc}    %
 
 \usepackage{listings}
+\lstdefinelanguage{scheme}
+{%
+  basicstyle=\ttfamily,
+  alsoletter={-,\#,!,/,\~},
+  columns=fullflexible,
+  escapeinside={<\%}{\%>},
+  keywordstyle=\bfseries,
+  keepspaces=true,
+  morekeywords={%
+    begin,
+    cond-expand,
+    define-library,
+    define-macro,
+    define-syntax,
+    define,
+    let,
+    let*,
+    letrec,
+    letrec*,
+    let-values,
+    let-values*,
+    export,
+    import,
+    only,
+    rename,
+    except,
+    include,
+    include-ci,
+    include-library-declarations,
+    set!
+  },
+  escapeinside={\%*}{*},
+  morecomment=[l][\ttfamily]{;}
+}
+
 \lstset{basicstyle=\ttfamily,
   columns=fullflexible,
-  keepspaces=true,}
+  keepspaces=true,
+  escapeinside={\%*}{*}}
 
 \newcommand\lstcode[1]{\lstinline{#1}}
 \lstnewenvironment{mplisting}[1]

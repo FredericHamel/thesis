@@ -1,4 +1,5 @@
 \chapter{Migration de code}
+\label{ch:task_migration}
 
 Les systèmes distribués sont constitué d'un ensemble de nœuds interconnecter
 de calculs. Les nœuds interagissent par l'envoie et la réception de message
@@ -15,7 +16,7 @@ global. Les problèmes discutés dans ce chapitre sont les suivant:
 \begin{itemize}
 
   \item {\bf RPC:} Comment l'appelle distant à une procédure (RPC)
-    implémenté quand l'envoyeur et le receveur ne sont pas conçut
+    implémenté quand l'envoyeur et le receveur ne sont pas conçu
     ensemble?
 
   \item {\bf Mise à jour de code:} Comment la mise à jour du programme d'un
@@ -31,7 +32,7 @@ global. Les problèmes discutés dans ce chapitre sont les suivant:
 
 \end{itemize}
 
-Le langage Termite Scheme\cite{DBLP:conf/erlang/Germain06} a été conçut
+Le langage Termite Scheme\cite{DBLP:conf/erlang/Germain06} a été conçu
 pour simplifier l'implémentation de systèmes distribués et fournit
 certaine solution au problèmes de ces système. Le langage Termite Scheme est
 fortement inspiré des concepts du langage de programmation d'Erlang avec la
@@ -54,9 +55,31 @@ sans problème entre les nœuds. Dans le cas compilé, il faut que
 chaque nœud possède la définition des procédures qui sont transmis.
 
 
+\section{Le langage Termite}
+
+Ce langage conçu par Guillaume Germain en 2006 est l'implémentation
+du style de programmation par message d'Erlang dans Gambit Scheme.
+Les processus sont représentés par les threads de Scheme. La communication
+entre ces processus est effectué par un système de boîte de message
+présent dans Gambit. Chaque thread possède une queue de message entrant.
+
+Termite expose plusieurs procédures pour gérer les processus et la transmission
+de message entre chacun des nœuds.
+
+\begin{itemize}
+  \item La procédure \lstcode{(spawn thunk #!key name)} permet de
+    créer des processus Termite.
+
+  \item La procédure \lstcode{(! node msg)} envoie le message
+    \lstcode{msg} au nœud \lstcode{node}.
+
+  \item La procédure \lstcode{(?)} permet de recevoir un message
+    envoyé par un autre processus au nœud courant.
 
 
-
+  \item La procédure \lstcode{(!? node msg)} envoie un message au
+    nœud \lstcode{node} et attend la réponse.
+\end{itemize}
 
 
 

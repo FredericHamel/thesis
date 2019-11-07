@@ -1,14 +1,18 @@
 
 \chapter{Implémentation des modules}
 
+La syntaxe choisit pour les modules est celle qui utilise \lstcode{define-library}
+dans R7RS. Cette forme offre plus de flexibilité que la forme \lstcode{library} dans
+R6RS. Le standard R7RS est un simplification du standard R6RS qui offre des
+fonctionnalités équivalentes.
+
 Les format des modules R7RS construit par \lstcode{define-library} contient
 plusieurs composantes. L'espace de nom du module qui regroupe toutes les
 fonctionnalités. Une liste des modules qui sont utilisés par le module courant.
-Une liste des symboles exportés par le module.  Les modules R7RS construit par
-\lstcode{define-library} permettent de spécifier une transformation sur les
-identifiants d'un module durant l'importation et aussi durant l'exportation.
-L'importation d'un module doit être effectué une seul fois, même si présent
-plusieurs fois.  Pour exprimé les relations entre les modules certaines forme
+Une liste des symboles exportés par le module. Il est possible de modifier les
+identifiant d'un module lors de l'importation et de l'exportation. L'importation
+multiple d'un module doit correspondre à un seul chargement.
+Pour exprimé les relations entre les modules certaines forme
 spéciale plus simple ont été ajouté dans Gambit.
 
 % Le format des modules nécessite plusieurs composantes.
@@ -26,56 +30,112 @@ spéciale plus simple ont été ajouté dans Gambit.
 % - Spécifier les dépendence. (2)
 % - Spécifier les paramètre de compilation.
 
-\section{Formes spéciales}
+\section{La forme \lstcode{\#\#namespace}}
 
 Les espaces de nom sont gérer avec une forme spécial propre à Gambit. Cette
-forme se nomme \lstcode{##namespace} et permet associer des identifiant à un
-espace de nom. Cette forme primitive était présente dans Gambit depuis
-plusieurs versions.  Un espace de nom se compose de n'importe quelle séquence
-de caractère terminé par un \lstcode{#}. Il y a seulement l'espace de nom vide
-qui ne termine pas par le caractère \lstcode{#}, c'est l'espace de nom par
-défaut.  Les associations de symbole donné par la forme \lstcode{##namespace}
-utilise une porté lexical. La syntaxe de la forme \lstcode{##namespace} qui
-inclus toutes les symboles dans l'espace de nom marqué par \lstcode{<ns>} est:
+forme se nomme \lstcode{##namespace} et permet d'associer des identifiants à
+d'autre.  Cette forme primitive est présente dans Gambit depuis longtemps.  Un
+espace de nom se compose de n'importe quelle séquence de caractère terminé par
+un \lstcode{#}. Il y a seulement l'espace de nom vide qui ne respecte pas cette
+règle, c'est l'espace de nom par défaut.  Les associations de symbole données
+par la forme \lstcode{##namespace} respecte la porté lexical. Il y a trois
+types d'opération avec les espaces de nom.
 
+Il y a les espaces de nom global qui s'applique à tous les symboles qui ne
+contiennent pas de \lstcode{#}.
 \begin{center}
-  \begin{mplisting}{0.8}
-(##namespace ("<ns>#"))
+  \lstset{language={scheme},frame=single,label=lst:forms->namespace-global,captionpos=b,caption={Namespace Global}}
+  \begin{mplisting}{0.6}
+(##namespace ("<ns>"))
+;; <symbol-name> => <ns><symbol-name>
 \end{mplisting}
 \end{center}
-
-Il est possible de spécifier une liste des symboles qui appartiennent à
-l'espace de nom. Notez que seulement le espace de nom est entre guillemets.
-
+Il est possible de spécifier la liste des symboles qui sont affectés par
+la déclaration d'espace de nom. De la syntaxe \ref{lst:forms->namespace-global}
+il suffit d'ajouter les symboles après le nom de l'espace de nom.\\
 \begin{center}
-  \begin{mplisting}{0.8}
-(##namespace ("<ns>" sym1 ...))
+  \lstset{language={scheme},
+          frame=single,
+          captionpos=b,
+          caption={Namespace Set},
+          label=lst:forms->namespace-set}
+  \begin{mplisting}{0.6}
+(##namespace ("<ns>" A B ...))
+;; A => <ns>A
+;; B => <ns>B
+;; ...
 \end{mplisting}
 \end{center}
-
+%Chaque symbole dans l'espace de nom peut être renommé à un nouveau symbole en
+%spécifier une pair contenant l'association. La forme ressemble à l'exemple
 La forme \lstcode{##namespace} permet aussi d'associer un identifiant à un
 autre identifiant dans un espace de nom donné. Chaque association est marqué
 par une pair qui alias le premier élément par le second. Par exemple, la pair
-\lstcode{sym1 new-sym1} alias \lstcode{sym1} par \lstcode{new-sym1}.
-
+\lstcode{(<old> <new>)} remplace \lstcode{<old>} par \lstcode{<new>}.\\
 \begin{center}
+  \lstset{language={scheme},
+          frame=single,
+          captionpos=b,
+          caption={Namespace Rename},
+          label={lst:forms->namespace-rename}}
   \begin{mplisting}{0.6}
-(##namespace ("<ns>" (sym1 new-sym1) ...))
+(##namespace ("<ns>" (<old> <new>) ...))
+;; <old> => <ns><new>
+;; ...
 \end{mplisting}
 \end{center}
+
+% La syntaxe de la
+% forme \lstcode{##namespace} qui inclus toutes les symboles dans l'espace de nom
+% marqué par \lstcode{<ns>} est:
+
+% \begin{center}
+%   \begin{mplisting}{0.8}
+% (##namespace ("<ns>"))
+% \end{mplisting}
+% \end{center}
+
+% Il est possible de spécifier une liste des symboles qui appartiennent à
+% l'espace de nom. Notez que seulement le espace de nom est entre guillemets.
+
+% \begin{center}
+%   \begin{mplisting}{0.8}
+% (##namespace ("<ns>" sym1 ...))
+% \end{mplisting}
+% \end{center}
+
 
 % L'utilisation de la forme \lstcode{##namespace} permet de associer plusieurs
 % identifiant dans un espace de nom spécifique.  La procédure \lstcode{hello} est
 % défini dans l'espace de nom \lstcode{hello#}.
 
-% \begin{center}
-% \begin{mplisting}{0.6}
-% (##namespace ("hello#" hello))
-% (define (hello)
-%   (display "Hello, world!\n"))
-% \end{mplisting}
-% \end{center}
+%% XXX: namespace???
+Cette forme est utilisé pour de créer un espace distinct pour chaque module.
+Cela permet d'éviter les conflits de nom entre les identifiants des modules.
+Chaque module commence par déclarer son espace de nom suivit des définitions
+des procédures du module. Une déclaration d'espace de nom à l'une des forme
+donné par \ref{lst:forms->namespace-global}, \ref{lst:forms->namespace-set}
+ou \ref{lst:forms->namespace-rename}.
+\\
+\begin{center}
+  \lstset{language={scheme},
+          frame=single,
+          captionpos=b,
+          caption={Module Hello},
+          label={lst:namespace->hello}}
+\begin{mplisting}{0.6}
+;; hello.scm
+(##namespace ("hello#" hello))
+(define (hello)
+  (display "Hello, world!\n"))
+(hello)
+\end{mplisting}
+\end{center}
+L'exemple \ref{lst:namespace->hello} est un exemple d'utilisation de la forme
+\lstcode{##namespace} dans pour créer un espace pour le module \lstcode{hello}.
+La procédure \lstcode{hello} est dans l'espace de nom \lstcode{hello#}.
 
+\section{La forme \lstcode{\#\#demand-module} et \lstcode{\#\#supply-module}}
 
 Le mécanisme de chargement des modules est géré par la forme spéciale
 \lstcode{##demand-module}. Cette forme indique au système de charger un module
@@ -88,11 +148,6 @@ phase d'expansion des macros. Le paramètre passé à \lstcode{##demand-module}
 doit être un symbole qui correspond au nom du module. La procédure \lstcode{load}
 requière le chemin complet vers le fichier à charger.
 
-\begin{center}
-  \begin{mplisting}{0.8}
-(##demand-module %\textit{<module>}*)
-\end{mplisting}
-\end{center}
 
 Il est à noter que l'ordre des \lstcode{##demand-module} correspond à l'ordre
 que les modules vont être visité. Cette forme agit peut importe sont emplacement
@@ -109,22 +164,30 @@ ou l'expansion de macros est appliquée.
 % \end{center}
 
 Un forme spéciale conjointe au \lstcode{##demand-module} indique le nom
-des modules exportés par un unité. Cette forme spéciale est \lstcode{##supply-module}
-Elle accepte comme paramètre le nom du module exporté par l'unité courant.
-La syntaxe est identique au \lstcode{##demand-module}.
-
+symbolique des modules importés des modules exportés. Cette forme spéciale est
+\lstcode{##supply-module} Elle accepte comme paramètre le nom du module exporté
+par l'unité courant.  La syntaxe de ces deux formes dans le listing
+\ref{lst:syntax->demand/supply-module}.\\
 \begin{center}
+  \lstset{language={scheme},
+          frame=single,
+          captionpos=b,
+          caption={Syntaxe \lstcode{demand-module} et \lstcode{supply-module}},
+          label={lst:syntax->demand/supply-module}}
   \begin{mplisting}{0.8}
+(##demand-module %*\textit{<module>}*)
 (##supply-module %*\textit{<module>}*)
 \end{mplisting}
 \end{center}
 
-\section{Implémentation des modules de base}
 
-Un module de base est constitué d'un fichier d'entête avec la déclaration
-de l'espace de nom et les définitions de macros et un fichier contenant
-les procédure. Dans Gambit les fichiers d'entête sont marqués par un \lstcode{#}
-juste avant l'extension.
+
+\section{Implémentation des Modules Primitifs}
+
+Un module primitif est généralement constitué d'un fichier d'entête avec la
+déclaration de l'espace de nom et les définitions de macros et un fichier
+contenant les procédure. Dans Gambit les fichiers d'entête sont marqués par un
+\lstcode{#} juste avant l'extension.
 
 \begin{itemize}
 
@@ -137,50 +200,41 @@ juste avant l'extension.
 
 \end{itemize}
 
-Le nom \lstcode{<name>} représentante la dernière partie du nom du module. Par
-exemple, le module \lstcode{gambit/tar} utilise le nom \lstcode{tar} dans le
-nom du fichier d'entête et du fichier qui contient les définitions.
-
-\todo{Continuer ici}
-
-% Gambit offre un mécanisme pour aider a minimiser les conflits de nom. Ce
-% mécanisme permet d'associer un identifiant à un autre avec la forme spécial
-% \lstcode{##namespace}.  L'appel à \lstcode{(##namespace ("foo#" A B))} indique
-% qu'une référence futur à \lstcode{A} devient une référence à
-% \lstcode{foo#A} et l'un à \lstcode{B} devient une à \lstcode{foo#B}. Le espace
-% de nom dans lequel \lstcode{A} et \lstcode{B} est \lstcode{foo#}.
-En utilisant cette structure, un module peut être écrit comme suit:
-
+Le nom des fichier doit correspondre à la dernier partie du nom de module.  Par
+exemple, le module primitif \lstcode{stk} doit inclure les fichiers
+\lstcode{stk.scm} et généralement \lstcode{stk#.scm}.\\
 \begin{center}
-  \begin{figure}[h]
-  \begin{tabular}{|l|}
-\hline
-\begin{mplisting}{0.5}
-;; math#.scm
-(##namespace ("math#" fact fib))
-\end{mplisting} \\\hline
-\begin{mplisting}{0.6}
-;; math.scm
-(##supply-module math)
-(##namespace ("math#" fact fib))
-(define (fib n)
-  (if (< n 2)
-    n
-    (+ (fib (- n 1)) (fib (- n 2)))))
-(define (fact n)
-  (if (< n 2)
-    1
-    (* n (fact (- n 1)))))
-\end{mplisting}\\\hline
-  \end{tabular}
-  \caption{Écriture d'un petit module mathématique qui implémente les fonctions \lstcode{fact}
-    et \lstcode{fib}. Ce module est séparé en 2 fichiers, \texttt{math\#.scm} est un fichier
-    contenant les déclarations de l'espace de noms et des définitions de macros que le module
-    exporte.}
-  \label{fig:math_module1}
-\end{figure}
+  \lstset{language={scheme},frame=single}
+\begin{mplisting}{0.9}
+;; stk#.scm
+(##namespace ("stk#" empty push pop))
+\end{mplisting}\\[4ex]
+  \lstset{caption={Écriture d'un module qui implémente une pile. Ce module est
+            séparé en 2 fichiers. Le fichier \texttt{stk\#.scm} qui contient les
+            exportations et \texttt{stk.scm} qui contient les implémentations des
+            fonctions.},
+          captionpos=b,
+          label={lst:module->stk}}
+\begin{mplisting}{0.9}
+;; stk.scm
+(##supply-module stk)
+(##namespace ("stk#"))
+(##include "~~lib/gambit#.scm")
+(##include "stk#.scm")
+
+(define (empty) '())
+(define (push x s) (cons x s))
+(define (pop s) (cdr s))
+
+(define (test)
+  (if (equal? (push 1 (empty)) '(1))
+      "good"
+      "bad"))
+\end{mplisting}
 \end{center}
+
 % XXX: END implementation
+%\todo{Continuer ici}
 
 %\begin{center}
 %  \begin{figure}[h]
@@ -213,50 +267,117 @@ En utilisant cette structure, un module peut être écrit comme suit:
 %\end{figure}
 %\end{center}
 
-La forme \lstcode{##namespace} dans l'exemple du module \lstcode{math} est
-utilisé pour créer un espace de nom pour contenir les identifiant \lstcode{fact}
-et \lstcode{fib}. Le \lstcode{##supply-module} indique au système Gambit que
-le unité \lstcode{math.scm} fournit le module \lstcode{math}.
+Dans l'exemple \ref{lst:module->stk}, il y a dans \lstcode{stk.scm} l'inclusion
+de du fichier d'entête \lstcode{stk#.scm} qui ajoute une déclaration d'espace
+de nom redondante dans ce cas.  La déclaration \lstcode{(##namespace ("stk#"))}
+implique l'espace de nom ajouté par l'inclusion du fichier d'entête. Il est
+possible que l'espace de nom déclaré dans \lstcode{stk#.scm} ne corresponde
+pas à celui utilisé dans \lstcode{stk.scm}.
 
-Ce module peut être importé par la forme \lstcode{##import}. L'importation
-est fait en deux parties, l'inclusion du fichier \lstcode{<name>#.scm} et
-un chargement des définitions par \lstcode{##demand-module}. L'importation
-\lstcode{(##import math)} est équivalent à:
+La forme \lstcode{##namespace} dans l'example \ref{lst:module->stk}
+s'applique aux identifiants suivant:
+\begin{center}
+  \lstset{language={scheme},keepspaces=true}
+  \begin{mplisting}{0.3}
+empty --> stk#empty
+push  --> stk#push
+pop   --> stk#pop
+test  --> stk#test
+\end{mplisting}
+\end{center}
+L'inclusion de \lstcode{\~\~lib/gambit#.scm} force les identifiants
+\lstcode{define}, \lstcode{if}, \lstcode{cons}, \lstcode{cdr} et
+\lstcode{equal?} dans l'espace de nom global. Sans cette inclusion
+ces identifiants sont placés dans l'espace de nom \lstcode{stk#} qui
+ne seront pas définis.
+
+\subsection{La forme \lstcode{\#\#import}} L'importation des modules est
+effectué par la forme \lstcode{\#\#import} qui effectue deux actions,
+l'inclusion du fichier \lstcode{<name>#.scm} et un chargement des définitions.
+La forme \lstcode{##import}, comme \lstcode{##demand-module} s'occupe de
+trouver l'emplacement du fichier d'entête à partir du nom du module. Elle
+génère le \lstcode{##include} du fichier d'entête s'il existe et un
+\lstcode{##demand-module} du module.  L'importation \lstcode{(##import stk)}
+est équivalent à:
 
 \begin{center}
+  \lstset{%
+    caption={Expansion de \lstcode{(\#\#import stk)}},
+    captionpos=b,
+    label={lst:prim-import->stk}}
   \begin{mplisting}{0.9}
-  (##include "math/math#.scm")
-  (##demand-module math)
-  \end{mplisting}
+(##include "/un/chemin/stk#.scm")
+(##demand-module stk)
+\end{mplisting}
+  \label{lst:prim-import->stk}
 \end{center}
 
-La forme \lstcode{##import} s'occupe de trouver l'emplacement du fichier
-d'entête à partir du nom du module. Elle génére le \lstcode{##include} du
-fichier d'entête s'il existe et un \lstcode{##demand-module} du module.
 
-Cette forme est utilisé affin de créer un espace distinct pour chaque module.
-Cela permet d'éviter les conflits de nom entre les identifiants utilisé au sein
-des modules.  Chaque module commence par déclarer son espace de nom suivit des
-définitions des procédures du module.  Une déclaration d'espace de nom à la
-forme suivante \lstcode{(##namespace ("<name>#"))}. La partie \lstcode{<name>}
-de la forme \lstcode{##namespace} doit être un chaine d'au moins un caractères.
-Toutes les caractères sont permis.
-
-\begin{center}
-  \begin{tabular}{|l|}
-\hline
-\begin{mplisting}{0.6}
-;; example.scm
-(##namespace ("example#" hello))
-(define (hello)
-  (display "Hello, world!\n"))
-(hello)
-\end{mplisting}\\\hline
-  \end{tabular}
-\end{center}
-L'exemple ci-dessus est un exemple d'utilisation de la forme \lstcode{##namespace}
-dans pour créer un espace pour le module \lstcode{example}. La procédure \lstcode{hello}
-est définit dans l'espace de nom \lstcode{example#}.
 
 \section{Implémentation des modules R7RS}
 % XXX: Implémentation
+
+Pour que le système de module soit compatible avec d'autre implémentation
+Scheme.  Les modules haut niveau sont défini dans le standard R7RS
+Small~\cite{Scheme:R7RS}. Les modules sont définis par la forme
+\lstcode{define-library} la syntaxe est donnée par le
+listing~\ref{lst:syntax->define-library}.
+
+Le \lstcode{define-library} est expansé avec les formes spéciales utilisées
+dans les modules primitives \lstcode{##namespace}, \lstcode{##demand-module}
+et \lstcode{##supply-module}.
+
+\subsection{Expansion du \lstcode{import}}
+La forme \lstcode{import} de R7RS a deux expansion. Une expansion pour
+l'importation d'un module primitif et une expansion pour l'expansion pour
+les modules R7RS.
+
+L'importation d'un module primitif limite la syntaxe du \lstcode{import}.
+Il n'est pas possible d'utiliser les extensions \lstcode{only}, \lstcode{except}
+et \lstcode{rename} sur un module primitif présentement. Le \lstcode{import} R7RS se rabat
+sur le \lstcode{##import} des modules primitifs qui ne supporte pas les extensions R7RS.\\
+\begin{center}
+  \lstset{language={scheme},captionpos=b,frame=single,
+          label={lst:import->expand-primitive},
+          caption={Expansion du \texttt{import} d'un module primitif}}
+\begin{mplisting}{0.8}
+;; expansion of (import (termite))
+(##import termite)
+\end{mplisting}
+\end{center}
+
+L'expansion de l'importation d'un module R7RS contient au plus trois parties.
+Une déclaration de d'espace de nom qui donne accès au identifiant du module,
+un \lstcode{##demand-module} qui charge les fonctionnalité et les définition
+de macros qui sont importés.
+
+\begin{center}
+  \lstset{language={scheme},captionpos=b,frame=single,
+          label={lst:import->expand-primitive},
+          caption={Expansion du \texttt{import} d'un module R7RS}}
+  \begin{mplisting}{0.8}
+;; expansion of (import (github.com/gambit/hello))
+(##demand-module github.com/gambit/hello)
+(##namespace ("github.com/gambit/hello#" hi salut))
+;; macros expansion here
+\end{mplisting}
+\end{center}
+
+
+
+
+\subsection{Expansion du \lstcode{define-library}}
+
+
+% ;; expansion of (define-library (hello) ...)
+% (##declare (block))
+% (##supply-module github.com/gambit/hello)
+% (##namespace ("github.com/gambit/hello#"))
+% (##namespace ("" define ...))
+% (##namespace ("" write-shared write display write-simple))
+% (define (exclaim msg1 msg2)
+%     (display msg1) (display msg2) (display "!\n"))
+% (define (hi name) (exclaim "hello " name))
+% (define (salut name) (exclaim "bonjour " name))
+% (##namespace (""))
+

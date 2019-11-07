@@ -1,12 +1,13 @@
 
 \chapter{Modèle de chargement}
-
-\section{Chargement des bibliothèques}
-
+\label{ch:loading-model}
 
 Un système est composé d'un ensemble d'éléments (modules) qui interagissent
 entre eux.  Une bibliothèque fait office de module au sein d'un système simple
 ou complexe.
+
+\section{Chargement des bibliothèques}
+
 %La collection des modules s'effectue au sein d'un
 
 % TODO: voir chargé
@@ -94,28 +95,27 @@ compilé.
 \section{Module hébergé}
 
 Un module qui est hébergé est un module qui dont son contenu
-se retrouve sur un domain comme \url{github.com}.
-
-
-\begin{figure}[ht]
-\begin{lstlisting}
+se retrouve sur un domain comme \url{github.com}.\\
+\begin{center}
+  \lstset{caption={Grammaire BNF représentant un hostname selon un sous
+  ensemble du RFC-2396.},captionpos=b,frame=single}
+  \begin{mplisting}{0.9}
 hostname      = +( domainlabel "." ) toplabel
 domainlabel   = alphanum | alphanum *( alphanum | "-" ) alphanum
 toplabel      = alpha | alpha *( alphanum | "-" ) alphanum
 alphanum      = alpha | digit
 alpha         = [a-zA-Z]
 digit         = [0-9]
-\end{lstlisting}
-  \caption{Grammaire BNF représentant un hostname selon un sous
-  ensemble du RFC-2396.}
-\end{figure}
+\end{mplisting}
+  \label{lst:hostname->grammar}
+\end{center}
 
 La différence avec la spécification du hostname dans le RFC-2396
 est que le hostname ne peut pas finir par un point et doit contenir
 au moins un \verb|domainlabel|. C'est pour permettre de distingué
 un module local et un module hébergé.
 
-\subsection{Module gambit/git}
+\subsection{Module \texttt{\_git}}
 
 Ce module offre un interface pour utiliser interagir avec les des dépôts git.
 Il permet de cloner un dépôts qui est hébergé sur \url{github.com}. Un clone du
