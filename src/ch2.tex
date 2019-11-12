@@ -403,17 +403,19 @@ importation ou un importation avec un niveau. Le niveau d'importation est soit:
 \lstcode{run}, \lstcode{expand} ou \lstcode{(meta <level>)}.  Le niveau méta
 donné par \lstcode{<level>} est un entier exacte. Un niveau d'importation 0
 correspond à \lstcode{run} et un niveau d'importation de 1 correspond
-\lstcode{expand}. L'importation d'un module contient les sous formes suivantes:
-\begin{center}
-\begin{mplisting}{0.7}
-  <libref>
-  (library <libref>)
-  (only <import set> <identifier_1> ...)
-  (except <import set> <identifier_1> ...)
-  (prefix <import set> <identifier>)
-  (rename <import set> (<identifier_1> <identifier_2>))
-\end{mplisting}
-\end{center}
+\lstcode{expand}.
+
+% L'importation d'un module contient les sous formes suivantes:
+% \begin{center}
+% \begin{mplisting}{0.7}
+%   <libref>
+%   (library <libref>)
+%   (only <import set> <identifier_1> ...)
+%   (except <import set> <identifier_1> ...)
+%   (prefix <import set> <identifier>)
+%   (rename <import set> (<identifier_1> <identifier_2>))
+% \end{mplisting}
+% \end{center}
 
 % \begin{itemize}
 %   \item \lstcode{(rename  (<identifier1> <identifier_2>))}
@@ -493,6 +495,19 @@ bloque \lstcode{begin}.
     dans le contexte d'une bibliothèque.
 
 \end{itemize}
+
+La forme \lstcode{import} en R7RS permet d'importer un ensemble d'identifiants
+qui sont exporté par un module. Chaque ensemble importé spécifie le nom des
+identifiants du module et parfois même associe un nom local aux identifiants.
+Le \lstcode{import} peut prendre l'une des formes suivante:
+\begin{itemize}
+  \item \lstcode{<library-name>}
+  \item \lstcode{(only <import-set> id1 ...)}
+  \item \lstcode{(except <import-set> id1 ...)}
+  \item \lstcode{(prefix <import-set> id)}
+  \item \lstcode{(rename <import-set> (id1 id2) ...)}
+\end{itemize}
+
 
 --------------------------------------END---------------------------------------\\
 

@@ -10,10 +10,14 @@ Les format des modules R7RS construit par \lstcode{define-library} contient
 plusieurs composantes. L'espace de nom du module qui regroupe toutes les
 fonctionnalités. Une liste des modules qui sont utilisés par le module courant.
 Une liste des symboles exportés par le module. Il est possible de modifier les
-identifiant d'un module lors de l'importation et de l'exportation. L'importation
-multiple d'un module doit correspondre à un seul chargement.
-Pour exprimé les relations entre les modules certaines forme
-spéciale plus simple ont été ajouté dans Gambit.
+identifiant d'un module lors de l'importation et de l'exportation.
+L'importation multiple d'un module doit correspondre à un seul chargement.
+Pour exprimé les relations entre les modules certaines forme spéciale plus
+simple ont été ajouté dans Gambit.  Si les concepteurs de librairies respectent
+la syntaxe R7RS, alors il est possible de l'importer dans Gambit. C'est indépendant
+du système dans lequel les librairies ont été écrit.
+
+
 
 % Le format des modules nécessite plusieurs composantes.
 % Chaque module a son propre espace de nom
@@ -180,7 +184,19 @@ par l'unité courant.  La syntaxe de ces deux formes dans le listing
 \end{mplisting}
 \end{center}
 
+\subsection{Méta informations}
+Un module a des informations qui sont utilisées lors de l'expansion
+et même la compilation. Ces informations sont spécifier par la forme
+\lstcode{##meta-info}. Cette forme accepte au moins un paramètre qui
+est le nom de la méta information, le reste des paramètres est la valeur
+associer à la méta donnée.
 
+\begin{center}
+  \begin{mplisting}{0.5}
+(##meta-info name value)
+\end{mplisting}
+\end{center}
+% cc-options ld-options ld-options-prelude pkg-config pkg-config-path
 
 \section{Implémentation des Modules Primitifs}
 
@@ -291,14 +307,15 @@ L'inclusion de \lstcode{\~\~lib/gambit#.scm} force les identifiants
 ces identifiants sont placés dans l'espace de nom \lstcode{stk#} qui
 ne seront pas définis.
 
-\subsection{La forme \lstcode{\#\#import}} L'importation des modules est
-effectué par la forme \lstcode{\#\#import} qui effectue deux actions,
-l'inclusion du fichier \lstcode{<name>#.scm} et un chargement des définitions.
-La forme \lstcode{##import}, comme \lstcode{##demand-module} s'occupe de
-trouver l'emplacement du fichier d'entête à partir du nom du module. Elle
-génère le \lstcode{##include} du fichier d'entête s'il existe et un
-\lstcode{##demand-module} du module.  L'importation \lstcode{(##import stk)}
-est équivalent à:
+\subsection{La forme \lstcode{\#\#import}}
+%
+L'importation des modules est effectué par la forme \lstcode{\#\#import} qui
+effectue deux actions, l'inclusion du fichier \lstcode{<name>#.scm} et un
+chargement des définitions.  La forme \lstcode{##import}, comme
+\lstcode{##demand-module} s'occupe de trouver l'emplacement du fichier d'entête
+à partir du nom du module. Elle génère le \lstcode{##include} du fichier
+d'entête s'il existe et un \lstcode{##demand-module} du module.  L'importation
+\lstcode{(##import stk)} est équivalent à:
 
 \begin{center}
   \lstset{%
@@ -316,26 +333,28 @@ est équivalent à:
 
 \section{Implémentation des modules R7RS}
 % XXX: Implémentation
-
 Pour que le système de module soit compatible avec d'autre implémentation
 Scheme.  Les modules haut niveau sont défini dans le standard R7RS
 Small~\cite{Scheme:R7RS}. Les modules sont définis par la forme
 \lstcode{define-library} la syntaxe est donnée par le
-listing~\ref{lst:syntax->define-library}.
-
-Le \lstcode{define-library} est expansé avec les formes spéciales utilisées
-dans les modules primitives \lstcode{##namespace}, \lstcode{##demand-module}
-et \lstcode{##supply-module}.
+listing~\ref{lst:syntax->define-library}. Les forme \lstcode{define-library} et
+\lstcode{import} utilisé les formes spéciales utilise par les modules
+primitifs. L'élément qui distingue un module primitif et un module R7RS
+est l'utilisation de la forme \lstcode{define-library}.
 
 \subsection{Expansion du \lstcode{import}}
-La forme \lstcode{import} de R7RS a deux expansion. Une expansion pour
-l'importation d'un module primitif et une expansion pour l'expansion pour
-les modules R7RS.
+\label{sec:import-expand}
+
+La façon que la forme \lstcode{import} est expansé dépend du type de module qui
+est importé. L'importation d'un module primitif est diffférent de l'importation
+d'un module R7RS. Gambit permet l'importation d'un module primitif en utilisant
+la même forme que pour les modules R7RS.
 
 L'importation d'un module primitif limite la syntaxe du \lstcode{import}.
 Il n'est pas possible d'utiliser les extensions \lstcode{only}, \lstcode{except}
 et \lstcode{rename} sur un module primitif présentement. Le \lstcode{import} R7RS se rabat
-sur le \lstcode{##import} des modules primitifs qui ne supporte pas les extensions R7RS.\\
+sur le \lstcode{##import} des modules primitifs qui ne supporte pas les extensions R7RS.
+Cela permet d'utiliser des modules primitifs dans un contexte R7RS.\\
 \begin{center}
   \lstset{language={scheme},captionpos=b,frame=single,
           label={lst:import->expand-primitive},
@@ -346,16 +365,17 @@ sur le \lstcode{##import} des modules primitifs qui ne supporte pas les extensio
 \end{mplisting}
 \end{center}
 
-L'expansion de l'importation d'un module R7RS contient au plus trois parties.
-Une déclaration de d'espace de nom qui donne accès au identifiant du module,
-un \lstcode{##demand-module} qui charge les fonctionnalité et les définition
-de macros qui sont importés.
+L'importation d'un module R7RS est expansé en trois parties.
+Un \lstcode{##demand-module} pour charger l'implémentation les procédures du
+module. Une déclaration de d'espace de nom qui donne accès au identifiant
+que le module exporte.\\
 
 \begin{center}
   \lstset{language={scheme},captionpos=b,frame=single,
-          label={lst:import->expand-primitive},
-          caption={Expansion du \texttt{import} d'un module R7RS}}
-  \begin{mplisting}{0.8}
+          label={lst:import->expand-r7rs},
+          caption={Expansion du \texttt{import} du module R7RS
+            \lstcode{github.com/gambit/hello}}}
+  \begin{mplisting}{1}
 ;; expansion of (import (github.com/gambit/hello))
 (##demand-module github.com/gambit/hello)
 (##namespace ("github.com/gambit/hello#" hi salut))
@@ -363,21 +383,84 @@ de macros qui sont importés.
 \end{mplisting}
 \end{center}
 
+Dans l'exemple \ref{lst:import->expand-r7rs}, toutes les identifiants du module
+sont importés. La déclaration \lstcode{##namespace} contient donc toutes les
+les identifiants exportés du module. La déclaration d'espace de nom généré par
+le \lstcode{import} est influencé par la forme utilisé. \\
 
+% TODO: Différent namespaces généré par import.
+
+\begin{center}
+  \lstset{language={scheme},captionpos=b,frame=single,
+          label={lst:import->expand-r7rs-namespace},
+          caption={Différent \lstcode{\#\#namespace} généré par
+            l'expansion du \texttt{import} d'un module R7RS.}}
+  \begin{mplisting}{1}
+;; (import (only (github.com/gambit/hello) hi))
+(##namespace ("github.com/gambit/hello#" hi))
+
+;; (import (except (github.com/gambit/hello) hi))
+(##namespace ("github.com/gambit/hello#" salut))
+
+;; expansion of (import (prefix (github.com/gambit/hello) m-))
+(##demand-module github.com/gambit/hello)
+(##namespace ("github.com/gambit/hello#" (m-hi hi) (m-salut salut)))
+
+;; (import (rename (github.com/gambit/hello) (hi bonjour)))
+(##namespace ("github.com/gambit/hello#" (bonjour hi) salut))
+\end{mplisting}
+\end{center}
 
 
 \subsection{Expansion du \lstcode{define-library}}
 
 
-% ;; expansion of (define-library (hello) ...)
-% (##declare (block))
-% (##supply-module github.com/gambit/hello)
-% (##namespace ("github.com/gambit/hello#"))
-% (##namespace ("" define ...))
-% (##namespace ("" write-shared write display write-simple))
-% (define (exclaim msg1 msg2)
-%     (display msg1) (display msg2) (display "!\n"))
-% (define (hi name) (exclaim "hello " name))
-% (define (salut name) (exclaim "bonjour " name))
-% (##namespace (""))
+La forme \lstcode{define-library} est expansé dans les formes qui composent un
+module primitif. Les déclarations de la bibliothèque sont utilisées dans
+l'expansion du \lstcode{define-library}. La déclaration d'exportation est
+valide si toutes les identifiants exportés sont distincts.  Une déclaration
+\lstcode{export} qui exporte un identifiant plusieurs fois cause une erreur de
+syntaxe. Les informations les identifiant exporté ne sont pas utilisé lors
+l'expansion du \lstcode{define-library}, mais lors de l'importation de cette
+bibliothèque.  Les déclarations \lstcode{import} sont expansées de la même
+façons que dans contexte global. La différence entre l'importation global et
+celle dans un \lstcode{define-library} est la possibilité d'avoir un
+\lstcode{import} relatif au module courant. L'importation relatif est un
+extension de Gambit. Le listing~\ref{lst:relative-import} montre un exemple
+d'importation relatif.
+\\
+
+\begin{center}
+  \lstset{language={scheme},
+          frame=single,
+          captionpos=b,
+          caption={Importation relatif du module \lstcode{(A C)}},
+          label={lst:relative-import}}
+  \begin{mplisting}{0.8}
+(define-library (A B)
+  ;; => (import (A C))
+  (import (.. C)))
+\end{mplisting}
+\end{center}
+
+
+\begin{center}
+  \lstset{language={scheme},captionpos=b,frame=single,
+          label={lst:define-library->expand},
+          caption={Expansion de la forme \lstcode{define-library}
+            du module \lstcode{github.com/gambit/hello}}}
+  \begin{mplisting}{0.9}
+;; expansion of (define-library (hello) ...)
+(##declare (block))
+(##supply-module github.com/gambit/hello)
+(##namespace ("github.com/gambit/hello#"))
+(##namespace ("" define ...))
+(##namespace ("" write-shared write display write-simple))
+(define (exclaim msg1 msg2)
+    (display msg1) (display msg2) (display "!\n"))
+(define (hi name) (exclaim "hello " name))
+(define (salut name) (exclaim "bonjour " name))
+(##namespace (""))
+\end{mplisting}
+\end{center}
 
