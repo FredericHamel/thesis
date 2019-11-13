@@ -184,7 +184,7 @@ par l'unité courant.  La syntaxe de ces deux formes dans le listing
 \end{mplisting}
 \end{center}
 
-\subsection{Méta informations}
+\subsection{Les Méta Informations}
 Un module a des informations qui sont utilisées lors de l'expansion
 et même la compilation. Ces informations sont spécifier par la forme
 \lstcode{##meta-info}. Cette forme accepte au moins un paramètre qui
@@ -196,7 +196,30 @@ associer à la méta donnée.
 (##meta-info name value)
 \end{mplisting}
 \end{center}
-% cc-options ld-options ld-options-prelude pkg-config pkg-config-path
+
+Les méta infos sont utilisés pour donner des paramètres de compilation
+du module. Les différents méta infos sont \lstcode{##cc-options},
+\lstcode{##ld-options}, \lstcode{##ld-options-prelude}, \lstcode{##pkg-config}
+et \lstcode{##pkg-config-path}. Ces méta infos ne sont utile que pour les modules
+compilés.
+
+\begin{itemize}
+  \item Les \lstcode{##cc-options} sont ajouter au options de la command qui
+    invoque le compilateur C.
+
+  \item Les méta infos \lstcode{##ld-options} et \lstcode{#3ld-options-prelude}
+    ajoute les paramètres à la command qui invoque l'éditeur de lien.
+    Les paramètres dans \lstcode{#3ld-options-prelude} précèdent ceux
+    qui sont dans \lstcode{##ld-options}.
+
+  \item \lstcode{##pkg-config} contient le nom des bibliothèques C à être
+    lié au module Scheme. Les options nécessaires pour au compilateur
+    C sont déterminés automatiquement par l'utilitaire \lstcode{pkg-config}.
+
+  \item \lstcode{##pkg-config-path} ajoute des répertoires à la variable d'environnement
+    \lstcode{PKG_CONFIG_PATH} qui est utilisée par l'utilitaire \lstcode{pkg-config}.
+
+\end{itemize}
 
 \section{Implémentation des Modules Primitifs}
 
@@ -326,9 +349,7 @@ d'entête s'il existe et un \lstcode{##demand-module} du module.  L'importation
 (##include "/un/chemin/stk#.scm")
 (##demand-module stk)
 \end{mplisting}
-  \label{lst:prim-import->stk}
 \end{center}
-
 
 
 \section{Implémentation des modules R7RS}
@@ -348,7 +369,28 @@ est l'utilisation de la forme \lstcode{define-library}.
 La façon que la forme \lstcode{import} est expansé dépend du type de module qui
 est importé. L'importation d'un module primitif est diffférent de l'importation
 d'un module R7RS. Gambit permet l'importation d'un module primitif en utilisant
-la même forme que pour les modules R7RS.
+la même forme que pour les modules R7RS. Les capacités du \lstcode{import}
+dépendent s'il est d'un \lstcode{define-library} d'un programme principal. Dans
+le cas d'un \lstcode{define-library} le \lstcode{import} supporte l'importation
+relatif, qui est un extension de Gambit.
+
+L'importation relatif La différence entre l'importation global et celle dans un
+\lstcode{define-library} est la possibilité d'avoir un \lstcode{import} relatif
+au module courant. L'importation relatif est un extension de Gambit. Le
+listing~\ref{lst:relative-import} montre un exemple d'importation relatif.
+
+\begin{center}
+  \lstset{language={scheme},
+          frame=single,
+          captionpos=b,
+          caption={Importation relatif du module \lstcode{(A C)}},
+          label={lst:relative-import}}
+  \begin{mplisting}{0.8}
+(define-library (A B)
+  ;; => (import (A C))
+  (import (.. C)))
+\end{mplisting}
+\end{center}
 
 L'importation d'un module primitif limite la syntaxe du \lstcode{import}.
 Il n'est pas possible d'utiliser les extensions \lstcode{only}, \lstcode{except}
@@ -367,7 +409,7 @@ Cela permet d'utiliser des modules primitifs dans un contexte R7RS.\\
 
 L'importation d'un module R7RS est expansé en trois parties.
 Un \lstcode{##demand-module} pour charger l'implémentation les procédures du
-module. Une déclaration de d'espace de nom qui donne accès au identifiant
+module. Une déclaration de d'espace de nom qui donne accès auz identifiants
 que le module exporte.\\
 
 \begin{center}
@@ -423,26 +465,7 @@ valide si toutes les identifiants exportés sont distincts.  Une déclaration
 syntaxe. Les informations les identifiant exporté ne sont pas utilisé lors
 l'expansion du \lstcode{define-library}, mais lors de l'importation de cette
 bibliothèque.  Les déclarations \lstcode{import} sont expansées de la même
-façons que dans contexte global. La différence entre l'importation global et
-celle dans un \lstcode{define-library} est la possibilité d'avoir un
-\lstcode{import} relatif au module courant. L'importation relatif est un
-extension de Gambit. Le listing~\ref{lst:relative-import} montre un exemple
-d'importation relatif.
-\\
-
-\begin{center}
-  \lstset{language={scheme},
-          frame=single,
-          captionpos=b,
-          caption={Importation relatif du module \lstcode{(A C)}},
-          label={lst:relative-import}}
-  \begin{mplisting}{0.8}
-(define-library (A B)
-  ;; => (import (A C))
-  (import (.. C)))
-\end{mplisting}
-\end{center}
-
+façons que dans contexte des programmes principaux. \\
 
 \begin{center}
   \lstset{language={scheme},captionpos=b,frame=single,
