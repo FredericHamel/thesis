@@ -72,29 +72,32 @@ LISP.
 
 \begin{table}[htbp]
 \begin{center}
-\begin{tabular}{|l|l|l|}
+\begin{tabular}{|l|l|}
   \hline
-  \textbf{Préfixe}& \textbf{Infixe}& \textbf{Suffixe}\\\hline
+  \textbf{Préfixe}& \textbf{Infixe}
+  % & \textbf{Suffixe}
+  \\\hline
+
   \begin{mplisting}{0.1}
 (+ 1 2)
 \end{mplisting}&
   \begin{mplisting}{0.1}
 1 + 2;
-\end{mplisting}&
-  \begin{mplisting}{0.1}
-1 2 +
-\end{mplisting}\\
-\hline
-  \begin{mplisting}{0.22}
-(proc a1 a2 a3)
-\end{mplisting}&
-  \begin{mplisting}{0.22}
-proc(a1, a2, a3);
-\end{mplisting}&
-  \begin{mplisting}{0.22}
-a1 a2 a3 proc
-\end{mplisting}\\
-\hline
+\end{mplisting}
+  % \begin{mplisting}{0.1}
+% 1 2 +
+% \end{mplisting}\\
+\\\hline
+  % \begin{mplisting}{0.22}
+% (proc a1 a2 a3)
+% \end{mplisting}&
+  % \begin{mplisting}{0.22}
+% proc(a1, a2, a3);
+% \end{mplisting}&
+  % \begin{mplisting}{0.22}
+% a1 a2 a3 proc
+% \end{mplisting}\\
+% \hline
 %    \begin{mplisting}{0.25}
 %(if e1
 %    e2
@@ -109,7 +112,7 @@ a1 a2 a3 proc
 %\hline
 \end{tabular}
 \end{center}
-  \caption{Voici des example qui montre une comparaison entre une syntaxe préfixe, infixe et suffixe.}
+  \caption{Voici un example qui montre une comparaison entre une syntaxe préfixe et infixe.}
   \label{tab:prefix_vs_infix}
 \end{table}
 
@@ -501,12 +504,14 @@ qui sont exporté par un module. Chaque ensemble importé spécifie le nom des
 identifiants du module et parfois même associe un nom local aux identifiants.
 Le \lstcode{import} peut prendre l'une des formes suivante:
 \begin{itemize}
+  \label{itm:import-set}
   \item \lstcode{<library-name>}
   \item \lstcode{(only <import-set> id1 ...)}
   \item \lstcode{(except <import-set> id1 ...)}
   \item \lstcode{(prefix <import-set> id)}
   \item \lstcode{(rename <import-set> (id1 id2) ...)}
 \end{itemize}
+
 
 
 --------------------------------------END---------------------------------------\\
@@ -563,7 +568,7 @@ de la bibliothèque à collecter en plus des information sur les composante
   \begin{mplisting}{0.9}
 (import (only (gambit thread) make-thread thread-start! thread-join!))
 \end{mplisting}
-  \caption{Importation d'un sous-ensemble des fonctionnalité de la bibliothèque}
+  \caption{Importation d'un sous-ensemble des fonctionnalités de la bibliothèque}
 \end{figure}
 
 % - (import (foo)) ; exportant f1 f2 f3

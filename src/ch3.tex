@@ -1,9 +1,11 @@
 
 \chapter{Implémentation des modules}
 
-La syntaxe choisit pour les modules est celle qui utilise \lstcode{define-library}
-dans R7RS. Cette forme offre plus de flexibilité que la forme \lstcode{library} dans
-R6RS. Le standard R7RS est un simplification du standard R6RS qui offre des
+La syntaxe des module se veut portable entre différente implémentation de
+Scheme.  Gambit est un système qui se veut conforme R7RS.  La syntaxe choisit
+pour les modules est celle qui utilise \lstcode{define-library} dans R7RS.
+Cette forme offre plus de flexibilité que la forme \lstcode{library} dans R6RS.
+Le standard R7RS est un simplification du standard R6RS qui offre des
 fonctionnalités équivalentes.
 
 Les format des modules R7RS construit par \lstcode{define-library} contient
@@ -197,22 +199,22 @@ associer à la méta donnée.
 \end{mplisting}
 \end{center}
 
-Les méta infos sont utilisés pour donner des paramètres de compilation
-du module. Les différents méta infos sont \lstcode{##cc-options},
+Les méta informations sont utilisés pour donner des paramètres de compilation
+du module. Les différents méta informations sont \lstcode{##cc-options},
 \lstcode{##ld-options}, \lstcode{##ld-options-prelude}, \lstcode{##pkg-config}
-et \lstcode{##pkg-config-path}. Ces méta infos ne sont utile que pour les modules
+et \lstcode{##pkg-config-path}. Ces méta informations ne sont utile que pour les modules
 compilés.
 
 \begin{itemize}
-  \item Les \lstcode{##cc-options} sont ajouter au options de la command qui
+  \item Les \lstcode{cc-options} sont ajouter au options de la commande qui
     invoque le compilateur C.
 
-  \item Les méta infos \lstcode{##ld-options} et \lstcode{#3ld-options-prelude}
-    ajoute les paramètres à la command qui invoque l'éditeur de lien.
-    Les paramètres dans \lstcode{#3ld-options-prelude} précèdent ceux
-    qui sont dans \lstcode{##ld-options}.
+  \item Les méta informations \lstcode{ld-options} et \lstcode{ld-options-prelude}
+    ajoute les paramètres à la commande qui invoque l'éditeur de lien.
+    Les paramètres dans \lstcode{ld-options-prelude} précèdent ceux
+    qui sont dans \lstcode{ld-options}.
 
-  \item \lstcode{##pkg-config} contient le nom des bibliothèques C à être
+  \item \lstcode{pkg-config} contient le nom des bibliothèques C à être
     lié au module Scheme. Les options nécessaires pour au compilateur
     C sont déterminés automatiquement par l'utilitaire \lstcode{pkg-config}.
 
@@ -355,7 +357,7 @@ d'entête s'il existe et un \lstcode{##demand-module} du module.  L'importation
 \section{Implémentation des modules R7RS}
 % XXX: Implémentation
 Pour que le système de module soit compatible avec d'autre implémentation
-Scheme.  Les modules haut niveau sont défini dans le standard R7RS
+Scheme,  les modules haut niveau sont défini dans le standard R7RS
 Small~\cite{Scheme:R7RS}. Les modules sont définis par la forme
 \lstcode{define-library} la syntaxe est donnée par le
 listing~\ref{lst:syntax->define-library}. Les forme \lstcode{define-library} et
@@ -367,31 +369,15 @@ est l'utilisation de la forme \lstcode{define-library}.
 \label{sec:import-expand}
 
 La façon que la forme \lstcode{import} est expansé dépend du type de module qui
-est importé. L'importation d'un module primitif est diffférent de l'importation
+est importé. L'importation d'un module primitif est différent de l'importation
 d'un module R7RS. Gambit permet l'importation d'un module primitif en utilisant
 la même forme que pour les modules R7RS. Les capacités du \lstcode{import}
 dépendent s'il est d'un \lstcode{define-library} d'un programme principal. Dans
 le cas d'un \lstcode{define-library} le \lstcode{import} supporte l'importation
 relatif, qui est un extension de Gambit.
 
-L'importation relatif La différence entre l'importation global et celle dans un
-\lstcode{define-library} est la possibilité d'avoir un \lstcode{import} relatif
-au module courant. L'importation relatif est un extension de Gambit. Le
-listing~\ref{lst:relative-import} montre un exemple d'importation relatif.
 
-\begin{center}
-  \lstset{language={scheme},
-          frame=single,
-          captionpos=b,
-          caption={Importation relatif du module \lstcode{(A C)}},
-          label={lst:relative-import}}
-  \begin{mplisting}{0.8}
-(define-library (A B)
-  ;; => (import (A C))
-  (import (.. C)))
-\end{mplisting}
-\end{center}
-
+\subsubsection{Importation d'un module primitif}
 L'importation d'un module primitif limite la syntaxe du \lstcode{import}.
 Il n'est pas possible d'utiliser les extensions \lstcode{only}, \lstcode{except}
 et \lstcode{rename} sur un module primitif présentement. Le \lstcode{import} R7RS se rabat
@@ -407,28 +393,46 @@ Cela permet d'utiliser des modules primitifs dans un contexte R7RS.\\
 \end{mplisting}
 \end{center}
 
-L'importation d'un module R7RS est expansé en trois parties.
-Un \lstcode{##demand-module} pour charger l'implémentation les procédures du
-module. Une déclaration de d'espace de nom qui donne accès auz identifiants
-que le module exporte.
+\subsubsection{Importation d'un module R7RS}
+
+L'importation d'un module R7RS est expansé en au plus trois parties.  Un
+\lstcode{##demand-module} qui s'occupe de charger l'implémentation des
+procédures du module. Une déclaration de d'espace de nom qui donne accès au
+identifiants que le module exporte. L'implémentation des macros qui sont
+exporté du module.
+
+L'instruction de chargement du module est générer dans tous les cas qu'un
+module définit des procédures. Un module qui ne définit que des macros ne
+nécessite pas d'être charger durant l'exécution seulement dans le contexte
+d'expansion des macros. L'importation d'un module R7RS qui ne contient qu'une
+déclaration \lstcode{export} ne nécessite pas d'être chargé durant l'exécution.
+Ce type de module est utilisé pour exporter les fonctionnalité déjà implémenté
+dans Gambit dans un contexte R7RS.
+
+La forme utilisé pour rendre disponible à l'ensemble identifiants importés est
+\lstcode{##namespace}. L'ensemble des identifiants importés dépend de la forme
+du \lstcode{import}. Par défaut, tous les identifiant, exporté par le module,
+sont importés.  Les opérateurs \lstcode{only} et \lstcode{except} affectent le
+nombre d'identifiant importé. Les opérateurs \lstcode{prefix} et
+\lstcode{rename} affecte le nom des identifiants.  Dans l'exemple
+\ref{lst:import->expand-r7rs}, l'importation inclut l'ensemble des identifiants
+exporté par le module. L'ensemble des formes \lstcode{##namespace} générées
+par un \lstcode{import} est donnée par le listing~\ref{lst:import->expand-r7rs-namespace}.
+\\
 
 \begin{center}
   \lstset{language={scheme},captionpos=b,frame=single,
           label={lst:import->expand-r7rs},
-          caption={Expansion du \texttt{import} du module R7RS
-            \lstcode{github.com/gambit/hello}}}
+          caption={L'exemple de l'expansion du \texttt{import} du module R7RS
+            \lstcode{github.com/gambit/hello} qui exporte les procédures
+            \lstcode{hello} et \lstcode{hi}}}
   \begin{mplisting}{1}
 ;; expansion of (import (github.com/gambit/hello))
 (##demand-module github.com/gambit/hello)
 (##namespace ("github.com/gambit/hello#" hi salut))
-;; macros expansion here
+;; macros
 \end{mplisting}
 \end{center}
-
-Dans l'exemple \ref{lst:import->expand-r7rs}, toutes les identifiants du module
-sont importés. La déclaration \lstcode{##namespace} contient donc toutes les
-les identifiants exportés du module. La déclaration d'espace de nom généré par
-le \lstcode{import} est influencé par la forme utilisé. \\
 
 % TODO: Différent namespaces généré par import.
 
@@ -456,11 +460,10 @@ le \lstcode{import} est influencé par la forme utilisé. \\
 
 \subsection{Expansion du \lstcode{define-library}}
 
-
 La forme \lstcode{define-library} est expansé dans les formes qui composent un
-module primitif. Les déclarations de la bibliothèque sont utilisées dans
+module primitif. Chacune des déclarations de la bibliothèque est utilisée dans
 l'expansion du \lstcode{define-library}. La déclaration d'exportation est
-valide si toutes les identifiants exportés sont distincts.  Une déclaration
+valide si toutes les identifiants exportés sont distincts. Une déclaration
 \lstcode{export} qui exporte un identifiant plusieurs fois cause une erreur de
 syntaxe. Les informations les identifiant exporté ne sont pas utilisé lors
 l'expansion du \lstcode{define-library}, mais lors de l'importation de cette
@@ -474,28 +477,19 @@ façons que dans contexte des programmes principaux.\\
             avant l'expansion.}}
 \begin{mplisting}{0.9}
 (define-library (hello)
-
   (import (scheme base) (scheme write))
-
   (export hi salut)
-
   (begin
-
     (define (exclaim msg1 msg2)
       (display msg1)
       (display msg2)
       (display "!\n"))
-
     (define (hi name) (exclaim "hello " name))
-
     (define (salut name) (exclaim "bonjour " name))
-
     ;; it is best for a library to not have side-effects...
     #;(salut "le monde")))
 \end{mplisting}
-\end{center}
-
-\begin{center}
+  \vspace*{4ex}
   \lstset{language={scheme},captionpos=b,frame=single,
           label={lst:define-library->expand},
           caption={Expansion de la forme \lstcode{define-library}
@@ -515,3 +509,59 @@ façons que dans contexte des programmes principaux.\\
 \end{mplisting}
 \end{center}
 
+\subsubsection{Extensions de Gambit}
+
+Gambit offre des extensions au \lstcode{define-library} et au \lstcode{import}.
+L'importation dans le contexte d'une bibliothèques peut être relatif au module
+courant. Plusieurs déclarations supplémentaires ont été ajouté dans la forme
+\lstcode{define-library}.
+
+\begin{itemize}
+  \item \lstcode{namepase}
+  \item \lstcode{cc-options}
+  \item \lstcode{ld-options} et \lstcode{ld-options-prelude}
+  \item \lstcode{pkg-config} et \lstcode{pkg-config-path}
+\end{itemize}
+
+
+Le listing~\ref{lst:relative-import} est un exemple d'importation
+relatif.  L'importation relatif par du \lstcode{module-ref} du module courant.
+Un \lstcode{import} de \lstcode{(.. C)} à partir du module \lstcode{(A B)}
+correspond à l'importation de \lstcode{(A C)}. C'est pour permettre au sous
+module de tests unitaires de référer au module principal.\\
+
+\begin{center}
+  \lstset{language={scheme},
+          frame=single,
+          captionpos=b,
+          caption={Importation relatif du module \lstcode{(A C)}},
+          label={lst:relative-import}}
+  \begin{mplisting}{0.8}
+(define-library (A B)
+  ;; => (import (A C))
+  (import (.. C)))
+\end{mplisting}
+\end{center}
+
+La déclaration \lstcode{namespace} permet de forcer l'espace de nom d'un module.
+L'utilisation primaire de cette déclaration est l'implémentation de modules qui
+exporte les fonctionnalités déjà implémentées dans Gambit. \\
+
+\begin{center}
+  \lstset{language={scheme},
+          frame=single,
+          captionpos=b,
+          caption={Implémentation de la bibliothèques système \lstcode{(scheme case-lambda)}.},
+          label={lst:relative-import}}
+  \begin{mplisting}{0.8}
+(define-library (scheme case-lambda)
+  (namespace "")
+  (export
+case-lambda
+))
+\end{mplisting}
+\end{center}
+
+Les déclarations \lstcode{cc-options}, \lstcode{ld-options}, \lstcode{ld-options-prelude},
+\lstcode{pkg-config} et \lstcode{pkg-config-path} permet d'ajouter des éléments dans les
+méta informations respectifs.
