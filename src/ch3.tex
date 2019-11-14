@@ -410,7 +410,7 @@ Cela permet d'utiliser des modules primitifs dans un contexte R7RS.\\
 L'importation d'un module R7RS est expansé en trois parties.
 Un \lstcode{##demand-module} pour charger l'implémentation les procédures du
 module. Une déclaration de d'espace de nom qui donne accès auz identifiants
-que le module exporte.\\
+que le module exporte.
 
 \begin{center}
   \lstset{language={scheme},captionpos=b,frame=single,
@@ -465,13 +465,41 @@ valide si toutes les identifiants exportés sont distincts.  Une déclaration
 syntaxe. Les informations les identifiant exporté ne sont pas utilisé lors
 l'expansion du \lstcode{define-library}, mais lors de l'importation de cette
 bibliothèque.  Les déclarations \lstcode{import} sont expansées de la même
-façons que dans contexte des programmes principaux. \\
+façons que dans contexte des programmes principaux.\\
+
+\begin{center}
+  \lstset{language={scheme},captionpos=b,frame=single,
+          label={lst:define-library->expand},
+          caption={C'est le code source du module \lstcode{github.com/gambit/hello}
+            avant l'expansion.}}
+\begin{mplisting}{0.9}
+(define-library (hello)
+
+  (import (scheme base) (scheme write))
+
+  (export hi salut)
+
+  (begin
+
+    (define (exclaim msg1 msg2)
+      (display msg1)
+      (display msg2)
+      (display "!\n"))
+
+    (define (hi name) (exclaim "hello " name))
+
+    (define (salut name) (exclaim "bonjour " name))
+
+    ;; it is best for a library to not have side-effects...
+    #;(salut "le monde")))
+\end{mplisting}
+\end{center}
 
 \begin{center}
   \lstset{language={scheme},captionpos=b,frame=single,
           label={lst:define-library->expand},
           caption={Expansion de la forme \lstcode{define-library}
-            du module \lstcode{github.com/gambit/hello}}}
+            du module \lstcode{github.com/gambit/hello}.}}
   \begin{mplisting}{0.9}
 ;; expansion of (define-library (hello) ...)
 (##declare (block))

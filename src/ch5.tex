@@ -108,9 +108,6 @@ le \lstcode{module-ref}  est utilisé pour déterminer l'emplacement du module
 dans le répertoire des modules. Chaque \lstcode{module-ref} est associé à un
 réperoire unique dans le répertoire des modules.
 
-
-
-
 % Les modules qui sont hébergés sur un serveur de révision comme github, gitlab, bitbucket,
 % etc ont un \lstcode{module-ref} distinct.
 
@@ -138,11 +135,11 @@ réperoire unique dans le répertoire des modules.
 Les modules sont hébergés sur des serveurs de version tel que github, gitlab,
 bitbucket, etc. Chaque version d'un module est installé dans un répertoire
 distinct. Il est donc possible d'avoir plus d'une version d'un module installé.
-L'installation des modules s'effectue par l'intermédiaire de
-\lstcode{git}. Le processus d'installation est séparé en plusieurs étapes.  Le
-contenu du module est installé dans un répertoire temporaire qui est ensuite
-renommé au répertoire de destination. Cela permet d'installer le module de
-façon atomique.
+L'installation des modules s'effectue par l'intermédiaire du module
+\lstcode{_git} qui offre un interface à l'utilitaire \lstcode{git}. Le
+processus d'installation est séparé en plusieurs étapes.  Le contenu du module
+est installé dans un répertoire temporaire qui est ensuite renommé au
+répertoire de destination. Cela permet d'installer le module de façon atomique.
 
 Tout d'abord, la
 branche \lstcode{master} dépôt du module est cloné. Ensuite un archive de la
@@ -182,14 +179,14 @@ et est spécifier par l'option \lstcode{-to}.  La racine par défaut est
 
 \begin{center}
   \begin{mplisting}{1}
-> gsi -install -to /tmp/exemple github.com/frederichamel/semver/tree/1.0.1
+> gsi -install -to /tmp/exemple github.com/frederichamel/semver@1.0.1
 \end{mplisting}
 \end{center}
 
 \section{Désinstallation}
 
 La désinstallation d'un module consiste à supprimer les fichier
-de ce module. Le module \lstcode{gambit/pkg} offre la procédure
+de ce module. Le module \lstcode{_pkg} offre la procédure
 \lstcode{uninsall} qui accepte deux arguments: le nom du module
 et de façon optionnelle le répertoire dans lequel les modules
 sont situé. Les valeurs retournées par cette procédure sont
@@ -216,7 +213,7 @@ La désinstallation du module \lstcode{semver} dans installé dans le
 répertoire \lstcode{/tmp/exemple} est fait par la commande suivante:
 \begin{center}
   \begin{mplisting}{1}
-> gsi -uninstall -to /tmp/exemple github.com/frederichamel/semver/tree/1.0.1
+> gsi -uninstall -to /tmp/exemple github.com/frederichamel/semver@1.0.1
 \end{mplisting}
 \end{center}
 
@@ -241,17 +238,20 @@ Les tests unitaires pour un module nommé \lstcode{A} est un fichier
 \lstcode{A-test.scm} dans le répertoire du module.
 
 \begin{center}
-  \begin{mplisting}{0.8}
-> gsi -test [-to <path>] module
+\begin{mplisting}{0.8}
+> gsi module/test
+*** all tests passed out of a total of %*\textit{N}* tests
 \end{mplisting}
 \end{center}
 
-La commande de test ci-dessus réussi si l'exécution des teste termine sans
+La commande de test ci-dessus réussi si 
 lancer d'erreurs.
 
 % Exemple de tests.
 
 \section{Compilation d'un module}
+La compilation d'un module est fait en passant le nom du module en paramètre.
+
 Il n'y a pas d'options spécial pour demander la compilation d'un module.
 Il suffit d'invoquer le compilateur de Gambit avec le nom du module
 à compiler. Le nom du module est le même que celui utilisé dans la
@@ -262,5 +262,144 @@ l'importation.
 
 \section{Comparaison avec d'autre système}
 
-TODO: not done
+L'organisation des module sur le système de fichier dans Gambit
+diffère de celui de OCaml, Python et NodeJS. Ils ne permettent pas
+l'installation de plus d'une version d'un module directement. Le système
+utilisé dans Go ressemble beaucoup au système implémenté dans Gambit.
+
+Un système de module permet la coexistence de plusieurs version du même module
+sur le système de fichier s'ils sont considérés comme des modules différents.
+L'installation d'un version différente d'un module ne remplace pas la version
+déjà installée. L'organisation des bibliothèques est importante pour permettre
+cette coexistance.
+
+La caractéristique que le système de bibliothèque doit avoir pour permettent
+plusieurs version d'une bibliothèque est un organisation qui permet de distinguer
+les différentes versions de la bibliothèque par un chemin unique.
+La plupart des système de module ne distinguer pas les version d'un même module
+et ne permette l'installation que d'une seul version. Les systèmes de module permettent
+la gestion de différent préfixe dans lequel les modules sont installés. Chaque préfixe peut
+contenir une version différente d'un même module. Pour avoir une nouvelle version d'un module,
+il faut créer un nouveau préfixe.
+
+
+%Le nombre de bibliothèque moyen dans un langage est d'environ 90000 \colorbox{red}{ref}
+%en prennant en compte les gestionnaire de modules (bibliothèques) suivant:
+
+% \todo{Include number of module in pm from www.modulecounts.com}
+
+% Il est à noté que le nombre de bibliothèques qu'un langage possède est lié au nombre
+% d'utilisateur. Aussi le nombre de bibliothèques n'est pas représentatif du nombre
+% réellement utilisé.
+
+\begin{table}[h]
+\begin{tabular}{|r|c|c|c|c|}
+  \hline  & Environnement séparé & Multiple versions & Latest     \\\hline
+  OCaml   & \checkmark           & \xmark            & default    \\\hline
+  Python  & \checkmark           & \xmark            & default    \\\hline
+  NodeJS  & \checkmark           & \xmark            & default    \\\hline
+  Go      & \checkmark           & \checkmark        & default    \\\hline
+%  Gambit Scheme & \checkmark & \checkmark & default \\\hline
+\end{tabular}
+\caption{Comparaison de différent système de module. Le système Go permet plusieurs version
+  d'un module pour des version incompatible selon le sémantique de version. La version \texttt{1.0.0} coexiste avec
+  la version \texttt{2.0.0}. La version récent \texttt{1.2.0} remplace la vielle version \texttt{1.0.1}.}
+\end{table}
+
+
+
+%\subsubsection{Organisation dans Gambit Scheme}
+%\todo{}
+% exemple coexistence sur un système de fichier
+
+\subsection{Organisation de OCaml}
+Le système de gestion de bibliothèques d'OCaml se nomme OPAM. Ce système permet d'avoir
+plusieurs environnement distinct contenant chacun un ensemble de version des bibliothèques.
+Chaque environnement permet l'installation d'une version spécifique de chaque bibliothèque et
+est étiqueté avec un nom choisit par l'utilisateur. Un changement d'environnement est
+effectué par une requête de l'utilisateur \verb|opam switch <envname>|. Il utilise
+le projet \textit{mancoosi}, un projet Européen de recherche dans le 7e cadre de recherche (FP7)
+de la commission Européenne, pour gérer les contrainte de version, les dépendances optionnelles
+et la gestion des conflits. L'environnement par défaut est lié aux dépôts standard d'OCaml.
+
+\subsection{Organisation de Python}
+L'organisation des bibliothèques Python ne permet de stocker que la dernière version
+d'une bibliothèques. Les emplacements des bibliothèques sont modifiés par la variable d'environnement
+\verb|PYTHONPATH| qui correspond dans python à la variable \verb|path| de la bibliothèque
+interne \verb|sys|. Le système de bibliothèque de Python ne permet pas la coexistence de plusieurs
+version de la même bibliothèque. Le \textit{package manager} principal de Python est \textit{pip}.
+L'installation d'une autre version d'une bibliothèque désinstalle
+ou masque la version déjà installé. Le système de module ne permet pas de référer à deux version
+de la même bibliothèques.
+
+\begin{figure}[ht]
+    \begin{minipage}[t]{0.5\textwidth}
+\begin{verbatim}
+>>> import sys
+>>> print('\n'.join(sys.path))
+/usr/lib/python37.zip
+/usr/lib/python3.7
+/usr/lib/python3.7/lib-dynload
+/home/username/.local/lib/python3.7/site-packages
+/usr/lib/python3.7/site-packages
+\end{verbatim}
+    \end{minipage}
+    \caption{L'ensemble des répertoires qui est utilisé par Python version 3.7
+    pour organiser les bibliothèques sur un système de type Linux.}
+\end{figure}
+
+Python a le concept équivalent à OCaml de \textit{virtualenv} qui permet d'avoir plusieurs
+versions installées sur la même machine. Cela permet de d'installer des
+bibliothèques dans un environnement isolé des autre. L'avantage est qu'il est
+possible d'avoir une compatibilité avec des logiciel qui utilise des version de
+bibliothèques antérieur. Un inconvénient est qu'il n'y a pas un partage des
+versions de bibliothèques communes entre les différent environnement, cela a
+comme effet d'avoir plus d'un exemplaire d'une version de la bibliothèque installée
+sur le système de fichier. Chaque \texttt{virtualenv} ne permet qu'une seule version de
+chaque bibliothèque d'être installé.
+
+%\todo{\hspace{2.5in}Image de coexistence venv}
+
+\subsection{Organisation de NodeJS}
+NodeJS est un interprète Javascript qui a été conçu pour être exécuté
+du côté serveur dans un modèle client-serveur. Les bibliothèques sont
+installé au niveau du projet. Cela implique que plusieurs projet qui
+utilise la même version de la bibliothèque vont avoir la même exemplaire
+de la bibliothèque.
+
+La structure d'une bibliothèque dans NodeJS est décrit par un fichier
+\texttt{package.json} qui contient plusieurs les méta données comme
+le nom, la version, le nom des dépendances, la version des dépendances,
+la licence sous laquelle la bibliothèque est publié et plusieurs autres
+méta données lié à la bibliothèque. Sous NodeJS les bibliothèques sont gérer
+par projet plutôt que globalement cela à comme avantage que chaque projet
+fonctionne avec ses versions des bibliothèques.
+
+\subsection{Organisation de Go}
+L'organisation des bibliothèques dans Go est plus dans un
+contexte environnement dont la racine est spécifier par la variable d'environnement \texttt{GOPATH}
+avec un répertoire pour les exécutable compilé (\texttt{bin}),
+un répertoire contenant le code source des différent projets (\texttt{src}) et un
+répertoire pour les objets des modules installé (\texttt{pkg}). Chaque paire de système
+d'exploitation et d'architecture a son propre répertoire dans \texttt{pkg}.
+
+La structure du répertoire dans go
+\todo{Refer to go help golang}
+\begin{verbatim}
+$GOPATH/
+  - bin
+    - ... binaries
+  - src
+    - github.com
+      - UserName1
+        - project1
+        - project2
+      - UserName2
+        - projectA
+        - projectB
+  - pkg
+    - linux_amd64
+      - pkglist
+        - objets
+\end{verbatim}
 
