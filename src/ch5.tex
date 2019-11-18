@@ -74,7 +74,7 @@ un commit du système de révision Git. Un \lstcode{<tag>} vide réfère
 à la version de développement du module.  La syntaxe du
 nom de domaine est donnée par la grammaire[\ref{lst:hostname->grammar}].  La
 grammaire formelle\ref{lst:module-ref->grammar} décrit la syntaxe du
-\lstcode{<module-ref>} dans le cas hébergé et local.
+\lstcode{<module-ref>} dans le cas hébergé et local.\\
 
 \begin{center}
   \lstset{caption={Grammaire formelle},captionpos=b,frame=single}
@@ -169,7 +169,7 @@ L'installation peut être effectué en passant l'option \lstcode{-install}
 de façon optionnelle le préfixe d'installation.
 \begin{center}
   \begin{mplisting}{0.8}
-> gsi -install [-to <path>] module [...]
+$ gsi -install [-to <path>] module [...]
 \end{mplisting}
 \end{center}
 Le préfixe \lstcode{<path>} est la racine utilisée pour installer les modules
@@ -179,7 +179,7 @@ et est spécifier par l'option \lstcode{-to}.  La racine par défaut est
 
 \begin{center}
   \begin{mplisting}{1}
-> gsi -install -to /tmp/exemple github.com/frederichamel/semver@1.0.1
+$ gsi -install -to /tmp/exemple github.com/frederichamel/semver@1.0.1
 \end{mplisting}
 \end{center}
 
@@ -201,7 +201,7 @@ La désinstallation peut être fait en passant l'option \lstcode{-uninstall}
 répertoire  des module à désinstaller.
 \begin{center}
   \begin{mplisting}{0.8}
-> gsi -uninstall [-to <path>] module
+$ gsi -uninstall [-to <path>] module
 \end{mplisting}
 \end{center}
 Le répertoire \lstcode{<path>} est l'emplacement des module
@@ -213,7 +213,7 @@ La désinstallation du module \lstcode{semver} dans installé dans le
 répertoire \lstcode{/tmp/exemple} est fait par la commande suivante:
 \begin{center}
   \begin{mplisting}{1}
-> gsi -uninstall -to /tmp/exemple github.com/frederichamel/semver@1.0.1
+$ gsi -uninstall -to /tmp/exemple github.com/frederichamel/semver@1.0.1
 \end{mplisting}
 \end{center}
 
@@ -226,7 +226,7 @@ de la branche master et d'installer la nouvelle version.
 
 \begin{center}
   \begin{mplisting}{0.8}
-> gsi -update [-to <path>] module
+$ gsi -update [-to <path>] module
 \end{mplisting}
 \end{center}
 
@@ -239,26 +239,33 @@ Les tests unitaires pour un module nommé \lstcode{A} est un fichier
 
 \begin{center}
 \begin{mplisting}{0.8}
-> gsi module/test
+$ gsi module/test
 *** all tests passed out of a total of %*\textit{N}* tests
 \end{mplisting}
 \end{center}
 
-La commande de test ci-dessus réussi si 
-lancer d'erreurs.
+La commande affiche le résultat des tests unitaires contenus dans le
+sous-module test.
 
 % Exemple de tests.
 
 \section{Compilation d'un module}
 La compilation d'un module est fait en passant le nom du module en paramètre.
 
-Il n'y a pas d'options spécial pour demander la compilation d'un module.
-Il suffit d'invoquer le compilateur de Gambit avec le nom du module
-à compiler. Le nom du module est le même que celui utilisé dans la
-l'importation.
-
 %% Module avec du C.
 
+La compilation d'un module se fait par le \texttt{\textit{<module-ref>}}.
+Le compilateur cherche le module dans les répertoires du
+\lstcode{##module-search-order}. Le module est compilé s'il est
+trouvé dans un sous-répertoire du module. La compilation du module
+\texttt{srfi/69} se fait par la commande suivante:
+
+\begin{center}
+\begin{mplisting}{0.8}
+$ gsc srfi/69
+$
+\end{mplisting}
+\end{center}
 
 \section{Comparaison avec d'autre système}
 
@@ -294,11 +301,11 @@ il faut créer un nouveau préfixe.
 
 \begin{table}[h]
 \begin{tabular}{|r|c|c|c|c|}
-  \hline  & Environnement séparé & Multiple versions & Latest     \\\hline
-  OCaml   & \checkmark           & \xmark            & default    \\\hline
-  Python  & \checkmark           & \xmark            & default    \\\hline
-  NodeJS  & \checkmark           & \xmark            & default    \\\hline
-  Go      & \checkmark           & \checkmark        & default    \\\hline
+  \hline   & Multiple versions \\\hline
+  OCaml    & \xmark            \\\hline
+  Python   & \xmark            \\\hline
+  NodeJS   & \xmark            \\\hline
+  Go       & \checkmark        \\\hline
 %  Gambit Scheme & \checkmark & \checkmark & default \\\hline
 \end{tabular}
 \caption{Comparaison de différent système de module. Le système Go permet plusieurs version
@@ -368,7 +375,7 @@ utilise la même version de la bibliothèque vont avoir la même exemplaire
 de la bibliothèque.
 
 La structure d'une bibliothèque dans NodeJS est décrit par un fichier
-\texttt{package.json} qui contient plusieurs les méta données comme
+\texttt{package.json} qui contient plusieurs méta données comme
 le nom, la version, le nom des dépendances, la version des dépendances,
 la licence sous laquelle la bibliothèque est publié et plusieurs autres
 méta données lié à la bibliothèque. Sous NodeJS les bibliothèques sont gérer
@@ -383,7 +390,7 @@ un répertoire contenant le code source des différent projets (\texttt{src}) et
 répertoire pour les objets des modules installé (\texttt{pkg}). Chaque paire de système
 d'exploitation et d'architecture a son propre répertoire dans \texttt{pkg}.
 
-La structure du répertoire dans go
+%La structure du répertoire dans un projet g
 \todo{Refer to go help golang}
 \begin{verbatim}
 $GOPATH/

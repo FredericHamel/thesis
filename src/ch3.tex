@@ -181,8 +181,8 @@ par l'unité courant.  La syntaxe de ces deux formes dans le listing
           caption={Syntaxe \lstcode{demand-module} et \lstcode{supply-module}},
           label={lst:syntax->demand/supply-module}}
   \begin{mplisting}{0.8}
-(##demand-module %*\textit{<module>}*)
-(##supply-module %*\textit{<module>}*)
+(##demand-module %*\textit{<module-ref>}*)
+(##supply-module %*\textit{<module-ref>}*)
 \end{mplisting}
 \end{center}
 
@@ -195,14 +195,15 @@ associer à la méta donnée.
 
 \begin{center}
   \begin{mplisting}{0.5}
-(##meta-info name value)
+(##meta-info %*\textit{<name>}* %*\textit{<value>}*)
+(##meta-info %*\textit{<name>}* %*\textit{<value>}* ...)
 \end{mplisting}
 \end{center}
 
 Les méta informations sont utilisés pour donner des paramètres de compilation
-du module. Les différents méta informations sont \lstcode{##cc-options},
-\lstcode{##ld-options}, \lstcode{##ld-options-prelude}, \lstcode{##pkg-config}
-et \lstcode{##pkg-config-path}. Ces méta informations ne sont utile que pour les modules
+du module. Les différents méta informations sont \lstcode{cc-options},
+\lstcode{ld-options}, \lstcode{ld-options-prelude}, \lstcode{pkg-config}
+et \lstcode{pkg-config-path}. Ces méta informations ne sont utile que pour les modules
 compilés.
 
 \begin{itemize}
@@ -223,7 +224,7 @@ compilés.
 
 \end{itemize}
 
-\section{Implémentation des Modules Primitifs}
+\section{Implémentation des modules primitifs}
 
 Un module primitif est généralement constitué d'un fichier d'entête avec la
 déclaration de l'espace de nom et les définitions de macros et un fichier
@@ -231,46 +232,38 @@ contenant les procédure. Dans Gambit les fichiers d'entête sont marqués par u
 \lstcode{#} juste avant l'extension.
 
 \begin{itemize}
-
-  \item \lstcode{<name>#.scm} est la structure du nom fichier d'entête.
+  \item \texttt{\textit{<name>}\#.scm} est la structure du nom fichier d'entête.
     Ce fichier contient des déclaration d'espace de nom et des
     définitions de macros.
 
-  \item \lstcode{<name>.scm} est la structure du nom du fichier qui contient
+  \item \texttt{\textit{<name>}.scm} est la structure du nom du fichier qui contient
     les procédures du module.
 
 \end{itemize}
 
 Le nom des fichier doit correspondre à la dernier partie du nom de module.  Par
-exemple, le module primitif \lstcode{stk} doit inclure les fichiers
-\lstcode{stk.scm} et généralement \lstcode{stk#.scm}.\\
+exemple, le module primitif \lstcode{angle2} doit inclure les fichiers
+\lstcode{angle2/angle2.scm} et généralement \lstcode{angle2/angle2#.scm}.\\
 \begin{center}
   \lstset{language={scheme},frame=single}
 \begin{mplisting}{0.9}
-;; stk#.scm
-(##namespace ("stk#" empty push pop))
+;; angle2/angle2#.scm
+(##namespace ("angle2#" deg->rad rad->deg))
 \end{mplisting}\\[4ex]
   \lstset{caption={Écriture d'un module qui implémente une pile. Ce module est
             séparé en 2 fichiers. Le fichier \texttt{stk\#.scm} qui contient les
             exportations et \texttt{stk.scm} qui contient les implémentations des
             fonctions.},
           captionpos=b,
-          label={lst:module->stk}}
+          label={lst:module->angle}}
 \begin{mplisting}{0.9}
-;; stk.scm
-(##supply-module stk)
-(##namespace ("stk#"))
-(##include "~~lib/gambit#.scm")
-(##include "stk#.scm")
-
-(define (empty) '())
-(define (push x s) (cons x s))
-(define (pop s) (cdr s))
-
-(define (test)
-  (if (equal? (push 1 (empty)) '(1))
-      "good"
-      "bad"))
+;; angle2/angle2.scm
+(include "angle2#.scm")
+(##namespace ("angle2#" factor))
+(##supply-module angle2)
+(define factor (/ (atan 1) 45))
+(define (deg->rad x) (* x factor))
+(define (rad->deg x) (/ x factor))
 \end{mplisting}
 \end{center}
 
@@ -308,47 +301,41 @@ exemple, le module primitif \lstcode{stk} doit inclure les fichiers
 %\end{figure}
 %\end{center}
 
-Dans l'exemple \ref{lst:module->stk}, il y a dans \lstcode{stk.scm} l'inclusion
-de du fichier d'entête \lstcode{stk#.scm} qui ajoute une déclaration d'espace
-de nom redondante dans ce cas.  La déclaration \lstcode{(##namespace ("stk#"))}
+Dans l'exemple \ref{lst:module->angle}, il y a dans \lstcode{angle2/angle2.scm} l'inclusion
+de du fichier d'entête \lstcode{angle2/angle2#.scm} qui ajoute une déclaration d'espace
+de nom redondante dans ce cas.  La déclaration \lstcode{(##namespace ("angle2#"))}
 implique l'espace de nom ajouté par l'inclusion du fichier d'entête. Il est
-possible que l'espace de nom déclaré dans \lstcode{stk#.scm} ne corresponde
-pas à celui utilisé dans \lstcode{stk.scm}.
+possible que l'espace de nom déclaré dans \lstcode{angle2/angle2#.scm} ne corresponde
+pas à celui utilisé dans \lstcode{angle2/angle2.scm}.
 
-La forme \lstcode{##namespace} dans l'example \ref{lst:module->stk}
+La forme \lstcode{##namespace} dans l'example \ref{lst:module->angle}
 s'applique aux identifiants suivant:
 \begin{center}
   \lstset{language={scheme},keepspaces=true}
   \begin{mplisting}{0.3}
-empty --> stk#empty
-push  --> stk#push
-pop   --> stk#pop
-test  --> stk#test
+factor    --> stk#factor
+deg->rad  --> stk#deg->rad
+rad->deg  --> stk#rad->deg
 \end{mplisting}
 \end{center}
-L'inclusion de \lstcode{\~\~lib/gambit#.scm} force les identifiants
-\lstcode{define}, \lstcode{if}, \lstcode{cons}, \lstcode{cdr} et
-\lstcode{equal?} dans l'espace de nom global. Sans cette inclusion
-ces identifiants sont placés dans l'espace de nom \lstcode{stk#} qui
-ne seront pas définis.
 
 \subsection{La forme \lstcode{\#\#import}}
 %
-L'importation des modules est effectué par la forme \lstcode{\#\#import} qui
+L'importation des modules est effectué par la forme \lstcode{##import} qui
 effectue deux actions, l'inclusion du fichier \lstcode{<name>#.scm} et un
 chargement des définitions.  La forme \lstcode{##import}, comme
 \lstcode{##demand-module} s'occupe de trouver l'emplacement du fichier d'entête
 à partir du nom du module. Elle génère le \lstcode{##include} du fichier
 d'entête s'il existe et un \lstcode{##demand-module} du module.  L'importation
-\lstcode{(##import stk)} est équivalent à:
+\lstcode{(##import angle2)} est équivalent à:
 
 \begin{center}
   \lstset{%
-    caption={Expansion de \lstcode{(\#\#import stk)}},
+    caption={Expansion de \lstcode{(\#\#import angle2)}},
     captionpos=b,
     label={lst:prim-import->stk}}
   \begin{mplisting}{0.9}
-(##include "/un/chemin/stk#.scm")
+(##include "/un/chemin/angle2/angle2#.scm")
 (##demand-module stk)
 \end{mplisting}
 \end{center}
@@ -403,7 +390,7 @@ exporté du module.
 
 L'instruction de chargement du module est générer dans tous les cas qu'un
 module définit des procédures. Un module qui ne définit que des macros ne
-nécessite pas d'être charger durant l'exécution seulement dans le contexte
+nécessite pas d'être charger durant l'exhowdy seulement dans le contexte
 d'expansion des macros. L'importation d'un module R7RS qui ne contient qu'une
 déclaration \lstcode{export} ne nécessite pas d'être chargé durant l'exécution.
 Ce type de module est utilisé pour exporter les fonctionnalité déjà implémenté
@@ -453,7 +440,7 @@ par un \lstcode{import} est donnée par le listing~\ref{lst:import->expand-r7rs-
 (##namespace ("github.com/gambit/hello#" (m-hi hi) (m-salut salut)))
 
 ;; (import (rename (github.com/gambit/hello) (hi bonjour)))
-(##namespace ("github.com/gambit/hello#" (bonjour hi) salut))
+(##namespace ("github.com/gambit/hello#" (howdy hi) salut))
 \end{mplisting}
 \end{center}
 
@@ -491,7 +478,7 @@ façons que dans contexte des programmes principaux.\\
 \end{mplisting}
   \vspace*{4ex}
   \lstset{language={scheme},captionpos=b,frame=single,
-          label={lst:define-library->expand},
+          label={lst:define-library->expand2},
           caption={Expansion de la forme \lstcode{define-library}
             du module \lstcode{github.com/gambit/hello}.}}
   \begin{mplisting}{0.9}
@@ -525,7 +512,8 @@ courant. Plusieurs déclarations supplémentaires ont été ajouté dans la form
 
 
 Le listing~\ref{lst:relative-import} est un exemple d'importation
-relatif.  L'importation relatif par du \lstcode{module-ref} du module courant.
+relatif.  L'importation relatif part:w
+du \lstcode{module-ref} du module courant.
 Un \lstcode{import} de \lstcode{(.. C)} à partir du module \lstcode{(A B)}
 correspond à l'importation de \lstcode{(A C)}. C'est pour permettre au sous
 module de tests unitaires de référer au module principal.\\
@@ -552,7 +540,7 @@ exporte les fonctionnalités déjà implémentées dans Gambit. \\
           frame=single,
           captionpos=b,
           caption={Implémentation de la bibliothèques système \lstcode{(scheme case-lambda)}.},
-          label={lst:relative-import}}
+          label={lst:module->scheme/case-lambda}}
   \begin{mplisting}{0.8}
 (define-library (scheme case-lambda)
   (namespace "")

@@ -1,13 +1,13 @@
 
 \chapter{Bibliothèque Scheme}
 
-Le langage Scheme\cite{Scheme} à été conçu en 1975 par Guy L. Steele et Gerald
+Le langage Scheme\cite{Clinger:2008:SCH:1529966.1529973} à été conçu en 1975 par Guy L. Steele et Gerald
 Jay Sussman.  C'est un langage de programmation avec un système de type
 dynamique, cela signifie que les variables peuvent contenir n'importe quels
 types. Il supporte plusieurs paradigmes de programmation comme fonctionnelle,
 impérative et méta. Chaque expression est représenté sous forme préfixé et
 fortement parenthésé.  Un programme Scheme est une séquence de liste parenthésé
-en forme préfixé, ce sont des \textit{s-expresssions}.  Chaque
+en forme préfixé, ce sont des \textit{s-expressions}.  Chaque
 \textit{s-expression} correspond soit à une constante, une application de
 procédure ou une application de macro. Les macros sont lié au paradigme de
 méta programmation qui manipulent les expressions.
@@ -15,25 +15,25 @@ méta programmation qui manipulent les expressions.
 Les formes de base usuelles en Scheme sont \lstcode{define}, \lstcode{lambda},
 \lstcode{let}, \lstcode{if} and \lstcode{set!}.
 \begin{itemize}
-  \item La forme \lstcode{(define <name> <val>)} associe le nom \lstcode{<name>} avec
-    la valeur \lstcode{<val>}. Il est utilisé pour définir des variables globales.
+  \item La forme \texttt{(define \textit{<name>} \textit{<val>})} associe le nom \textit{<name>} avec
+    la valeur \textit{<val>}. Il est utilisé pour définir des variables globales.
 
-  \item La forme \lstcode{(lambda <args> <body>)} permet la définition de
-    procédures anonymes. Les arguments sont \lstcode{<args>} et le corps
-    de procédure \lstcode{<body>}.
+  \item La forme \texttt{(lambda \textit{<args>} \textit{<body>})} permet la définition de
+    procédures anonymes. Les arguments sont \textit{<args>} et le corps
+    de procédure \textit{<body>}.
 
-  \item La forme \lstcode{(let <bindings> <body>)} permet de créer des
-    associations (\lstcode{<bindings}) visible seulement dans le contexte de
-    \lstcode{<body>}. Les associations sont sous la forme d'une liste
+  \item La forme \texttt{(let \textit{<bindings>} \textit{<body>})} permet de créer des
+    associations (\textit{<bindings}) visible seulement dans le contexte de
+    \textit{<body>}. Les associations sont sous la forme d'une liste
     associative nom et valeur.
 
   %% XXX: Too much???
-  \item Les conditions sont géré par la forme \lstcode{(if <e1> <e2> <e3>)}.
-    La branche \lstcode{<e1>} est exécutée si la condition \lstcode{<e2>} est
-    vrai sinon \lstcode{<e3>}.
+  \item Les conditions sont géré par la forme \texttt{(if \textit{<e1>} \textit{<e2>} \textit{<e3>})}.
+    La branche \textit{<e1>} est exécutée si la condition \textit{<e2>} est
+    vrai sinon \textit{<e3>}.
 
-  \item La forme \lstcode{(set! <name> <val>)} modifie le contenu de la variable
-    \lstcode{<name>} avec la valeur \lstcode{<val>}.
+  \item La forme \texttt{(set! \textit{<name>} \textit{<val>})} modifie le contenu de la variable
+    \textit{<name>} avec la valeur \textit{<val>}.
 \end{itemize}
 
 %read from here
@@ -185,7 +185,7 @@ utilisant la méta programmation.
 La programmation méta est présente dans plusieurs langage comme C, C++, LISP,
 Haskell, Scheme, etc. Elle est basé sur la capacité d'un programme de manipuler
 d'autre programme comme des données. Cela implique qu'il est possible de
-générer, analyser et modifier le code d'un autre programme s'incluant.  Les
+générer, analyser et modifier le code d'un autre programme.  Les
 constructions utilisées pour manipuler le code du programme et
 ajouter des extensions au langage sont les macros.
 
@@ -198,9 +198,8 @@ paramètres.  Les paramètres sont passés à la macro sans être évalués, c'e
 qu'on appelle le passage par nom.  Certain Scheme offre la forme
 \lstcode{define-macro} pour définir les macros.  Cette forme est équivalente au
 \lstcode{defmacro} de LISP. Elle accepte en entré des \textit{s-expression}s et
-retourne une \textit{s-expression} (soit une liste ou une constante).  Le
-problème de cette forme spéciale est l'hygiène qui est traité dans le chapitre
-\ref{XXX}.
+retourne une \textit{s-expression} (soit une liste ou une constante).  Cette
+forme spéciale a un problème d'hygiène.
 
 \begin{figure}[htbp]
   \begin{tabular}{|l|}\hline
@@ -272,7 +271,7 @@ la forme \lstcode{include} avec \lstcode{define-syntax} qui est l'alternative à
    \label{fig:macro_include_def_syntax}
 \end{figure}
 
-\section{Structure des Bibliothèques}
+\section{Structure des bibliothèques}
 
 Les bibliothèques, aussi appelées modules, facilitent le partage de
 fonctionnalités entre plusieurs programmes. Dans le standard
@@ -505,17 +504,29 @@ identifiants du module et parfois même associe un nom local aux identifiants.
 Le \lstcode{import} peut prendre l'une des formes suivante:
 \begin{itemize}
   \label{itm:import-set}
-  \item \lstcode{<library-name>}
-  \item \lstcode{(only <import-set> id1 ...)}
-  \item \lstcode{(except <import-set> id1 ...)}
-  \item \lstcode{(prefix <import-set> id)}
-  \item \lstcode{(rename <import-set> (id1 id2) ...)}
+  \item \texttt{\textit{<library-name>}}
+  \item \texttt{(only \textit{<import-set>} \textit{<id1>} ...)}
+  \item \texttt{(except \textit{<import-set>} \textit{<id1>} ...)}
+  \item \texttt{(prefix \textit{<import-set>} \textit{<id>})}
+  \item \texttt{(rename <import-set> (\textit{<id1>} \textit{<id2>}) ...)}
 \end{itemize}
 
 
+Dans la première forme importe tous les identifiants exportés par
+la bibliothèque \texttt{\textit{<library-name>}}. Les autres types de
+\texttt{\textit{<import-set>}} modifient l'ensemble comme suit:
 
---------------------------------------END---------------------------------------\\
+\begin{itemize}
+  \item \textbf{only} inclut seulement les identifiants spécifiés. C'est un
+    erreur d'importer un identifiant non exporté par la bibliothèque.
 
+  \item \textbf{except} permet d'exclure des identifiants de l'ensemble.
+
+  \item \textbf{rename} renomme les identifiants importés.
+
+  \item \textbf{prefix} ajoute un préfixe à l'ensemble des identifiants
+    importés.
+\end{itemize}
 
 % L'implémentation des bibliothèques Scheme est basé sur le standard R7RS qui
 % conserve la procédure \texttt{load} que le R6RS enlève et remplace la structure
@@ -560,16 +571,6 @@ Le \lstcode{import} peut prendre l'une des formes suivante:
   \label{fig:r6rs_r7rs_math_mdoule}
 \end{figure}
 \end{center}
-
-La syntaxe \lstinline{import} définit dans le R7RS indique le nom de
-de la bibliothèque à collecter en plus des information sur les composante
-à importer.
-\begin{figure}[ht]
-  \begin{mplisting}{0.9}
-(import (only (gambit thread) make-thread thread-start! thread-join!))
-\end{mplisting}
-  \caption{Importation d'un sous-ensemble des fonctionnalités de la bibliothèque}
-\end{figure}
 
 % - (import (foo)) ; exportant f1 f2 f3
 % ===>
