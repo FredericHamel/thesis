@@ -61,13 +61,28 @@ le chapitre \ref{ch:loading-model}.
 %     - Revient au chargement dynamique de ce module.
 
 Dans un système distribué, il est possible de transmettre des tâches entre les
-différents systèmes. C'est ce qu'on appelle, \textit{migration de tâche}.  Un
-programme distribué est séparé sur plusieurs systèmes. Qu'est-ce qui se passe
+différents systèmes. C'est ce qu'on appelle, \textit{migration de tâche}.
+Un exemple de migration de tâche est l'invocation de \texttt{ssh} qui permet
+d'exécuter un processus sur un système distant. Le problème de cette approche
+est que le programme doit exister sur la machine distante.
+Des mécanismes de migration de code ont été implémentés dans différents langages
+comme Erlang~\cite{DBLP:conf/agere/FrancalanzaZ13}, Java~\cite{And98transparentmigration},
+Scheme~\cite{Sumii00animplementation}, Javascript~\cite{DEV2017transparentmigration}, \dots.
+La plupart des méthodes de migration de code ont comme contrainte que les dépendances
+du code soit présentes sur le système distant.
+
+
+Un programme distribué est séparé sur plusieurs systèmes. Qu'est-ce qui se passe
 si une tâche transmit réfère à un module absent sur le système distant?  Le
 système distant peut soit lancé une exception, ou tenté de résoudre la
-fonctionnalité manquante. La première solution est la plus simple et aussi la
+fonctionnalité manquante.
+
+
+La première solution est la plus simple et aussi la
 plus restrictive, car elle inhibe la capacité de migrer une tâche. Le chapitre
 \ref{ch:task_migration} traite de la seconde solution mentionné.
+
+
 
 % \section{Linkage statique}
 % Cette forme d'édition de lien permet la création de binaire qui indépendant
