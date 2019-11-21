@@ -516,7 +516,8 @@ relatif.  L'importation relatif part:w
 du \lstcode{module-ref} du module courant.
 Un \lstcode{import} de \lstcode{(.. C)} à partir du module \lstcode{(A B)}
 correspond à l'importation de \lstcode{(A C)}. C'est pour permettre au sous
-module de tests unitaires de référer au module principal.\\
+module de tests unitaires de référer au module principal en préservant le
+\lstcode{<module-ref>} avec la version. \\
 
 \begin{center}
   \lstset{language={scheme},
@@ -526,8 +527,8 @@ module de tests unitaires de référer au module principal.\\
           label={lst:relative-import}}
   \begin{mplisting}{0.8}
 (define-library (A B)
-  ;; => (import (A C))
-  (import (.. C)))
+  (import (.. C))  ;; => (import (A C))
+  (import (..))) ;; => (import (A))
 \end{mplisting}
 \end{center}
 
