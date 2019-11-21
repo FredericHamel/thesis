@@ -292,7 +292,28 @@
 \francais{}
 
 \chapter*{Sommaire}
-sommaire et mots clés en français
+Le présent mémoire décrit un système de module
+qui améliore la migration de code dans le langage
+distribué Termite. Ce système de module à la possibilité
+d'être utilisé dans les applications non -- distribués
+ou distribué. Ce système de module à pour but de facilité
+une conception des programmes dans un structure modulaire
+et faciliter la migration de code entre des nœuds
+d'un système distribué. Le système de module est conçu pour
+Gambit, un compilateur interprète de Scheme.
+
+Le modèle de module utilisé permet d'identifier les module
+de façon unique dans un contexte distribué. La facilité
+d'utilisation et la portabilité ont été des facteurs considéré
+dans la conception du système de module.
+
+Le mémoire décrit la structure des modules Scheme, son implémentation
+dans Gambit et son application. Le capacité du système de module sont
+démontrer par des exemples.
+
+\vspace*{1.5ex}
+\noindent\textbf{Mots clés}: Langage de Programmation fonctionnel,
+Scheme, Erlang, Système de module, Système distribué, Agent mobile.
 
 %%------------------------------------------------- %
 %%              pages iv                            %
@@ -301,7 +322,24 @@ sommaire et mots clés en français
 \anglais{}
 \chapter*{Summary}
 
-summary and keywords in english
+This thesis present a module system for Gambit Scheme
+that allows distributed computing. This module system
+ease the application modularity and ease code migration
+between node of a distributed system. Termite Scheme is
+used to implement the distributed applications.
+
+This module system uses a naming model for the module
+so they can be uniquely identify in a distributed
+context. Both ease to use and portability were taken
+into account in the system module design.
+
+The thesis will describe the Scheme module structure and how
+it was implemented into Gambit. The capacity of this system
+is shown with application example.
+
+\vspace*{1.5ex}
+\noindent\textbf{Keywords}: Functional programming, Scheme, Erlang,
+Module System, Distributed System, Mobile Agent.
 
 %%------------------------------------------------- %
 %%        page v --- Table de matieres              %
@@ -355,7 +393,7 @@ remerciements
 %%                                                  %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\include{intro}
+%\include{intro}
 
 %%------------------------------------------------- %
 %%                pages 1                           %
@@ -1251,6 +1289,7 @@ la politique lié au module (\url{https://docs.npmjs.com/cli/unpublish}).
 %%         références --- bibliographie             %
 %%------------------------------------------------- %
 
+\nocite{*}
 \bibliographystyle{plain-fr}
 \bibliography{references.bib}
 
