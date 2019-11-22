@@ -152,53 +152,6 @@ objet en fichier exécutable.
 %    \caption{Exemple de création d'un exécutable}
 %\end{figure}
 
-Pour permettre la réutilisation de code et faciliter
-l'écriture de programme plus complexe, le concept de bibliothèque de code est
-apparu. Par la contrainte des systèmes, le premier type de bibliothèques utilisé
-étaient dit statique.  Elles consistaient en un regroupement logique de
-plusieurs fichiers objets en un archive (.a). La création d'une bibliothèque
-statique peut s'effectuer avec l'utilitaire \verb|ar|. Lorsque que programme se
-lie à une bibliothèque statique, il inclut tout simplement l'ensemble des
-procédures contenu dans les fichiers objets. L'avantage des bibliothèques
-statiques est de regrouper plusieurs fonctionnalité commune en un seul concept,
-par exemple la bibliothèque mathématique \verb|libm.a| qui contient les
-fonctions mathématique (i.e. \verb|cos|, \verb|sin|).  En plus,  fait que le
-processus d'édition des liens, qui consiste à associer les noms des
-fonctionnalités avec leur valeur (AMBIGU), n'est effectué juste une fois. Une
-liaison avec une bibliothèque statique \verb|libfoo.a| qui contient le fichier
-objet \verb|foo.o| est équivalent à une liaison directe avec le fichier
-\verb|foo.o|.
-
-\begin{figure}[ht]
-    \begin{minipage}[t]{0.5\textwidth}
-\begin{verbatim}
-# Création de la bibliothèque statique libfoo.a
-ar rcs libfoo.a foo.o
-# Création de l'exécutable main.exe
-ld -o main.exe main.o libfoo.a
-\end{verbatim}
-    \end{minipage}
-
-    \caption{Exemple de création de bibliothèque statique suivit d'un exemple
-    d'utilisation.}
-\end{figure}
-
-\todo{Citation}
-Un des problèmes des bibliothèques statiques le coût est lié à la maintenance.  Les
-programmes qui utilise des bibliothèques statiques ne permettent pas une
-construction modulaire. La mise à niveau d'une des bibliothèques statiques
-nécessite la recompilation du programme au complet. En plus, cela n'est pas
-adapté pour des application d'un application évolutif qui peuvent être étendu
-par l'utilisateur. Une solution qui a été adopté est le
-concept des bibliothèques partagés (ou dynamique). Cela offre une plus grande
-liberté dans la conception des programmes. Un programme qui ce lié avec une
-bibliothèque partagé ne contient pas les définitions importé de la
-bibliothèque, seulement l'information pour la trouvé. Cette information
-consiste généralement aux noms de la fonctionnalités utilisé et des
-bibliothèques dépendantes. Contrairement aux bibliothèques statiques,
-l'édition des liens s'effectue à chaque exécution du programme.
-Les bibliothèques partagés offre plusieurs avantages par rapport
-aux bibliothèques statique.
 
 La construction d'un programme peut s'effectuer de façon modulaire; chaque
 composantes du programme peuvent être construites en séparément.  La
