@@ -179,15 +179,26 @@ digit         = [0-9]
 
 
 \subsection{Installation automatique}
-L'installation automatique d'un module dépend du contenu de la \textit{whitelist}.
-La \textit{whitelist} contient une liste de préfixe de \textit{<module-ref>}.
+%
+L'installation automatique d'un module dépend du contenu de la
+\textit{whitelist}.  La \textit{whitelist} contient une liste de préfixe
+utilisé pour valider les \textit{<module-ref>}. La validation consiste
+a trouvé un élément dans la \textit{whitelist} qui correspond à un
+préfixe du \textit{<module-ref>}.
 
-Un module hébergé est installé automatiquement s'il est présent dans la liste
-nommée \textit{whitelist}. Cette contient des préfixes de \textit{<module-ref>}
-qui sont considéré par l'utilisateur de confiance. Par défaut \texttt{github.com/gambit}
-est inclus dans cette liste.  Cela implique que tous les modules sous \texttt{github.com/gambit}
-peuvent être installé automatiquement.
+Un élément est considéré un préfixe si chaque composants sont inclus dans le
+\textit{<module-ref>} dans le même ordre. L'élément \texttt{github.com/gambit}
+est un préfixe de \texttt{github.com/gambit/hello}, car les parties
+\textit{github.com} et \textit{gambit} font partie du \textit{<module-ref>}. Le
+module \textit{github.com/gambitXYZ/hello} ne contient pas le préfixe
+\textit{gihtub.com/gambit}, car \textit{gambit} est différent de
+\textit{gambitXYZ}.
 
+
+Par défaut \texttt{github.com/gambit} est inclus dans cette liste. 
+Cela implique que tous les modules sous \texttt{github.com/gambit}
+peuvent être installé automatiquement. La \textit{whitelist} peut
+être modifié par un option de l'interprète:
 
 \begin{center}
   \begin{mplisting}{0.4}
@@ -197,7 +208,6 @@ $ gsi -:whitelist=github.com/foo
 \end{mplisting}
 \end{center}
 
-%L'installation d'un module hébergé dont le no
 
 
 \subsection{Module \texttt{\_git}}
