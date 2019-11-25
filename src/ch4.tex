@@ -134,24 +134,59 @@ répertoire de bibliothèque utilisateur (\lstinline{~~userlib}).
 Chaque module possède trois niveaux d'initialisation dans le système numérotés de
 0 à 2. Le niveau 0 indique que le module est collecté, mais non initialisé. Le
 niveau 1 indique que le descripteur du module à été récupéré. Le niveau 2 marque
-les module chargé qui sont près à être utilisé.
+les module chargé qui sont près à être utilisé. \\
 
-Soit un système avec les dépendance suivante:
+% \begin{figure}[h]
+%   \lstset{language={Scheme},frame=single}
+%   \begin{mplisting}{1}
+% > (##get-module '_zlib)
+% #(_zlib
+%   0
+%   #(#(_zlib) #(_digest) () 1 #<procedure #2> #<foreign #3 0x7f0514907740>))
+% \end{mplisting}
+% \end{figure}
+\begin{figure}[h]
+  \lstset{language={Scheme},frame=single}
+  \begin{mplisting}{1}
+> (define mods (##collect-modules '(_zlib)))
+> mods
+(#(_digest
+   0
+   #(#(_digest) #() () 1 #<procedure #2> #<foreign #3 0x7f448797ec00>))
+ #(_zlib
+   0
+   #(#(_zlib) #(_digest) () 1 #<procedure #4> #<foreign #5 0x7f44879f6740>))
+ )
+> (##init-modules mods)
+#t
+> ##registered-modules
+(#(_digest 2 #(#(_digest) #() () 1 #<procedure #2 _digest#> ...))
+ #(_zlib 2 #(#(_zlib) #(_digest) () 1 #<procedure #4 _zlib#> ...))
+ ...)
+\end{mplisting}
+  \caption{Un exemple qui montre la collection des modules à partir du module
+    \texttt{\_zlib} suivit de l'initialisation des modules collectés. La collection
+    des modules est éffectuée par la procédure \texttt{\#\#collect-module}. L'ensemble
+    des modules retournés sont initialisés par la procédure \texttt{\#\#init-modules}.
+    Les enregistrements des modules \texttt{\_zlib} et \texttt{\_digest} sont montrer
+    par la variable \texttt{\#\#registered-modules}.}
+\end{figure}
+
 \begin{figure}[ht]
   \includegraphics{figures/system-example}
   \caption{Un exemple d'un système fictif composé de différents modules.
   Le module principale se nomme \textbf{main.scm} avec l'extension \textbf{.scm}
   et les bibliothèques ont l'extension \textbf{.sld}}
+  \label{fig:system-dependency-example}
 \end{figure} % TODO: use yed for that graph
 
 
-Le démarrage du module principal \textbf{main.scm} déclenche la collection des
-modules X et Y, qui récursivement déclenche la collection de W et Z.
-L'algorithme de collection des modules gère les modules qui apparaisse
-plusieurs fois au sein du graphe.  Une fois la collection de tous ces modules
-est complété le descripteur de module est récupéré par un appels aux primitives
-du système d'exploitation si compilé.
-
+Dans l'exemple~\ref{fig:system-dependency-example}, l'exécution du module principal
+\textbf{main.scm} déclenche la collection des modules X et Y, qui récursivement
+déclenche la collection de W et Z.  L'algorithme de collection des modules gère
+les modules qui apparaisse plusieurs fois au sein du graphe.  Une fois la
+collection de tous ces modules est complété le descripteur de module est
+récupéré par un appels aux primitives du système d'exploitation si compilé.
 
 \section{Module hébergé}
 
@@ -208,15 +243,49 @@ $ gsi -:whitelist=github.com/foo
 \end{mplisting}
 \end{center}
 
+En plus de la \textit{whitelist} il y a aussi le mode d'installation.
+Le mode d'installation indique si l'installation demande une confirmation
+à l'usager lors de l'installation d'un module qui n'est pas dans la
+\textit{whitelist}. Il y a trois modes d'installation.
+\begin{itemize}
+  \item \textbf{never}: il y a seulement les modules qui sont dans la
+    \textit{whitelist} qui peuvent être installé.
+
+  \item \textbf{repl}: les modules qui ne sont pas dans la \textit{whitelist}
+    peuvent être installé avec la confirmation textuelle de l'usager s'il y a
+    une \textit{repl}.
+
+  \item \textbf{ask-always}: les modules qui ne sont pas dans la \textit{whitelist}
+    peuvent être installé avec la confirmation textuelle de l'usager.
+\end{itemize}
+
+Le mode d'installation est spécifié par le \textit{runtime option} nommé
+\textit{ask-install}.
+\begin{figure}[h]
+  \lstset{language={Scheme}}
+\begin{mplisting}{1}
+$ gsi -:ask-install=always
+Gambit v4.9.3
+
+> (import (github.com/frederichamel/semver))
+Hosted module github.com/frederichamel/semver is required but is not installed.
+Download and install (y/n)? n
+*** ERROR IN (stdin)@1.9 -- Cannot find library (github.com/frederichamel/semver)
+>
+\end{mplisting}
+  \caption{L'exemple montre le résultat d'une réponse négative lors de
+    l'installation du module qui n'est pas dans la \textit{whitelist}.
+    Il ne se fait pas installé.}
+\end{figure}
 
 
-\subsection{Module \texttt{\_git}}
+% \subsection{Module \texttt{\_git}}
 
-Ce module offre un interface pour utiliser interagir avec les des dépôts git.
-Il permet de cloner un dépôts qui est hébergé sur \url{github.com}. Un clone du
-dépôts est simplement un copie qui contient les informations suffisantes pour
-passer d'une version d'un module à un autre. L'opération qui permet de changer
-de version est \emph{checkout}.
+% Ce module offre un interface pour utiliser interagir avec les des dépôts git.
+% Il permet de cloner un dépôts qui est hébergé sur \url{github.com}. Un clone du
+% dépôts est simplement un copie qui contient les informations suffisantes pour
+% passer d'une version d'un module à un autre. L'opération qui permet de changer
+% de version est \emph{checkout}.
 
 
 %-------------------------------------------------------------------------------
