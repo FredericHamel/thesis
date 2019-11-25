@@ -250,22 +250,37 @@ sous-module test.
 % Exemple de tests.
 
 \section{Compilation d'un module}
-La compilation d'un module est fait en passant le nom du module en paramètre.
-
-%% Module avec du C.
-
-La compilation d'un module se fait par le \texttt{\textit{<module-ref>}}.
-Le compilateur cherche le module dans les répertoires du
-\lstcode{##module-search-order}. Le module est compilé s'il est
-trouvé dans un sous-répertoire du module. La compilation du module
-\texttt{srfi/69} se fait par la commande suivante:
+%
+La compilation d'un module est fait en passant le nom du module
+(\texttt{\textit{<module-ref>}}) en paramètre.  Le compilateur cherche le
+module dans les répertoires du \lstcode{##module-search-order}. Le module est
+installé au besoin et ensuite compilé dans un sous répertoire. Ce dossier associe
+la compilation de ce module à la version de Gambit et à la cible (C, JavaScript, \dots).
+La compilation d'un module se fait par la commande suivante:
 
 \begin{center}
 \begin{mplisting}{0.8}
-$ gsc srfi/69
-$
+$ gsc %*\textit{<module-ref>}*
 \end{mplisting}
 \end{center}
+
+%% Module avec du C.
+L'arborescence du répertoire du module après la compilation du module
+\texttt{\_digest} pour le \textit{backend} C ressemble à:
+%
+\begin{center}
+\begin{mplisting}{0.8}
+|-- _digest@gambit409003@C
+|   |-- _digest.c
+|   `-- _digest.o1
+|-- _digest#.scm
+|-- _digest.scm
+`-- test.scm
+
+1 directory, 5 files
+\end{mplisting}
+\end{center}
+
 
 \section{Comparaison avec d'autre système}
 
@@ -382,6 +397,15 @@ méta données lié à la bibliothèque. Sous NodeJS les bibliothèques sont gé
 par projet plutôt que globalement cela à comme avantage que chaque projet
 fonctionne avec ses versions des bibliothèques.
 
+\subsection{Organisation de Java}
+%
+Les modules en Java sont nommé \textit{package}.  Le nom des modules utilise
+généralement l'inverse d'un url comme espace de nom. Par exemple, les noms des
+modules liés aux services Google vont débuté par \texttt{com.google}. Cette
+convention à pour but d'unifier les noms de module. La version des module n'est
+pas lié au nom du module dans le cas de Java. Il n'est pas possible de chargé
+deux module qui utilise le même espace de nom, comme deux version d'un même module.
+
 \subsection{Organisation de Go}
 L'organisation des bibliothèques dans Go est plus dans un
 contexte environnement dont la racine est spécifier par la variable d'environnement \texttt{GOPATH}
@@ -389,6 +413,29 @@ avec un répertoire pour les exécutable compilé (\texttt{bin}),
 un répertoire contenant le code source des différent projets (\texttt{src}) et un
 répertoire pour les objets des modules installé (\texttt{pkg}). Chaque paire de système
 d'exploitation et d'architecture a son propre répertoire dans \texttt{pkg}.
+
+Le système Go permet l'installation de plusieurs version d'un même module dans
+le même environnement en utilisant le service \textit{gopkg.in}. Il y a deux
+syntaxes utilisées pour l'url des module Go avec \textit{gopkg.in}. Il est possible
+de spécifier une version spécifique du module lors de l'importation.
+
+\noindent
+\begin{mplisting}{1}
+gopkg.in/pkg.v3      -> github.com/go-pkg/pkg (branch/tag v3, v3.N, or v3.N.M)
+gopkg.in/user/pkg.v3 -> github.com/user/pkg   (branch/tag v3, v3.N, or v3.N.M)
+\end{mplisting}
+
+\begin{mplisting}{1}
+import "gopkg.in/oauth2.v2" oauthv2
+import "gopkg.in/oauth2.v3" oauthv3
+
+fun main() {
+  // use oauthv2 et oauthv3
+}
+\end{mplisting}
+
+% https://labix.org/gopkg.in
+% go help importpath
 
 %La structure du répertoire dans un projet g
 \todo{Refer to go help golang}
