@@ -2,7 +2,7 @@
 \chapter{Gestion des modules}
 \label{ch:module_management}
 % Installation, Désinstallation, Mise à jour, Compilation/Exécution
-La gestion des modules inclus généralement l'installation, la mise à jour et
+La gestion des modules inclut généralement l'installation, la mise à jour et
 la désinstallation. L'organisation des modules est un élément important
 dans la gestion des modules. Les gestionnaires de modules sont présent dans
 beaucoup de langage telle que Python, Ruby, Javascript, Common Lisp, Go, etc.
@@ -314,19 +314,25 @@ il faut créer un nouveau préfixe.
 % d'utilisateur. Aussi le nombre de bibliothèques n'est pas représentatif du nombre
 % réellement utilisé.
 
-\begin{table}[h]
+\begin{figure}[h]
 \begin{tabular}{|r|c|c|c|c|}
   \hline   & Multiple versions \\\hline
   OCaml    & \xmark            \\\hline
   Python   & \xmark            \\\hline
   NodeJS   & \xmark            \\\hline
+  Java     & \xmark            \\\hline
   Go       & \checkmark        \\\hline
 %  Gambit Scheme & \checkmark & \checkmark & default \\\hline
 \end{tabular}
-\caption{Comparaison de différent système de module. Le système Go permet plusieurs version
-  d'un module pour des version incompatible selon le sémantique de version. La version \texttt{1.0.0} coexiste avec
-  la version \texttt{2.0.0}. La version récent \texttt{1.2.0} remplace la vielle version \texttt{1.0.1}.}
-\end{table}
+
+\caption{Une table qui compare différent système de module sur la capacité
+  d'installer plusieurs version d'un module.  Le système Go permet plusieurs
+  version d'un module pour des version incompatible selon le sémantique de
+  version. La version \texttt{1.0.0} coexiste avec la version \texttt{2.0.0}.
+  La version récent \texttt{1.2.0} remplace la vielle version \texttt{1.0.1}.}
+
+\end{figure}
+
 
 
 
@@ -425,14 +431,30 @@ gopkg.in/pkg.v3      -> github.com/go-pkg/pkg (branch/tag v3, v3.N, or v3.N.M)
 gopkg.in/user/pkg.v3 -> github.com/user/pkg   (branch/tag v3, v3.N, or v3.N.M)
 \end{mplisting}
 
+\begin{figure}[h]
+  \lstset{language={Go},frame=single}
 \begin{mplisting}{1}
-import "gopkg.in/oauth2.v2" oauthv2
-import "gopkg.in/oauth2.v3" oauthv3
+package main
 
-fun main() {
-  // use oauthv2 et oauthv3
+import (
+  hellov1 "gopkg.in/FredericHamel/go-hello.v1"
+  hellov2 "gopkg.in/FredericHamel/go-hello.v2"
+)
+
+func main() {
+  // use hello version 1
+  hellov1.Hello("Bob")
+
+  // use hello version 2
+  hellov2.Salut("Alice")
+
+  // hellov1.Salut("Eve")
 }
 \end{mplisting}
+  \caption{Un exemple qui montre l'importation de deux version d'un même module
+    en Go. Le module \textbf{go-hello} version 2 exporte la fonction \texttt{Salut}
+    qui n'existe pas dans la version \texttt{1}.}
+\end{figure}
 
 % https://labix.org/gopkg.in
 % go help importpath
