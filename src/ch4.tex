@@ -188,6 +188,54 @@ les modules qui apparaisse plusieurs fois au sein du graphe.  Une fois la
 collection de tous ces modules est complété le descripteur de module est
 récupéré par un appels aux primitives du système d'exploitation si compilé.
 
+
+\subsection{Module compilé dans Gambit}
+% La construction d'un programme peut s'effectuer de façon modulaire; chaque
+% composantes du programme peuvent être construites en séparément.  La
+% modification d'une des bibliothèques partagés utilisés par
+% le programme ne nécessite pas la recompilation de celui-ci. Le nom qui est
+% donné à l'entité qui résout les noms des fonctionnalités est l'éditeur de liens (\textit{dynamic linker}).
+% Habituellement les bibliothèques exportent des fonctions, mais il peuvent aussi
+% exporter plusieurs types de données comme des entiers, des nombres à virgules,
+% des chaînes de caractères et des données composites (structures). Chacune de ces données est
+% associées à un nom unique (symbole) au sein de la bibliothèque.
+% Il n'est pas possible d'avoir deux bibliothèques statiques qui exportent une
+% fonctionnalité avec le même nom au sein d'une même application, alors qu'avec
+% les bibliothèques partagés c'est possible. Cela limite le choix des
+% bibliothèques qui peuvent être utilisé simultanément au sein du programme;
+% chaque bibliothèque doit avoir un ensemble de nom de fonctionnalité distinct
+% des autres. Puisque la résolution d'une fonctionnalité retourne la première
+% occurrence trouvée, il n'y a rien qui empêche d'avoir plus d'une fonctionnalité
+% associée au même nom.
+
+Les modules dans Gambit peuvent être compilé pour plus de performance en
+bibliothèque dynamique. Les programmes principaux peuvent être compilé en
+exécutable.  Gambit permet de l'utilisation de bibliothèques statiques et
+dynamiques.\\
+
+\begin{figure}[ht]
+  \centering
+  \lstset{language={Scheme},frame=single}
+
+  \begin{mplisting}{0.5}
+;; fib.scm
+(define (fib n)
+  (if (< n 2)
+      n
+      (+ (fib (- n 1))
+         (fib (- n 2)))))
+\end{mplisting}
+  \caption{Un module qui implémente la fonction mathématique \texttt{fib}.}
+  \label{fig:basic_fib_module}
+\end{figure}
+
+\vspace{-20pt}
+La construction d'un bibliothèque dynamique à partir du fichier \texttt{fib.scm}
+de la figure \ref{fig:basic_fib_module} s'effectue par le compilateur de Gambit
+qui nomme \texttt{gsc}. Cela produit un fichier avec l'extension \texttt{.oN}
+où le \texttt{N} correspond à la version généré de la bibliothèque qui commence à 1.
+
+
 \section{Module hébergé}
 
 Un module qui est hébergé est un module qui dont son contenu
