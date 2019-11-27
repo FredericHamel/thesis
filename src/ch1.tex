@@ -60,28 +60,37 @@ le chapitre \ref{ch:loading-model}.
 %     - Télécharger le module d'un serveur dédié.
 %     - Revient au chargement dynamique de ce module.
 
-Dans un système distribué, il est possible de transmettre des tâches entre les
-différents systèmes. C'est ce qu'on appelle, \textit{migration de tâche}.
-Un exemple de migration de tâche est l'invocation de \texttt{ssh} qui permet
-d'exécuter un processus sur un système distant. Le problème de cette approche
-est que le programme doit exister sur la machine distante.
-Des mécanismes de migration de code ont été implémentés dans différents langages
-comme Erlang~\cite{DBLP:conf/agere/FrancalanzaZ13}, Java~\cite{And98transparentmigration},
-Scheme~\cite{Sumii00animplementation}, Javascript~\cite{DEV2017transparentmigration}, \dots.
-La plupart des méthodes de migration de code ont comme contrainte que les dépendances
-du code soit présentes sur le système distant.
+Un programme distribué est séparé sur plusieurs systèmes. Dans un système
+distribué, il est possible de transmettre des tâches entre les différents
+systèmes. C'est ce qu'on appelle, \textit{migration de tâche}.  Un exemple de
+migration de tâche est l'invocation de \texttt{ssh} qui permet d'exécuter un
+processus sur un système distant. Le problème de cette approche est que le
+programme doit exister sur la machine distante et que chaque invocation passe
+par une authentification. Des mécanismes de migration de code ont été
+implémentés dans différents langages comme Erlang~\cite{M_mobileintelligent},
+Java~\cite{And98transparentmigration}, Scheme~\cite{Sumii00animplementation},
+Javascript~\cite{DEV2017transparentmigration}, \dots.  La plupart des méthodes
+de migration de code requièrent que l'ensemble des procédures sont
+présentes sur le système distant.
 
+Le système Java~\cite{And98transparentmigration} capture l'état du programme courant
+qui consiste aux valeurs et aux types de toutes les variables de chaque objet. L'autre
+information est la pile des appels de méthode avec les valeurs de toutes les variable.
+Ces informations sont transmis et utilisés pour reconstruire l'état du programme.
+L'ensemble des méthodes sur le nœud de départ est présent sur le nœud d'arrivé.
+Le système Erlang~\cite{M_mobileintelligent} requière aussi que le code soit disponible
+sur le nœud destination.
 
-Un programme distribué est séparé sur plusieurs systèmes. Qu'est-ce qui se passe
-si une tâche transmit réfère à un module absent sur le système distant?  Le
-système distant peut soit lancé une exception, ou tenté de résoudre la
-fonctionnalité manquante.
+Le système de migration en Javascript utilise des dépôts de code pour
+conserver le code. Il est basé sur le fait que le code des agents
+sont connus. Puisque le code des agents est connu, il suffit de transmettre
+l'état de l'agent. Ce modèle Javascript ressemble à celui implémenté dans
+dans Gambit.
 
-
-La première solution est la plus simple et aussi la
-plus restrictive, car elle inhibe la capacité de migrer une tâche. Le chapitre
-\ref{ch:task_migration} traite de la seconde solution mentionné.
-
+La migration de de code ne devrait pas être limité par le code sur le nœud
+distant. Le système de module offre la possibilité de migrer un agent sur un
+nœud qui ne connait pas le code de l'agent. Un exemple concret de migration
+de code est présenté dans le chapitre \ref{ch:task_migration}.
 
 
 % \section{Linkage statique}
@@ -198,125 +207,258 @@ de la figure \ref{fig:basic_fib_module} s'effectue par le compilateur de Gambit
 qui nomme \texttt{gsc}. Cela produit un fichier avec l'extension \texttt{.oN}
 où le \texttt{N} correspond à la version généré de la bibliothèque qui commence à 1.
 
-% NOTE: distingué version .oN et version du code.
 
-\section{Coexistence entre bibliothèque}
-Les bibliothèques coexistent de deux façon principales, de façon passive dans
-un système fichier et de façon active durant l'exécution d'un programme.  Un
-système de fichier contient un arborescence hiérarchique de répertoires et de
-fichiers avec une seule racine. Un fichier est l'entité dans un système de
-fichier qui contient les données, c'est dans cette entité que le code des
-bibliothèques ce situe.  Les répertoires sont les entités qui permette de
-regrouper plusieurs fichiers de façon logique. La racine correspond au sommet
-de la hiérarchie du système de fichier. La façon de référer au un fichier
-uniquement dans un système de fichier est d'utiliser le chemin absolu. Cela
-correspond à la liste des répertoires à parcourir de la racine jusqu'au
-fichier. L'outil responsable d'organiser les bibliothèques sur un système
-est le \textit{package manager}. Il possède plusieurs objectif incluant
-l'installation de bibliothèque, la mise à jour de toute les bibliothèques
-installées, la désinstallation de bibliothèque et la résolution des dépendances.
+\section{Concepts}
 
-Un cas intéressant de coexistence entre bibliothèques est celui qui inclue
-plusieurs versions d'une même bibliothèque, car cela peut amener des problème
-à la fois sur le système de fichier et durant l'exécution d'un processus utilisant
-ces bibliothèques. Il y a aussi plusieurs utilités d'avoir plusieurs version
-d'une même bibliothèque, cela permet de supporter des application qui dépend de
-bibliothèques antérieurs.
+% Définition sommaire d'une bibliothèque de code
+Une bibliothèque de code est le regroupement de plusieurs types
+de données, des entiers, des nombres à virgule flottant, des chaînes
+de caractères, des fonctions et des données composites. L'ensemble
+de ces données constitue les fonctionnalités de la bibliothèque.
+Les fonctionnalités d'une bibliothèque peut être copié dans l'exécutable
+(bibliothèque statique), cela facilité la distribution du binaire puisque
+que ses dépendances sont inclus dans l'exécutable.
+Les fonctionnalités d'une bibliothèque peuvent aussi être chargé
+à l'exécution (bibliothèque partagés), cela permet de partagé des routine
+commune entre plusieurs processus (programme en exécution). Les données de
+la bibliothèque, par contre, ne sont partagé, chaque processus réfère à
+sa propre version des données.
+Le format d'une bibliothèque de code varie d'un langage à l'autre et aussi d'un
+système d'exploitation à un autre. Les langages interprétés utilisent plus
+souvent le code source directement ou une représentation intermédiaire comme format pour
+les bibliothèques de code.
+Pour les langages compilés, c'est le format natif correspondant au système d'exploitation
+qui est le plus souvent utilisé. Le système d'exploitation Linux utilise le
+format ELF (Extensible Linking Format), Microsoft Window utilise le format PE (Portable Executable)
+et MacOSX utilise le format Mach-O (Mach object) pour les exécutables et les bibliothèques.
+% XXX: bytecodes aussi pour les langage compilé.
 
-Un autre application est de convertir un vieux format de fichier vers un format
-plus récent. Dans le cas où il n'est pas possible de plusieurs version d'une bibliothèque
-il faut alors écrire un \textit{reader} pour lire le vieux format manuellement ensuite le
-utilise fonctions de la version cible de bibliothèque pour générer le nouveau format du fichier.
-Cette solution à comme problème que le \textit{reader} est beaucoup moins testé que la
-vielle version de la bibliothèque. Cela demande aussi de réécrire qu'est-ce qui à déjà été fait.
-
-\begin{figure}[ht]
-  \includegraphics[width=30em]{figures/app_convert_v1_to_v2.pdf}
-  \caption{Un exemple d'application de conversion entre deux version d'un format
-  de fichier comme sqlite2 et sqlite3 exploitant la possibilité de charger plusieurs
-  version d'une bibliothèque.}
-\end{figure}
-
-L'architecture de processus sur un système permet plusieurs propriétés. La
-robustesse, un processus failli les autres processus ne sont pas affectés. La
-sécurité et l'isolation, chaque processus possède leur mémoire qui n'est pas
-accessible par les autre processus et peuvent utilisé une version spécifique
-des bibliothèques. Il est possible de concevoir l'architecture de processus en
-utilisant des threads.  Un \textit{thread} décrit un courant d'exécution d'un
-programme. Un processus à au minimum un \textit{thread} qui correspond au
-courant d'exécution principal du programme. Les \textit{threads} sont utiles
-pour paralléliser l'exécution d'un processus. La création de \textit{threads}
-est beaucoup plus rapide que la création d'un processus, car elle ne nécessite
-pas l'appel au système d'exploitation.
-
-Ce modèle exploite la légèreté des \textit{threads} par rapport au processus et
-la possibilité de charger plusieurs version des bibliothèques qu'il a besoin au sein
-du système. Cela est similaire au modèle de processus utilisé par les
-système d'exploitation, sauf que l'ensemble est juste au sein d'un seul processus.
-Étant donnée que les \textit{threads} vivent tous au sein d'un même processus,
-il est donc facile de partagé des informations d'un \textit{thread} à un autre.
-Ce qui est plus difficile avec le modèle de processus, cela nécessite l'utilisation
-mécanisme comme la mémoire partagé.
-
-%\todo{picture: Thread as Light process}
-
-% TODO: exemple de chemin.
-
-%et s'il c'est un cas qui peut
-%contenir un coexistence néfaste.  Cela n'est possible que s'il est possible de
-%distinguer les deux version de la bibliothèque et aussi répartir les appels à
-%des fonctions de même nom à la bonne version de la bibliothèque.
+%Les langages
+%de programmation interprétés fournisse leurs bibliothèques directement
+%en code source. Dans cette catégorie, il y a Ruby, Python, Perl, Lua et
+%Scheme -- dont le code des bibliothèques est écrit et frounit dans le
+%langage respectif. Les langages compilés -- comme C, C++, C\# et Java --
+%utilisent plutôt des formats binaires destiné, soit à une machine virtuelle
+%(e.g. la \textit{Java Virtual Machine} JVM ou un architecture
+%physique (e.g. i686, x86\_64, ARM). Les bibliothèques natives peuvent
+%être utilisé
 
 
-\subsection{Coexistence au sein d'un processus}
-L'autre type de coexistence entre les bibliothèques est durant l'exécution d'un
-processus.  La coexistence entre des bibliothèques peuvent être positive ou
-néfaste.  Un coexistence positive entre des bibliothèques est marqué par une
-bonne répartition des appels de fonctions parmi ces bibliothèque.  Un appel à
-la fonction \verb|foo| de la bibliothèque \verb|libA.so| ne va pas être
-effectué dans la bibliothèque \verb|libB.so|. Deux bibliothèques ne coexiste
-pas correctement au sein d'un processus si les appels de fonctions sont
-réparties incorrectement parmi les bibliothèques. Le chargement des bibliothèques
-diffère d'un langage interprété à un langage compilé nativement.
 
-\subsubsection{Contexte interprété}
-Les bibliothèques dans les langages interprétés utilisent leur propre procédure
-de chargement de bibliothèque. Ce processus permet de charger directement les
-fonctionnalité d'une bibliothèque à partir du code source.
 
-La façon de charger le code source peut être effectué par une lecture de la
-bibliothèque suivit d'un évaluation du code.
+Une application qui utilise une bibliothèque partagés ne contient pas le
+code de la bibliothèque, mais plutôt le nom des fonctionnalités utilisés.
+La routine qui permet de récupérer la fonctionnalité
+à partir du nom est la résolution qui est effectué par le \textit{dynamic loader}.
+Lorsqu'un programme lié dynamiquement
+à plusieurs bibliothèques partagés exécute du code externe \verb|foo|,
+un routine de résolution est démarré pour déterminé quelle bibliothèque
+lié au fournit la fonctionnalité \verb|foo|.
 
+%% Bibiothèque dynamique native.
+Par exemple, sous Linux l'utilitaire <<yes>>, qui est écrit en C,
+est lié aux bibliothèques systèmes suivantes:
 \begin{verbatim}
-class Module(object):
-    def __init__(self, members):
-        for k in members.keys():
-            setattr(self, k, members[k])
-
-def importFile(name):
-    with open(name, 'r') as fd:
-        code=fd.read()
-    env = {}
-    exec(code, env)
-    return Module(env)
-
+  linux-vdso.so.1 (0x00007ffeef7f9000)
+  libc.so.6 => /usr/lib/libc.so.6 (0x00007ff68161c000)
+  /lib64/ld-linux-x86-64.so.2 => ...
 \end{verbatim}
+La bibliothèque \textit{libc.so.6} contient la plupart des fonctions
+standards du système sous Linux dont les fonctionnalités sont résolut
+à l'exécution.
+% Le but d'une bibliothèque est la réutilisation de code.
+Dans le contexte d'un exécutable natif, le chargement des bibliothèques
+s'effectue au début de l'application, avant l'exécution de la fonction principale
+souvent nommé \textbf{main}. Plusieurs bibliothèques peuvent coexister simultanément au
+sein d'un même processus sans que l'exécution du programme en soit affecté.
 
-\subsubsection{Contexte natif}
+La résolution des fonctionnalité de ces bibliothèques sont effectué par un programme adapté
+le \textit{program interpreter} du système qui correspond à \textit{/lib64/ld-linux-x86-64.so.2}.
+Il est possible de forcer la résolution d'une fonctionnalité d'une bibliothèque
+de façon manuel. Ce genre d'interaction est possible sur
+les trois principales plateformes utilisées sur le marché (Windows, MacOSX et Linux).
 
-%\section{Chargement dynamique}
-Un des cas probables de deux bibliothèque avec les mêmes noms de fonctionnalité
-sont deux versions différente de la même bibliothèque. Il existe des situations
-dans lesquelles il serait intéressant d'avoir la possibilité de charger plusieurs
-versions d'une bibliothèque.
+%% TODO: continue here FIXME
+Sur Linux, l'API qui permet d'interagir avec les bibliothèques partagés provient de \textit{libdl.so}.
+Elle contient les fonctions \textit{dlopen}, \textit{dlsym}, \textit{dlerror} et \textit{dlclose} pour gérer
+des bibliothèques de code supplémentaire chargé manuellement à l'exécution.  Pour charger la fonction
+\textit{foo}, qui ne prend pas d'argument et ne retourne rien de la bibliothèque \textit{libFoo.so} en C,
+il faut exécuter les deux appels suivant:
+\begin{center}
+  \begin{figure}[ht]
+\begin{lstlisting}[language=C,frame=single]
+  ...
+  void *handle = dlopen("./libFoo.so", RTLD_LAZY);
+  void (*foo)() = dlsym(handle, "foo");
+  ...
+\end{lstlisting}
+\caption{Chargement dynamique de la bibliothèque \textit{libFoo.so} et
+résolution de la fonction \textit{foo} sans gestion d'erreur sous Linux}
+  \end{figure}
+\end{center}
+L'équivalent des bibliothèques partagés sous Window sont les DLLs, ils peuvent être chargé de façon similaire dans un
+programme en utilisant les fonctions \textit{LoadLibrary}, \textit{LoadLibraryEx} et \textit{GetProcAddress}. Ils
+fonctionne de la même façon que leur équivalent Linux. Pour MacOSX, il faut passer par les routines:
+\begin{itemize}
+    \item \textit{NSCreateObjectFileImageFromFile}
+    \item \textit{NSLinkModule}
+    \item \textit{NSLookupSymbolInModule}
+    \item \textit{NSAddressOfSymbol}
+\end{itemize}
 
-Il y a dans un système dynamique qui permet de faire une mise à jour du
-code sans nécessité un redémarrage du processus. Cet procédure ce nomme
-\textit{hot-code-swapping}.
+La majorité des langages interprétés permettent l'importation de bibliothèque de code natif, via un interface
+nommé \textit{foreign function interface}.
+Prenons comme exemple les langage Python, Ruby, Lua et Scheme. Python possède le module ctypes
+qui permet de chargé des bibliothèques natives dynamique, Ruby possède le module ffi.
+%Ces modules ne font qu'encapsuler les fonction de chargement de bibliotheques native pour qu'il puisse être invoqué
+%dans le langage cible.
 
-Il y a aussi dans un contexte ou le processus doit supporté plusieurs versions
-d'un protocole fournit par une bibliothèque. Par exemple, un application qui migre
-le format \textit{sqlite} au format \textit{sqlite3} doit pouvoir charge le fichier
-dans le premier format et exporter toutes les tables dans le deuxième format.
+% Bibliothèque Lua en C
+% - La bibliothèque doit avoir le même nom que celui utilisé par le \textit{import}.
 
-\todo{Ajouté plus d'exemple}
+Certains langages ont même un mécanisme pour charger des bibliothèques natives s'ils ont été conçus spécialement.
+Dans le langage de programmation Lua, il est possible en Lua de chargé directement
+une bibliothèque dynamique si elle contient une fonction principale \textbf{luaopen\_\textit{libname}}
+où \textit{libname} est le nom de la bibliothèque.
+
+Gambit Scheme utilise un mécanisme équivalent. Il permet le chargement de ces modules qui ont été compilé
+en bibliothèque partagé (DLL) avec la fonction \textit{(\textbf{load} "libname")}. Le chargements de la
+bibliothèque ressemble à celui de Lua.
+
+%% Python
+%\begin{figure}[ht]
+%\begin{lstlisting}[language=python,frame=single]
+%# From https://docs.python.org/2/library/ctypes.html
+%from ctypes import *
+%# Chargement d'une bibliotheque native.
+%lib = cdll.LoadLibrary("./libFoo.so")
+%# Appel de la fonction foo.
+%lib.foo()
+%\end{lstlisting}
+%\caption{Code d'importation de la fonction \textbf{foo} de la bibliothèque \textit{libFoo.so} en Python}
+%\end{figure}
+
+\begin{center}
+% Ruby
+\begin{figure}[ht]
+\begin{lstlisting}[language=ruby,frame=single]
+require 'ffi'
+# Chargement d'une bibliotheque native.
+module LibFoo
+    extend FFI::Library
+    ffi_lib './libFoo.so'
+    attach_function :foo, [], :void
+end
+# Appel de la fonction foo.
+LibFoo.foo
+\end{lstlisting}
+\caption{Code d'importation de la fonction \textbf{foo} de la bibliothèque \textit{libFoo.so} en Ruby}
+\end{figure}
+\end{center}
+
+La résolution des fonctionnalités effectué par le \textit{dynamic linker} utilise un ordre de recherche
+définit. Cet ordre de recherche inclut l'exécutable courant, les dépendances de l'exécutable, la bibliothèque
+passé à \textit{dlsym}. La résolution d'une fonctionnalité par \textit{dlsym} qui n'engendre pas la résolution
+d'un autre fonctionnalité externe n'utilise pas le programme principale dans l'ordre de recherche qui alors
+commence par la bibliothèque passé à \verb|dlsym| suivit de ses dépendances. Les résolution de fonctionnalité
+provenant d'appels indirecte au \textit{dynamic linker} inclut le programme principal et ses dépendances avant
+la bibliothèque passé à \verb|dlsym|.
+
+\begin{center}
+    \begin{figure}[ht]
+        \includegraphics{figures/libdeps-ex1.pdf}
+        \caption{Un exemple de dépendance de bibliothèques au sein d'un application simple fictive.
+            La bibliothèque \textit{libA.so} est chargé dans l'application \texttt{main} via
+            les appels au procédure \textit{dlopen} et \textit{dlsym}. Le fonctionnalités utilisés
+            dans l'exemple sont marqué par un ellipse.
+        }
+        \label{fig:deps-ex1}
+    \end{figure}
+\end{center}
+
+Dans la situation situation présenté dans la figure-\ref{fig:deps-ex1}, quels sont les étapes inclut
+dans l'exécution de ce programme qui ne fait qu'appeler la fonctionnalité \texttt{start} de la
+bibliothèque \textit{libA.so}. La fonctionnalité \texttt{start} est résolu de façon direct par
+un appel à \verb|dlsym(libA, "start")|, qui commence la recherche de la procédure \texttt{start} dans
+la bibliothèque spécifier dans \texttt{dlsym}. Le programme, une fois la procédure trouvé, l'exécute.
+L'appel à une procédure non résolue (e.g.\ la procédure \texttt{foo} invoqué dans \texttt{start})
+déclenche une procédure automatique de résolution des fonctionnalités. Cette procédure de résolution
+commence sa recherche à partir de l'exécutable, puis itère la liste des dépendances directe. Si la
+fonctionnalité n'est pas encore trouvé, la recherche continuera à partir de la bibliothèque passé à
+\texttt{dlsym}.
+
+% Stub
+
+% TODO: exemple de résolution direct
+Connaissant l'ordre de recherche du \textit{dynamic linker}, il est facile de construire un application avec des bibliothèques
+qui cause un masquage de fonctionnalité. Deux possibilité facilement exploitable, faire que l'exécutable main fournisse
+directement la fonctionnalité à masquer, ou avoir une des dépendances de l'exécutable contenant cette fonctionnalité. La figure-\ref{fig:deps-ex2}
+en est l'exemple qui utilise la seconde méthode. La première consisterait à transformer l'exécutable main est bibliothèque
+exécutable qui ne pourrait pas être supporté sur certaine plateforme. Sous Linux, il est possible de créer une bibliothèque qui
+exécutable en passant le paramètre \texttt{-rdynamic} à \textit{gcc} lors de la construction.
+
+\begin{center}
+    \begin{figure}[ht]
+        \includegraphics{figures/libdeps-ex2.pdf}
+        \caption{Exemple de dépendance dans un application cause le masquage de la fonctionnalité \texttt{foo}
+        de la bibliothèque \textit{libfoo.so.1.0} par la bibliothèque \textit{libfoo.so.1.1}}
+        \label{fig:deps-ex2}
+    \end{figure}
+\end{center}
+%% BEGIN
+% D'autre langage compilé comme C/C++
+% ne le permette pas directement, la liste des bibliothèques de code utilisé par un
+% programme est déterminée lors de la création du fichier binaire, qui peut être
+% soit un exécutable où une bibliothèque.
+%% END
+
+
+% TODO: pourquoi est-ce utile?
+% XXX: structure pas final.
+% - Les bibliothèques coexistent dans les application de tous les jours.
+Analyser les interactions entre des bibliothèques au sein d'un même programme permet de
+mieux comprendre quels sont les circonstance qui peuvent conduire à des comportements
+non désirés, par exemple le masquage démontré dans la figure-\ref{fig:deps-ex2}.
+Cela permet aussi d'établir les conditions qui inhibe ces comportements non désirés.
+
+%Cela implique que ils possible de retrouvé une dépendance en diamant tel que représenter
+%dans la figure-\ref{fig:dep1} qui peut causer un problème. % Détailler
+%\begin{figure}[ht] %% Pas juste valide pour scheme.
+%  \begin{center}
+%    %\includegraphics[width=4cm]{figures/SchemeLibrary}
+%    \caption{Dépendence en diamant}
+%    \label{fig:dep1}
+%  \end{center}
+%\end{figure}
+
+%% NOTE: Soit P un processus, execution(A, P=[A,B]) == execution(A, P=[A]).
+%Soit un processus \textbf{P} qui réfère aux bibliothèques \textbf{A} et \textbf{B}.
+%Une bibliothèque peut masquer les symboles d'une autre bibliothèque chargé dans le même processus.
+%La bibliothèque \textbf{A} coexiste avec la bibliothèque \textbf{B} si la \textbf{A}
+%ne masque pas des symboles ne \textbf{B} qui amène un comportement non défini.
+
+
+% Historiquement, il y avait un problème avec la coexistence entre deux dll sous Window. TODO: devellopper
+
+% - Système distribué (Actor), non limité par la diversité des bibliothèque.
+
+
+% TODO:
+%La coexistance entre plusieurs versions d'une même bibliothèque
+%===========================================================
+%
+% - Définition d'une bibliothèque
+%   - Nom symboles:
+%     - Fonction
+%     - Variables global
+%     - Structure de donnée
+%     - Macro (Compilation)
+%
+%- Définition par coexistence de plusieurs bibliothèque.
+%- Pourquoi est-ce utile?
+%- Conditions nécessaire pour la coexistence entre plusieurs versions d'une même bibliothèque soit possible.
+%  - Data race.
+%  - État partagé.
+%- Système d'exploitation (DOS)
+
+
