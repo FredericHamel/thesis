@@ -32,20 +32,18 @@ L'ensemble des expériences ont été faites sur trois machine: arctic, gambit e
 \begin{mplisting}{1}
 Architecture:          x86_64
 CPU op-mode(s):        32-bit, 64-bit
-Byte Order:            Little Endian
 CPU(s):                4
 Thread(s) per core:    1
 Core(s) per socket:    4
-Socket(s):             1
-NUMA node(s):          1
 Vendor ID:             GenuineIntel
-CPU family:            6
-Model:                 158
 Model name:            Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz
-Stepping:              9
 CPU MHz:               4200.000
-CPU max MHz:           4200.0000
 CPU min MHz:           800.0000
+Storage:               216GB (NVME)
+RAM:                   16GB
+Swap:                  16GB
+C Compiler             gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+Ethernet Speed         1Gbps
 \end{mplisting}
   \caption{La spécification de la machine arctic qui est utilisé comme nœud de destination dans
   l'ensemble des tests. Cette machine, nommé \textbf{Arctic} est refroidit au liquide.}
@@ -56,16 +54,18 @@ CPU min MHz:           800.0000
 Architecture:        armv7l
 Byte Order:          Little Endian
 CPU(s):              4
-On-line CPU(s) list: 0-3
 Thread(s) per core:  1
 Core(s) per socket:  4
-Socket(s):           1
 Vendor ID:           ARM
-Model:               3
 Model name:          Cortex-A72
-Stepping:            r0p3
 CPU max MHz:         1500.0000
 CPU min MHz:         600.0000
+OS:                  Linux tictoc 4.19.66-v7l+ #1253 SMP
+Storage:             26GB (sdcard)
+RAM:                 2GB
+Swap:                2GB
+C Compiler           gcc (Raspbian 8.3.0-6+rpi1) 8.3.0
+Ethernet Speed       1Gbps
 \end{mplisting}
   \caption{La spécification du CPU du Raspberry Pi utilisé dans les tests.
   Cette machine se nomme \textbf{tictoc}.}
@@ -73,7 +73,14 @@ CPU min MHz:         600.0000
 
 \begin{figure}[h]
   \begin{mplisting}{1}
-
+Architecture:        x86_64
+CPU(s):              12
+Thread(s) per core:  2
+Core(s) per socket:  6
+Model name:          Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
+Storage:             1TB (SSD)
+RAM:                 8GB
+Network Speed:       1Gbps
 \end{mplisting}
 \end{figure}
 
