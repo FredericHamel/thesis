@@ -77,17 +77,17 @@ présentes sur le système distant.
 
 Le système Java~\cite{And98transparentmigration} capture l'état du programme courant
 qui consiste aux valeurs et aux types de toutes les variables de chaque objet. L'autre
-information est la pile des appels de méthode avec les valeurs de toutes les variable.
+information est la pile des appels de méthode avec les valeurs de toutes les variables.
 Ces informations sont transmis et utilisés pour reconstruire l'état du programme.
 L'ensemble des méthodes sur le nœud de départ est présent sur le nœud d'arrivé.
 Le système Erlang~\cite{M_mobileintelligent} requière aussi que le code soit disponible
 sur le nœud destination.
 
-Le système de migration en Javascript utilise des dépôts de code pour
-conserver le code. Il est basé sur le fait que le code des agents
-sont connus. Puisque le code des agents est connu, il suffit de transmettre
-l'état de l'agent. Ce modèle Javascript ressemble à celui implémenté dans
-dans Gambit.
+Le système de migration en Javascript utilise des dépôts de code pour conserver
+le code. Il est basé sur le fait que le code des agents sont connus par des
+nœuds spécialisés. Puisque le code des agents est connu, il suffit de
+transmettre l'état de l'agent. Ce modèle Javascript ressemble à celui
+implémenté dans Gambit lors de la transmission de procedure compilé.
 
 La migration de de code ne devrait pas être limité par le code sur le nœud
 distant. Le système de module offre la possibilité de migrer un agent sur un
@@ -100,14 +100,14 @@ est migrer.
 \section{Modules versionnés}
 %
 Un programme est généralement composé de plusieurs modules. Chaque module est
-associé à une seul version. La façon qu'un système voit les versions d'un
+associé à une seule version. La façon qu'un système voit les versions d'un
 module diffère entre les langages. Il est possible de voir chaque version d'un
 module comme un module différent, c'est ce qui est utilisé dans Go. Dans les
-système comme Python et Java les modules sont par le programme avec un nom sans
-la version.
+système comme Python et Java les modules sont vus par le programme par seulement
+un nom qui n'inclut pas la version.
 
 Dans les système qui considère chaque version d'un module comme un module différent,
-il existe des programmes qui charge plusieurs versions d'un module. Cela peut amener
+il existe des programmes qui chargent plusieurs versions d'un module. Cela peut amener
 certains problèmes de conflit entre les versions du module. Ces conflits peuvent être
 observer dans les langages interprété comme Javascript ou dans les langages compilé
 comme C/C++. Les conflits peuvent être dans les noms des fonctions du module ou
