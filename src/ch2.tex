@@ -1,36 +1,36 @@
 
 \chapter{Bibliothèque Scheme}
 
-Le langage Scheme\cite{Clinger:2008:SCH:1529966.1529973} à été conçu en 1975 par Guy L. Steele et Gerald
-Jay Sussman.  C'est un langage de programmation avec un système de type
-dynamique, cela signifie que les variables peuvent contenir n'importe quels
-types. Il supporte plusieurs paradigmes de programmation comme fonctionnelle,
-impérative et méta. Chaque expression est représenté sous forme préfixé et
-fortement parenthésé.  Un programme Scheme est une séquence de liste parenthésé
-en forme préfixé, ce sont des \textit{s-expressions}.  Chaque
-\textit{s-expression} correspond soit à une constante, une application de
-procédure ou une application de macro. Les macros sont lié au paradigme de
-méta programmation qui manipulent les expressions.
+Le langage Scheme\cite{Clinger:2008:SCH:1529966.1529973} a été conçu en 1975
+par Guy L. Steele et Gerald Jay Sussman.  C'est un langage de programmation
+avec un système de type dynamique, cela signifie que les variables peuvent
+contenir n'importe quels types. Il supporte plusieurs paradigmes de
+programmation comme fonctionnelle, impérative et méta. Chaque expression est
+représentée sous forme préfixée et fortement parenthésé.  Un programme Scheme est
+une séquence de liste parenthésé en forme préfixée, ce sont des
+\textit{s-expressions}.  Chaque \textit{s-expression} correspond soit à une
+constante, une application de procédure ou une application de macro. Les macros
+sont liées au paradigme de méta programmation qui manipule les expressions.
 
 Les formes de base usuelles en Scheme sont \lstcode{define}, \lstcode{lambda},
-\lstcode{let}, \lstcode{if} and \lstcode{set!}.
+\lstcode{let}, \lstcode{if} et \lstcode{set!}.
 \begin{itemize}
   \item La forme \texttt{(define \textit{<name>} \textit{<val>})} associe le nom \textit{<name>} avec
-    la valeur \textit{<val>}. Il est utilisé pour définir des variables globales.
+    la valeur \textit{<val>}. Il est utilisé pour définir les variables globales.
 
   \item La forme \texttt{(lambda \textit{<args>} \textit{<body>})} permet la définition de
     procédures anonymes. Les arguments sont \textit{<args>} et le corps
     de procédure \textit{<body>}.
 
   \item La forme \texttt{(let \textit{<bindings>} \textit{<body>})} permet de créer des
-    associations (\textit{<bindings}) visible seulement dans le contexte de
+    associations (\textit{<bindings>}) visibles seulement dans le contexte de
     \textit{<body>}. Les associations sont sous la forme d'une liste
     associative nom et valeur.
 
   %% XXX: Too much???
-  \item Les conditions sont géré par la forme \texttt{(if \textit{<e1>} \textit{<e2>} \textit{<e3>})}.
+  \item Les conditions sont gérées par la forme \texttt{(if \textit{<e1>} \textit{<e2>} \textit{<e3>})}.
     La branche \textit{<e1>} est exécutée si la condition \textit{<e2>} est
-    vrai sinon \textit{<e3>}.
+    vraie sinon \textit{<e3>}.
 
   \item La forme \texttt{(set! \textit{<name>} \textit{<val>})} modifie le contenu de la variable
     \textit{<name>} avec la valeur \textit{<val>}.
@@ -38,13 +38,13 @@ Les formes de base usuelles en Scheme sont \lstcode{define}, \lstcode{lambda},
 
 %read from here
 
-La méta programmation est un paradigme lié à l'utilisation de macro qui sont
-des entités qui manipulent la structure du programme. Elle est utilisé pour
+La méta programmation est un paradigme lié à l'utilisation de macros qui sont
+des entités qui manipulent la structure du programme. Elle est utilisée pour
 ajouter des abréviations dans le langage qui simplifie l'écriture du code.  La
 section \ref{sec:proc_and_macro} détaille de la méta programmation en Scheme.
 
 Les expressions Scheme sont en forme préfixe. Cela signifie que l'opération
-précède les opérandes. Cette forme est plus utilisé dans les langage de la famille
+précède les opérandes. Cette forme est plus utilisée dans les langages de la famille
 LISP.
 
 % Une expression peut être organisé de plusieurs façons, infixe, préfixe ou
@@ -70,75 +70,74 @@ LISP.
 % \end{verbatim}
 
 
-\begin{table}[htbp]
-\begin{center}
-\begin{tabular}{|l|l|}
-  \hline
-  \textbf{Préfixe}& \textbf{Infixe}
-  % & \textbf{Suffixe}
-  \\\hline
-
-  \begin{mplisting}{0.1}
-(+ 1 2)
-\end{mplisting}&
-  \begin{mplisting}{0.1}
-1 + 2;
-\end{mplisting}
-  % \begin{mplisting}{0.1}
-% 1 2 +
-% \end{mplisting}\\
-\\\hline
-  % \begin{mplisting}{0.22}
-% (proc a1 a2 a3)
-% \end{mplisting}&
-  % \begin{mplisting}{0.22}
-% proc(a1, a2, a3);
-% \end{mplisting}&
-  % \begin{mplisting}{0.22}
-% a1 a2 a3 proc
-% \end{mplisting}\\
-% \hline
-%    \begin{mplisting}{0.25}
-%(if e1
-%    e2
-%    e3)
+%\begin{table}[htbp]
+%\begin{center}
+%\begin{tabular}{|l|l|}
+%  \hline
+%  \textbf{Préfixe}& \textbf{Infixe}
+%  % & \textbf{Suffixe}
+%  \\\hline
+%  \begin{mplisting}{0.1}
+%(+ 1 2)
 %\end{mplisting}&
-%    \begin{mplisting}{0.25}
-%if(e1)
-%  e2;
-%else
-%  e3;
-%\end{mplisting}\\
-%\hline
-\end{tabular}
-\end{center}
-  \caption{Voici un example qui montre une comparaison entre une syntaxe préfixe et infixe.}
-  \label{tab:prefix_vs_infix}
-\end{table}
+%  \begin{mplisting}{0.1}
+%1 + 2;
+%\end{mplisting}
+%  % \begin{mplisting}{0.1}
+%% 1 2 +
+%% \end{mplisting}\\
+%\\\hline
+%  % \begin{mplisting}{0.22}
+%% (proc a1 a2 a3)
+%% \end{mplisting}&
+%  % \begin{mplisting}{0.22}
+%% proc(a1, a2, a3);
+%% \end{mplisting}&
+%  % \begin{mplisting}{0.22}
+%% a1 a2 a3 proc
+%% \end{mplisting}\\
+%% \hline
+%%    \begin{mplisting}{0.25}
+%%(if e1
+%%    e2
+%%    e3)
+%%\end{mplisting}&
+%%    \begin{mplisting}{0.25}
+%%if(e1)
+%%  e2;
+%%else
+%%  e3;
+%%\end{mplisting}\\
+%%\hline
+%\end{tabular}
+%\end{center}
+%  \caption{Voici un example qui montre une comparaison entre une syntaxe préfixe et infixe.}
+%  \label{tab:prefix_vs_infix}
+%\end{table}
 
 % La définition des associations globales en Scheme est effectuée avec \lstcode{define}.
 
-Les différents types que les valeurs peuvent prendre sont Les types de donnée
-disponible en Scheme sont \lstcode{boolean}, \lstcode{pair}, \lstcode{symbol},
+Les différents types primitifs que les valeurs peuvent prendre
+en Scheme sont \lstcode{boolean}, \lstcode{pair}, \lstcode{symbol},
 \lstcode{number}, \lstcode{char}, \lstcode{string}, \lstcode{vector},
 \lstcode{port} et \lstcode{procedure}.
 
 \section{Procédure et Macro}
 \label{sec:proc_and_macro}
 
-Les procédures sont des objets de premier classe, cela signifie qu'elles
-peuvent être manipulée comme n'importe quels types de donnée. Elles peuvent
-être passées en tant que paramètre à une procédure et retourné en tant que
-résultat.  Certaines fonctions -- telles que \lstcode{map}, \lstcode{fold}, etc.
--- bénéficie que les procédures sont des objets de premier classe.
+Les procédures sont des objets de première classe, cela signifie qu'elles
+peuvent être manipulées comme n'importe quels types de données. Elles peuvent
+être passées en tant que paramètre à une procédure et retournées en tant que
+résultat.  Certaines fonctions -- telles que \lstcode{for-each}, \lstcode{map} et
+\lstcode{fold} -- bénéficient que les procédures sont des objets de première classe.
 
-Les procédures et les fonctions sont définis par le constructeur
+Les procédures et les fonctions sont définies par le constructeur
 \lstcode{lambda} qui prend une liste d'arguments et une séquence d'au moins une
-\textit{s-expression} comme corps. Lors de l'application d'une procédure chacun
-des arguments est évalué puis passés à la procédure. C'est un mode de passage
-de paramètre par valeur. Il n'y a de forme spéciale pour les boucle, car elle
-peuvent construite par la récursion. Le langage offre une récursion sans coût
-avec l'appel terminal.  Il est possible d'ajouté une syntaxe pour les boucle en
+\textit{s-expression} comme corps. Lors de l'application d'une procédure, chacun
+des paramètres est évalué puis propagé à la procédure. C'est un mode de passage
+de paramètre par valeur. Il n'y a pas de forme spéciale pour les boucles, car elles
+sont construites par la récursion. Le langage offre une récursion sans coût
+avec l'appel terminal.  Il est possible d'ajouter une syntaxe pour les boucles en
 utilisant la méta programmation.
 % forme spéciale pour les boucle -> Les boucles sont faite par la récursion
 
@@ -182,8 +181,8 @@ utilisant la méta programmation.
 
 
 % La récursion est la façon dont les boucle sont faites.
-La programmation méta est présente dans plusieurs langage comme C, C++, LISP,
-Haskell, Scheme, etc. Elle est basé sur la capacité d'un programme de manipuler
+La programmation méta est présente dans plusieurs langages comme C, C++, LISP,
+Haskell, Scheme, etc. Elle est basée sur la capacité d'un programme de manipuler
 d'autre programme comme des données. Cela implique qu'il est possible de
 générer, analyser et modifier le code d'un autre programme.  Les
 constructions utilisées pour manipuler le code du programme et
@@ -191,13 +190,13 @@ ajouter des extensions au langage sont les macros.
 
 En C et C++, les macros ne permettent pas de récursion se référant à elle-même.
 Ils sont basés sur un modèle de remplacement textuel simple. Un appel à la
-macro est remplacer par le corps de celle-ci. Les macros de style LISP ont
-accès à l'ensemble des procédure, ce qui leurs donne plus de flexibilité.  La
+macro est remplacé par le corps de celle-ci. Les macros de style LISP ont
+accès à l'ensemble des procédures, ce qui leur donne plus de flexibilité.  La
 différence entre les procédures et les macros est le mode de passage de
 paramètres.  Les paramètres sont passés à la macro sans être évalués, c'est ce
-qu'on appelle le passage par nom.  Certain Scheme offre la forme
+qu'on appelle le passage par nom.  Certaines implémentations de Scheme offrent la forme
 \lstcode{define-macro} pour définir les macros.  Cette forme est équivalente au
-\lstcode{defmacro} de LISP. Elle accepte en entré des \textit{s-expression}s et
+\lstcode{defmacro} de LISP. Elle accepte en entrée des \textit{s-expression}s et
 retourne une \textit{s-expression} (soit une liste ou une constante).  Cette
 forme spéciale a un problème d'hygiène.
 
@@ -214,21 +213,21 @@ forme spéciale a un problème d'hygiène.
 \end{tabular}
 
   \caption{Implémentation de la macro \texttt{include} qui permet l'inclusion
-  d'un fichier dans un autre fichier avec la syntax \texttt{define-macro}.}
+  d'un fichier dans un autre fichier avec la syntaxe \texttt{define-macro}.}
 
   \label{fig:macro_include}
 \end{figure}
 
-Un exemple qui montre les capacité des macros Scheme est la macro
+Un exemple qui montre les capacités des macros Scheme est la macro
 \lstcode{include}.  Cette macro permet l'inclusion du contenu d'un fichier au
 point d'application.  Pour inclure un fichier dans un autre, il faut tout
-d'abord lire le contenu du fichier à inclure. Ensuite, il suffit de retourné le
+d'abord lire le contenu du fichier à inclure. Ensuite, il suffit de retourner le
 code lu. La figure \ref{fig:macro_include} montre une implémentation de cette
-macro avec \lstcode{define-macro}.  Pour les implémentation de Scheme ne
+macro avec \lstcode{define-macro}.  Pour les implémentations de Scheme ne
 supportant pas la forme \lstcode{define-macro}, il est possible d'implémenter
 la forme \lstcode{include} avec \lstcode{define-syntax} qui est l'alternative à
 \lstcode{define-macro}. L'implémentation de cette macro est donnée à la figure
-\ref{fig:macro_include_def_syntax}. Les particularité de
+\ref{fig:macro_include_def_syntax}. Les particularités de
 \lstcode{define-syntax} ne sont pas mentionnées dans ce mémoire.
 
 % --------------------------------------MOVE--------------------------------------
@@ -245,12 +244,6 @@ la forme \lstcode{include} avec \lstcode{define-syntax} qui est l'alternative à
 \begin{mplisting}{0.8}
 (define-syntax include
   (lambda (stx)
-    (define (read-all port)
-      (let loop ((rev-lst '()))
-        (let ((expr (read port)))
-          (if (eof-object? expr)
-            (reverse rev-lst)
-            (loop (cons expr rev-lst))))))
     (syntax-case stx ()
       ((_ fn)
        (let ((filename (syntax->datum (syntax fn))))
@@ -258,14 +251,14 @@ la forme \lstcode{include} avec \lstcode{define-syntax} qui est l'alternative à
                  (call-with-input-file
                     filename
                     (lambda (port)
-                      (cons 'begin (read-all port))))))
+                      `(begin ,(read-all port))))))
            (datum->syntax stx content)))))))
 \end{mplisting}\\\hline
 
 \end{tabular}
    \caption{Implémentation de la macro \texttt{include} qui permet l'inclusion
    d'un fichier dans un autre fichier avec la syntaxe \texttt{define-syntax}.
-   Cette macro effectue la même action que celle définit dans la figure
+   Cette macro effectue la même action que celle définie dans la figure
    \ref{fig:macro_include}.}
 
    \label{fig:macro_include_def_syntax}
@@ -276,7 +269,7 @@ la forme \lstcode{include} avec \lstcode{define-syntax} qui est l'alternative à
 Les bibliothèques, aussi appelées modules, facilitent le partage de
 fonctionnalités entre plusieurs programmes. Dans le standard
 R4RS\cite{Scheme:R4RS} et R5RS\cite{Scheme:R5RS} les modules consistent en des
-fichiers Scheme qui contiennent des définitions de procédures et de macros. Il
+fichiers Scheme qui contiennent des définitions de procédures et de macros. Ils
 sont chargés dans le module courant par la procédure \lstcode{load}. Certaines
 implémentations de Scheme ont la forme spéciale \lstcode{include} qui permet de
 séparer un module Scheme en plusieurs parties. Cette forme peut s'ajouter
@@ -287,15 +280,15 @@ lacunes.
 %% Gambit doc
 \begin{itemize}
   \item Ce modèle de chargement n'est pas à l'abri des chargements multiples
-    d'un module qui mène soit à de la duplication de code (dans le cas de \lstcode{include})
+    d'un module qui mène soit à de la duplication de code (dans le cas de la forme \lstcode{include})
     ou à de la réévaluation d'un code (dans le cas de \lstcode{load}).
 
-  \item Toutes les déclarations dans un module sont ajoutés à l'environnement
+  \item Toutes les déclarations dans un module sont ajoutées à l'environnement
     global lors du chargement par \lstcode{load}. Cela mène à des conflits de
     nom entre les identifiants du module principal et des modules importés.
 
   \item L'importation d'un module par \lstcode{load} ou \lstcode{include} nécessite la connaissance
-    de son emplacement dans le système de fichier. L'emplacement spécifier est soit relatif ou
+    de son emplacement dans le système de fichier. L'emplacement spécifié est soit relatif ou
     absolu.
 
 \end{itemize}
@@ -313,20 +306,20 @@ Le chargement d'un module dans Gambit Scheme par \lstcode{load} se fait en plusi
 phases: l'analyse lexicale, l'analyse syntaxique, l'expansion de macro et
 l'évaluation. L'analyse lexicale brise l'expression en mots. La séquence de
 mots est associée à un contexte par l'analyse syntaxique dans laquelle il y a aussi
-une expansion des macros. Le \lstcode{include} d'un fichier n'effectue qu'un
-analyse lexicale qui est effectué par la procédure \lstcode{read}. L'évaluation
-est effectué après l'analyse syntaxique et l'expansion des macros. D'autres systèmes
+une expansion des macros. Le \lstcode{include} d'un fichier n'effectue qu'une
+analyse lexicale qui est effectuée par la procédure \lstcode{read}. L'évaluation
+est effectuée après l'analyse syntaxique et l'expansion des macros. D'autres systèmes
 Scheme permettent le chargement des macros par \lstcode{load}.
 
 Dans un module, il y a du code qui est exécuté lors de l'expansion (les macros)
-et à l'évaluation. La procédure \lstcode{load} donne accès au procédure définit
+et à l'évaluation. La procédure \lstcode{load} donne accès aux procédures définit
 dans le module, mais pas aux macros, car elles sont expansées.  Après un
 \lstcode{load}, il ne reste que les procédures et variables globales qui
 résultent de l'expansion des macros.  Pour avoir accès aux macros, il faut
-utiliser la forme spécial \lstcode{include} qui est expansé par le contenu du
-fichier.  L'expression \lstcode{(include "foo#.scm")} est remplacé par le
+utiliser la forme spéciale \lstcode{include} qui est expansée par le contenu du
+fichier.  L'expression \lstcode{(include "foo#.scm")} est remplacée par le
 contenu du fichier \lstcode{foo#.scm}. L'exemple \ref{fig:r4rs_fact} montre un
-exemple de module simple n'utilisant que \lstcode{load}.
+exemple de module simple n'utilisant que la procédure \lstcode{load}.
 
 \begin{figure}[ht]
   \begin{center}
@@ -364,24 +357,24 @@ Le standard R6RS\cite{Scheme:R6RS} renforce le concept de modules avec la
 syntaxe \lstcode{library}.  Un module R6RS est séparé en 4 parties: le nom, une
 sous forme \lstcode{export}, une sous forme \lstcode{import} et le corps du
 module. Le nom du module l'identifie de façon unique, il peut contenir une
-spécification de version. La version est spécifié par une liste d'entiers
+spécification de version. La version est spécifiée par une liste d'entiers
 positifs. Une liste vide \lstcode{()} est l'équivalent de ne pas spécifier la
-version. Ensuite, il y a la liste des exportation spécifier par la sous forme
-\lstcode{export}. Chaque élément de cette liste est soit un identifiant ou un
-une sous forme \lstcode{rename} qui renomme l'identifiant exporté. Le
-\lstcode{import}, donne la liste des dépendances du module. Chaque dépendance
+version. Ensuite, il y a la liste des exportations spécifier par la sous forme
+\lstcode{export}. Chaque élément de cette liste est soit un identifiant ou une
+sous forme \lstcode{rename} qui renomme l'identifiant exporté.
+L'\lstcode{import} donne la liste des dépendances du module. Chaque dépendance
 spécifie:
 
 \begin{itemize}
-  \item le nom du module importé et de façon optionnelle une contrainte sur
+  \item le nom du module importé et de façon optionnelle, une contrainte sur
     la version;
-  \item le niveau d'import (temps d'expansion ou évaluation);
-  \item un sous ensemble du \lstcode{export} du module et le nom local
-    utilisé au sein du module courant pour chaque exportation du module.
+  \item le niveau d'import (temps d'expansion de macros ou évaluation);
+  \item un sous-ensemble de l'\lstcode{export} du module et le nom local
+    utilisé au sein du module présent pour chaque exportation du module.
 \end{itemize}
 
-Le corps du module contient une séquence de définitions suivit par une séquence
-d'expressions. Une définition peut être soit local ou exportée. Les expressions
+Le corps du module contient une séquence de définitions suivie par une séquence
+d'expressions. Une définition peut être locale ou exportée. Les expressions
 initialisent le module lors de l'exécution.  Le R6RS ajoute aussi la forme
 \lstcode{import} pour l'importation d'un module et enlève la procédure
 \lstcode{load}.  Contrairement au \lstcode{load}, la forme \lstcode{import}
@@ -400,8 +393,8 @@ permet de manipuler les noms des symboles importés et exportés.\\
 \end{center}
 
 La forme \lstcode{import} de R6RS permet l'importation d'un ensemble de module.
-Chaque spécification d'import \lstcode{<import spec>} peut être soit une simple
-importation ou un importation avec un niveau. Le niveau d'importation est soit:
+Chaque spécification d'import \lstcode{<import spec>} peut être une simple
+importation ou un importation avec un niveau. Les différents niveaux d'importation sont:
 \lstcode{run}, \lstcode{expand} ou \lstcode{(meta <level>)}.  Le niveau méta
 donné par \lstcode{<level>} est un entier exacte. Un niveau d'importation 0
 correspond à \lstcode{run} et un niveau d'importation de 1 correspond
@@ -423,15 +416,15 @@ correspond à \lstcode{run} et un niveau d'importation de 1 correspond
 %   \item \lstcode{(rename  (<identifier1> <identifier_2>))}
 % \end{itemize}
 
-La syntaxe pour l'importation avec les niveau méta est décrit dans la
+La syntaxe pour l'importation avec les niveaux méta est décrite dans la
 spécification R6RS~\cite{Scheme:R6RS}. Le \lstcode{import} R6RS permet un grand
 contrôle lors de l'importation des modules au prix d'une sémantique plus complexe.
 
 Les déclarations d'un module R6RS sont dans espace distinct de l'espace global et
 des autres modules. Les déclarations d'un module ne peuvent pas être en conflit avec
-des déclaration global ou d'autre module. L'élément qui distingue deux module est
-son nom avec sa version. Le nom du module correspond à l'espace de nom du module.
-C'est ce qui lie les déclarations au module et empêche les conflits de nom entre
+des déclarations globales ou d'autre module. L'élément qui permet de distinguer deux modules
+est leurs identifications (nom avec version). Le nom du module correspond à l'espace de nom du module.
+C'est ce qui unit les déclarations au module et empêche les conflits de nom entre
 les modules.
 
 
@@ -464,11 +457,11 @@ les modules.
 % What is define-library?
 Le standard R7RS\cite{Scheme:R7RS} simplifie la syntaxe des modules
 R6RS\cite{Scheme:R6RS}.  L'importation d'un module fait abstraction du niveau
-d'importation. Les macros et les procédures sont importés de façon
+d'importation. Les macros et les procédures sont importées de façon
 transparente. La procédure \lstcode{load} est conservée. La forme spéciale pour
 définir un module est \lstcode{define-library}. Il n'y a pas d'ordre spécifique
 dans les déclarations de la bibliothèque comme en R6RS. Un module R7RS commence par
-un nom suivit de plusieurs déclarations.\\
+un nom suivi de plusieurs déclarations.\\
 \begin{center}
   \lstset{language={scheme},
           captionpos=b,
@@ -493,15 +486,15 @@ bloque \lstcode{begin}.
     l'inclusion d'un fichier en tant qu'un bloque de code.  La seconde version
     non sensible à la casse des caractères.
 
-  \item La déclaration \lstcode{cond-expand} est un extension du \texttt{SRFI-0}
+  \item La déclaration \lstcode{cond-expand} est une extension du \texttt{SRFI-0}
     dans le contexte d'une bibliothèque.
 
 \end{itemize}
 
 La forme \lstcode{import} en R7RS permet d'importer un ensemble d'identifiants
-qui sont exporté par un module. Chaque ensemble importé spécifie le nom des
+qui sont exportés par un module. Chaque ensemble importé spécifie le nom des
 identifiants du module et parfois même associe un nom local aux identifiants.
-Le \lstcode{import} peut prendre l'une des formes suivante:
+L'\lstcode{import} peut prendre l'une des formes suivantes:
 \begin{itemize}
   \label{itm:import-set}
   \item \texttt{\textit{<library-name>}}
@@ -512,12 +505,12 @@ Le \lstcode{import} peut prendre l'une des formes suivante:
 \end{itemize}
 
 
-Dans la première forme importe tous les identifiants exportés par
-la bibliothèque \texttt{\textit{<library-name>}}. Les autres types de
-\texttt{\textit{<import-set>}} modifient l'ensemble comme suit:
-
+Dans la première forme, tous les identifiants exportés par
+la bibliothèque \texttt{\textit{<library-name>}} sont importés.
+Les autres types de \texttt{\textit{<import-set>}} modifient
+l'ensemble comme suit:
 \begin{itemize}
-  \item \textbf{only} inclut seulement les identifiants spécifiés. C'est un
+  \item \textbf{only} inclut seulement les identifiants spécifiés. C'est une
     erreur d'importer un identifiant non exporté par la bibliothèque.
 
   \item \textbf{except} permet d'exclure des identifiants de l'ensemble.
