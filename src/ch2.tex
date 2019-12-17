@@ -3,16 +3,18 @@
 
 Le langage Scheme\cite{Clinger:2008:SCH:1529966.1529973} a été conçu en 1975
 par Guy L. Steele et Gerald Jay Sussman.  C'est un langage de programmation
-avec un système de type dynamique, cela signifie que les variables peuvent
-contenir n'importe quels types. Il supporte plusieurs paradigmes de
-programmation comme fonctionnelle, impérative et méta. Chaque expression est
-représentée sous forme préfixée et fortement parenthésé.  Un programme Scheme est
-une séquence de liste parenthésé en forme préfixée, ce sont des
+avec un système de type dynamique.  Les types sont associés aux valeurs
+plutôt qu'aux variables et une variable donnée n'est pas contrainte
+à contenir un type particulier.  Il permet la programmation fonctionnelle,
+la programmation impérative et la méta-programmation. Sur le plan syntaxique,
+Scheme hérite la syntaxe préfixe parenthésée de Lisp.
+Un programme Scheme est
+une séquence de
 \textit{s-expressions}.  Chaque \textit{s-expression} correspond soit à une
-constante, une application de procédure ou une application de macro. Les macros
-sont liées au paradigme de méta programmation qui manipule les expressions.
+constante, une variable ou une forme \texttt{(\textit{<op>} \textit{<arg>...})}
+qui dénote un appel de procédure, un appel de macro, ou une forme spéciale.
 
-Les formes de base usuelles en Scheme sont \lstcode{define}, \lstcode{lambda},
+Les formes spéciales de base en Scheme sont \lstcode{define}, \lstcode{lambda},
 \lstcode{let}, \lstcode{if} et \lstcode{set!}.
 \begin{itemize}
   \item La forme \texttt{(define \textit{<name>} \textit{<val>})} associe le nom \textit{<name>} avec
@@ -36,16 +38,35 @@ Les formes de base usuelles en Scheme sont \lstcode{define}, \lstcode{lambda},
     \textit{<name>} avec la valeur \textit{<val>}.
 \end{itemize}
 
+\begin{figure}[htbp]
+  \begin{tabular}{|l|}\hline
+\begin{mplisting}{0.7}
+(define sq (lambda (x) (* x x)))
+
+(define fact
+  (lambda (n)
+    (if (< n 2)
+        1
+        (* n (fact (- n 1))))))
+
+(println (fact (sq 10)))
+\end{mplisting}\\\hline
+\end{tabular}
+
+\caption{Programme Scheme qui imprime la factorielle de 100.}
+
+\label{fig:fact100}
+\end{figure}
+
+À titre d'exemple, la figure \ref{fig:fact} montre un programme Scheme
+simple avec deux définitions de fonctions.
+
 %read from here
 
-La méta programmation est un paradigme lié à l'utilisation de macros qui sont
-des entités qui manipulent la structure du programme. Elle est utilisée pour
-ajouter des abréviations dans le langage qui simplifie l'écriture du code.  La
-section \ref{sec:proc_and_macro} détaille de la méta programmation en Scheme.
-
-Les expressions Scheme sont en forme préfixe. Cela signifie que l'opération
-précède les opérandes. Cette forme est plus utilisée dans les langages de la famille
-LISP.
+%La méta programmation est un paradigme lié à l'utilisation de macros qui sont
+%des entités qui manipulent la structure du programme. Elle est utilisée pour
+%étendre le langage avec des nouvelles formes syntaxiques pour simplifier l'écriture du code.  La
+%section \ref{sec:proc_and_macro} détaille la méta programmation en Scheme.
 
 % Une expression peut être organisé de plusieurs façons, infixe, préfixe ou
 % suffixe.  La différence entre ces organisations est l'emplacement de
@@ -117,23 +138,26 @@ LISP.
 
 % La définition des associations globales en Scheme est effectuée avec \lstcode{define}.
 
-Les différents types primitifs que les valeurs peuvent prendre
-en Scheme sont \lstcode{boolean}, \lstcode{pair}, \lstcode{symbol},
+Les différents types primitifs disponibles dans la norme Scheme
+sont \lstcode{boolean}, \lstcode{pair}, \lstcode{symbol},
 \lstcode{number}, \lstcode{char}, \lstcode{string}, \lstcode{vector},
 \lstcode{port} et \lstcode{procedure}.
+Plusieurs systèmes Scheme offrent des extensions à ces types, tel
+les dictionnaires (``hash tables''), les structures (``records'') et tableaux numériques (par exemple Gambit
+offre le type \lstcode{u8vector} qui est un tableau d'octets).
 
-\section{Procédure et Macro}
+\section{Procédures et macros}
 \label{sec:proc_and_macro}
 
-Les procédures sont des objets de première classe, cela signifie qu'elles
-peuvent être manipulées comme n'importe quels types de données. Elles peuvent
+Les procédures sont des objets de première classe, c'est-à-dire pouvant
+être manipulées comme n'importe quels types de données. Elles peuvent
 être passées en tant que paramètre à une procédure et retournées en tant que
-résultat.  Certaines fonctions -- telles que \lstcode{for-each}, \lstcode{map} et
-\lstcode{fold} -- bénéficient que les procédures sont des objets de première classe.
+résultat.  Certaines procédures, telles que \lstcode{for-each}, \lstcode{map} et
+\lstcode{fold}, bénéficient que les procédures soient des objets de première classe.
 
-Les procédures et les fonctions sont définies par le constructeur
+Les procédures sont définies par la forme spéciale
 \lstcode{lambda} qui prend une liste d'arguments et une séquence d'au moins une
-\textit{s-expression} comme corps. Lors de l'application d'une procédure, chacun
+\textit{s-expression} comme corps. Lors de l'appel d'une procédure, chacun
 des paramètres est évalué puis propagé à la procédure. C'est un mode de passage
 de paramètre par valeur. Il n'y a pas de forme spéciale pour les boucles, car elles
 sont construites par la récursion. Le langage offre une récursion sans coût
