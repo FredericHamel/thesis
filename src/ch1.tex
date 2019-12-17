@@ -58,8 +58,8 @@ lier les fonctionnalités des modules au programme principal. Le chapitre % chap
 dynamique. L'avantage principal du chargement dynamique de module est la possibilité de mise à jour
 individuelle d'un module sans avoir à lier le programme principal; dans le
 modèle statique le programme principal doit être lié à nouveau avec les modules.
-Les modules chargés dynamiquement par le système d'exploitation peuvent être partagé entre différent
-programme. Ce type de module porte le nom de \textit{bibliothèque partagée} ils sont décrit dans
+Les modules chargés dynamiquement par le système d'exploitation peuvent être partagés entre différents
+programmes. Ce type de module, les \textit{bibliothèques partagées}, sont décrits dans
 le chapitre \ref{ch:module_systems}.
 
 % % Migration de code dans un système distribué.
@@ -72,24 +72,24 @@ le chapitre \ref{ch:module_systems}.
 
 
 Un \textit{système distribué} est un groupe d'ordinateurs, les
-\textit{noeuds} de calcul, reliés en réseau afin qu'ils puissent
-échanger des messages et coordonner leurs activités.  Chaque noeud peut
-exécuter le même code que les autres noeuds ou bien un code spécialisé
+\textit{nœuds} de calcul, reliés en réseau afin qu'ils puissent
+échanger des messages et coordonner leurs activités.  Chaque nœud peut
+exécuter le même code que les autres nœuds ou bien un code spécialisé
 au rôle qu'il joue au sein du système (e.g.~serveur vs.~client).
 D'une façon ou de l'autre on parlera de l'ensemble du code comme étant
 le \textit{programme distribué} qu'ils exécutent.
 
 Les programmes distribués posent des nouveaux problèmes de déploiement
-car les noeuds sont rarement identiques.  Ils peuvent avoir des
+car les nœuds sont rarement identiques.  Ils peuvent avoir des
 architectures matérielles différentes, et/ou des ressources et
 périphériques différents, et/ou des systèmes d'exploitation
 différents.  Il est à noter que ces caractéristiques peuvent changer
 pendant la période d'exploitation du programme, par exemple lors de
 mise à jour du matériel et du système d'exploitation.  Ce problème est
 exacerbé par le \textit{code mobile}, c'est-à-dire un calcul en
-exécution sur un noeud qui se déplace, ou \textit{migre}, sur un autre
-noeud pour poursuivre son exécution.  Cette \textit{migration de
-  tâche} est utile pour améliorer la performance lorsque le noeud
+exécution sur un nœud qui se déplace, ou \textit{migre}, sur un autre
+nœud pour poursuivre son exécution.  Cette \textit{migration de
+  tâche} est utile pour améliorer la performance lorsque le nœud
 destinataire est plus puissant ou possède localement les données
 utilisées par la tâche migrée.  Finalement, dans le cas de programmes
 distribués offrant un service à l'externe, on veut minimiser les
@@ -97,17 +97,69 @@ interruptions de service causées par les mises à jour du système ou
 d'une de ses parties, que ce soit 1) au niveau matériel et/ou le
 système d'exploitation ou 2) le programme distribué lui-même.  Dans le
 premier cas, la migration de tâche peut être utilisée pour migrer le
-service à un autre noeud le temps que se fasse la mise à jour.  Dans
+service à un autre nœud le temps que se fasse la mise à jour.  Dans
 le deuxième cas on aimerait utiliser les nouveaux modules
 modifiés sans avoir à arrêter le programme et le redémarrer.
 
 Il apparait donc avantageux que le code du programme distribué prenne
 une forme exécutable \textit{portable} qui peut s'adapter aux
-particularités de chaque noeud sans demander au développeur de
+particularités de chaque nœud sans demander au développeur de
 modifier ou recompiler le programme distribué.  Idéalement, cette
 portabilité ne devrait pas causer des pertes de performance.  D'autre
 part, la possibilité de substituer une version d'un module par une
 nouvelle version sans interruption du programme est attrayante.
+
+\subsection{RPC et migration de tâche}
+
+Dans un tel système distribué, il est possible d'amorcer des calculs entre les
+différents nœuds. C'est fait soit par un appel RPC (\textit{Remote
+Procedure Call}) ou par \textit{migration de tâches}.  Un appel RPC correspond
+à une requête pour démarrer un service sur un nœud distant. Une migration de
+tâche copie l'état courant de la tâche et l'envoie sur le nœud distant où son
+exécution continue.
+
+Les appels RPC sont présents dans beaucoup de systèmes et langages de
+programmation.  Le protocole \texttt{ssh} permet des appels RPC par
+l'invocation de processus sur un système distant. Java offre les appels distants par un
+mécanisme similaire au RPC nommé RMI (\textit{Remote Method Invocation}).
+Le langage C offre des bibliothèques qui implémentent un protocole de RPC.
+Les variantes de RPC sont limitées aux fonctionnalités fournies par le nœud distant.
+Pour le bon fonctionnement de cette approche, il est nécessaire que la
+fonctionnalité existe sur la machine distante.
+
+La migration de tâche permet de transférer une tâche d'un nœud à un autre.  Ce
+mécanisme a été implémenté dans différents langages comme
+Erlang~\cite{M_mobileintelligent}, Java~\cite{And98transparentmigration},
+Scheme~\cite{Sumii00animplementation},
+JavaScript~\cite{DEV2017transparentmigration}. Ce mécanisme requiert que
+l'ensemble du code soit disponible sur le système distant dans la plupart des
+cas.
+
+Le système Java présenté dans l'article~\cite{And98transparentmigration} est un
+cas de migration de tâche. Il capture l'état présent du programme qui consiste
+aux valeurs et aux types de toutes les variables de chaque objet. La pile des
+appels de méthode avec les valeurs de toutes les
+variables est aussi incluse dans l'état du programme.
+Ces informations sont transmises au nœud distant qui les utilise pour reconstruire le programme initial.
+L'ensemble des méthodes sur le nœud de départ est présent sur le
+nœud d'arrivée.
+
+Le système Erlang~\cite{M_mobileintelligent} qui implémente des agents mobiles
+requiert que le code soit disponible sur le nœud destination.
+
+Le système de migration en JavaScript utilise des nœuds pour conserver
+le code. Il est basé sur le fait que le code des agents est connu par les
+nœuds spécialisés. Puisque le code des agents est connu, il suffit de
+transmettre l'état de l'agent pour effectuer une migration. Ce modèle
+JavaScript ressemble à celui implémenté dans Gambit lors de la transmission
+de procédures compilées par l'utilisation de nœuds pour conserver le code.
+
+La migration de code ne devrait pas être limitée par le code sur le nœud
+distant. Le système de module offre la possibilité de migrer un agent sur un
+nœud qui ne connait pas le code de l'agent. Un exemple concret de migration
+de code est présenté dans le chapitre \ref{ch:task_migration}. Le problème
+est la migration de code sur un nœud qui ne connait pas le code de l'agent qui
+se fait migrer.
 
 ------------------------------------------------------------
 
@@ -120,52 +172,17 @@ module comme un module différent, c'est ce qui est utilisé dans le langage de 
 tel Python et Java, les modules sont vus par le programme par seulement
 un nom qui n'inclut pas la version.
 
-Dans les système qui considère chaque version d'un module comme un module différent,
+Dans les systèmes qui considèrent chaque version d'un module comme un module différent,
 il existe des programmes qui chargent plusieurs versions d'un module. Cela peut amener
 certains problèmes de conflit entre les versions du module. Ces conflits peuvent être
-observer dans les langages interprété comme Javascript ou dans les langages compilé
+observé dans les langages interprétés comme JavaScript ou dans les langages compilés
 comme C/C++. Les conflits peuvent être dans les noms des fonctions du module ou
-dans des variables globales partagés entre plusieurs versions du module. Le chapitre
-\ref{ch:module_systems} traite des différent cas de conflit avec des exemple
+dans des variables globales partagées entre plusieurs versions du module. Le chapitre
+\ref{ch:module_systems} traite des différents cas de conflits avec des exemples
 dans plusieurs langages programmations.
 
 
 ------------------------------------------------------------
-
-Dans un système
-distribué, il est possible de transmettre des tâches entre les différents
-systèmes. C'est ce qu'on appelle, \textit{migration de tâche}.  Un exemple de
-migration de tâche est l'invocation de \texttt{ssh} qui permet d'exécuter un
-processus sur un système distant. Le problème de cette approche est que le
-programme doit exister sur la machine distante et que chaque invocation passe
-par une authentification. Des mécanismes de migration de code ont été
-implémentés dans différents langages comme Erlang~\cite{M_mobileintelligent},
-Java~\cite{And98transparentmigration}, Scheme~\cite{Sumii00animplementation},
-Javascript~\cite{DEV2017transparentmigration}, \dots.  La plupart des méthodes
-de migration de code requièrent que l'ensemble des procédures sont
-présentes sur le système distant.
-
-Le système Java~\cite{And98transparentmigration} capture l'état du programme courant
-qui consiste aux valeurs et aux types de toutes les variables de chaque objet. L'autre
-information est la pile des appels de méthode avec les valeurs de toutes les variables.
-Ces informations sont transmis et utilisés pour reconstruire l'état du programme.
-L'ensemble des méthodes sur le nœud de départ est présent sur le nœud d'arrivé.
-Le système Erlang~\cite{M_mobileintelligent} requière aussi que le code soit disponible
-sur le nœud destination.
-
-Le système de migration en Javascript utilise des dépôts de code pour conserver
-le code. Il est basé sur le fait que le code des agents sont connus par des
-nœuds spécialisés. Puisque le code des agents est connu, il suffit de
-transmettre l'état de l'agent. Ce modèle Javascript ressemble à celui
-implémenté dans Gambit lors de la transmission de procedure compilé.
-
-La migration de de code ne devrait pas être limité par le code sur le nœud
-distant. Le système de module offre la possibilité de migrer un agent sur un
-nœud qui ne connait pas le code de l'agent. Un exemple concret de migration
-de code est présenté dans le chapitre \ref{ch:task_migration}. Le problème
-est la migration de code sur un nœud qui ne connait pas le code de l'agent qui
-est migrer.
-
 
 % XXX: Agent TCL
 
