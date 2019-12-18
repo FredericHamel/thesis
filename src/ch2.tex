@@ -1,28 +1,26 @@
 
 \chapter{Bibliothèque Scheme}
 
-Le langage Scheme\cite{Clinger:2008:SCH:1529966.1529973} a été conçu en 1975
-par Guy L. Steele et Gerald Jay Sussman.  C'est un langage de programmation
-avec un système de type dynamique.  Les types sont associés aux valeurs
-plutôt qu'aux variables et une variable donnée n'est pas contrainte
-à contenir un type particulier.  Il permet la programmation fonctionnelle,
-la programmation impérative et la méta-programmation. Sur le plan syntaxique,
-Scheme hérite la syntaxe préfixe parenthésée de Lisp.
-Un programme Scheme est
-une séquence de
+Le langage Scheme\cite{Clinger:2008:SCH:1529966.1529973}, conçu en 1975 par Guy
+L. Steele et Gerald Jay Sussman, est un langage de programmation avec un
+système de type dynamique.  Les types sont associés aux valeurs plutôt qu'aux
+variables et une variable donnée n'est pas contrainte à contenir un type
+particulier.  Il permet la programmation fonctionnelle, la programmation
+impérative et la méta-programmation. Sur le plan syntaxique, Scheme hérite la
+syntaxe préfixe parenthésée de Lisp.  Un programme Scheme est une séquence de
 \textit{s-expressions}.  Chaque \textit{s-expression} correspond soit à une
 constante, une variable ou une forme \texttt{(\textit{<op>} \textit{<arg>...})}
 qui dénote un appel de procédure, un appel de macro, ou une forme spéciale.
 
-Les formes spéciales de base en Scheme sont \lstcode{define}, \lstcode{lambda},
+Les formes syntaxique spéciales de base en Scheme sont \lstcode{define}, \lstcode{lambda},
 \lstcode{let}, \lstcode{if} et \lstcode{set!}.
 \begin{itemize}
   \item La forme \texttt{(define \textit{<name>} \textit{<val>})} associe le nom \textit{<name>} avec
     la valeur \textit{<val>}. Il est utilisé pour définir les variables globales.
 
-  \item La forme \texttt{(lambda \textit{<args>} \textit{<body>})} permet la définition de
-    procédures anonymes. Les arguments sont \textit{<args>} et le corps
-    de procédure \textit{<body>}.
+  \item La forme \texttt{(lambda \textit{<params>} \textit{<body>})} permet la définition de
+    procédures anonymes. Les paramètres sont \textit{<params>} et le corps
+    de la procédure \textit{<body>}.
 
   \item La forme \texttt{(let \textit{<bindings>} \textit{<body>})} permet de créer des
     associations (\textit{<bindings>}) visibles seulement dans le contexte de
@@ -30,7 +28,7 @@ Les formes spéciales de base en Scheme sont \lstcode{define}, \lstcode{lambda},
     associative nom et valeur.
 
   %% XXX: Too much???
-  \item Les conditions sont gérées par la forme \texttt{(if \textit{<e1>} \textit{<e2>} \textit{<e3>})}.
+  \item L'évaluation conditionnelle est obtenue par la forme \texttt{(if \textit{<e1>} \textit{<e2>} \textit{<e3>})}.
     La branche \textit{<e1>} est exécutée si la condition \textit{<e2>} est
     vraie sinon \textit{<e3>}.
 
@@ -152,18 +150,17 @@ offre le type \lstcode{u8vector} qui est un tableau d'octets).
 Les procédures sont des objets de première classe, c'est-à-dire pouvant
 être manipulées comme n'importe quels types de données. Elles peuvent
 être passées en tant que paramètre à une procédure et retournées en tant que
-résultat.  Certaines procédures, telles que \lstcode{for-each}, \lstcode{map} et
-\lstcode{fold}, bénéficient que les procédures soient des objets de première classe.
+résultat.  Certaines procédures, commme \lstcode{for-each}, \lstcode{map} et
+\lstcode{fold}, en tire profit.
 
-Les procédures sont définies par la forme spéciale
-\lstcode{lambda} qui prend une liste d'arguments et une séquence d'au moins une
-\textit{s-expression} comme corps. Lors de l'appel d'une procédure, chacun
-des paramètres est évalué puis propagé à la procédure. C'est un mode de passage
-de paramètre par valeur. Il n'y a pas de forme spéciale pour les boucles, car elles
-sont construites par la récursion. Le langage offre une récursion sans coût
-avec l'appel terminal.  Il est possible d'ajouter une syntaxe pour les boucles en
-utilisant la méta programmation.
-% forme spéciale pour les boucle -> Les boucles sont faite par la récursion
+Les procédures sont définies par la forme \lstcode{lambda} qui prend une liste
+de paramètres et une séquence d'au moins une \textit{s-expression} comme corps.
+Lors de l'appel d'une procédure, chacun des paramètres est évalué puis propagé
+à la procédure. C'est un mode de passage de paramètre par valeur. Il n'y a pas
+de forme spéciale pour les boucles, car le même effet peut être obtenu par la
+récursion.  Cela est facilité par l'existence de l'appel terminal garanti.  Il
+est assez simple d'ajouter une syntaxe pour les boucles à l'aide de la méta
+programmation.
 
 
 % \begin{figure}[ht]
@@ -205,7 +202,7 @@ utilisant la méta programmation.
 
 
 % La récursion est la façon dont les boucle sont faites.
-La programmation méta est présente dans plusieurs langages comme C, C++, LISP,
+La méta programmation est présente dans plusieurs langages comme C, C++, LISP,
 Haskell, Scheme, etc. Elle est basée sur la capacité d'un programme de manipuler
 d'autre programme comme des données. Cela implique qu'il est possible de
 générer, analyser et modifier le code d'un autre programme.  Les
@@ -217,12 +214,11 @@ Ils sont basés sur un modèle de remplacement textuel simple. Un appel à la
 macro est remplacé par le corps de celle-ci. Les macros de style LISP ont
 accès à l'ensemble des procédures, ce qui leur donne plus de flexibilité.  La
 différence entre les procédures et les macros est le mode de passage de
-paramètres.  Les paramètres sont passés à la macro sans être évalués, c'est ce
-qu'on appelle le passage par nom.  Certaines implémentations de Scheme offrent la forme
+paramètres.  Les paramètres sont passés à la macro sans être évalués.
+Certaines implémentations de Scheme offrent la forme
 \lstcode{define-macro} pour définir les macros.  Cette forme est équivalente au
 \lstcode{defmacro} de LISP. Elle accepte en entrée des \textit{s-expression}s et
-retourne une \textit{s-expression} (soit une liste ou une constante).  Cette
-forme spéciale a un problème d'hygiène.
+retourne une \textit{s-expression}.
 
 \begin{figure}[htbp]
   \begin{tabular}{|l|}\hline
@@ -247,12 +243,12 @@ Un exemple qui montre les capacités des macros Scheme est la macro
 point d'application.  Pour inclure un fichier dans un autre, il faut tout
 d'abord lire le contenu du fichier à inclure. Ensuite, il suffit de retourner le
 code lu. La figure \ref{fig:macro_include} montre une implémentation de cette
-macro avec \lstcode{define-macro}.  Pour les implémentations de Scheme ne
-supportant pas la forme \lstcode{define-macro}, il est possible d'implémenter
+macro avec \lstcode{define-macro}.  Pour les systèmes Scheme n'offrant
+pas la forme \lstcode{define-macro}, il assez simple d'implémenter
 la forme \lstcode{include} avec \lstcode{define-syntax} qui est l'alternative à
 \lstcode{define-macro}. L'implémentation de cette macro est donnée à la figure
 \ref{fig:macro_include_def_syntax}. Les particularités de
-\lstcode{define-syntax} ne sont pas mentionnées dans ce mémoire.
+\lstcode{define-syntax} ne sont pas pertinentes à ce mémoire.
 
 % --------------------------------------MOVE--------------------------------------
 
@@ -589,12 +585,21 @@ l'ensemble comme suit:
 \end{figure}
 \end{center}
 
+
+\section{Conclusion}
+Les révisions de Scheme ont déjà considéré comment définir un module
+syntaxiquement en partant de R4RS à R7RS. La forme \lstcode{define-library}
+de R7RS est suffisante pour implémenter le système module et pour implémenter
+des modules mobiles. Elles permettent la création de modules avec des noms
+uniques qui est nécessaire dans le transfert de code.
+
 % - (import (foo)) ; exportant f1 f2 f3
 % ===>
 % - (##demand-module foo)
 % - (##namespace ("foo") f1 f2 f3)
 % - macros
 % - (##namespace (""))
+
 
 
 
