@@ -1,12 +1,24 @@
 
 \chapter{Bibliothèque Scheme}
 
-Ce chapitre traite l'évolution des modules du langage Scheme qui a
-servi dans implantation du système de module. La structure
-des modules de chaque révision est présentée (R4RS, R5RS, R6RS et R7RS).
-Le tout, pour introduire la syntaxe des modules utilisée dans le
-système de module implémenté dans ce mémoire.
+La \textit{modularisation} du code mobile est un concept intéressant dans les
+systèmes distribués.  L'approche employée, pour implémenter une application
+avec ce concept, utilise le système Termite, une implémentation du protocole
+d'Erlang avec le langage Scheme. Erlang et Termite sont des langages de
+programmation fonctionnelle pour concevoir les systèmes distribués. La syntaxe
+de Scheme est simple et a la propriété d'homoiconicité, c'est-à-dire que la
+représentation des programmes est aussi une structure de donnée.  La pièce qui
+manque dans Termite est la modularisation des applications. Ce chapitre
+introduit la syntaxe de Scheme et des modules de chacune de ses révisions
+(R4RS, R5RS, R6RS et R7RS). Le choix de la syntaxe pour les modules est
+important.
 
+% Ce concept pose des défis particuliers dans l'implantation.
+%Le tout, pour introduire la syntaxe des modules qui permet de résoudre
+%les problème avec le code mobile lié mentionné dans le
+%chapitre~\ref{ch:mod_sys_dis}.
+
+\section{Scheme et sa syntaxe}
 
 Le langage Scheme\cite{Clinger:2008:SCH:1529966.1529973}, conçu en 1975 par Guy
 L. Steele et Gerald Jay Sussman, est un langage de programmation avec un
