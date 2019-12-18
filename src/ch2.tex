@@ -1,18 +1,25 @@
 
 \chapter{Bibliothèque Scheme}
 
+Ce chapitre traite l'évolution des modules du langage Scheme qui a
+servi dans implantation du système de module. La structure
+des modules de chaque révision est présentée (R4RS, R5RS, R6RS et R7RS).
+Le tout, pour introduire la syntaxe des modules utilisée dans le
+système de module implémenté dans ce mémoire.
+
+
 Le langage Scheme\cite{Clinger:2008:SCH:1529966.1529973}, conçu en 1975 par Guy
 L. Steele et Gerald Jay Sussman, est un langage de programmation avec un
 système de type dynamique.  Les types sont associés aux valeurs plutôt qu'aux
 variables et une variable donnée n'est pas contrainte à contenir un type
 particulier.  Il permet la programmation fonctionnelle, la programmation
-impérative et la méta-programmation. Sur le plan syntaxique, Scheme hérite la
-syntaxe préfixe parenthésée de Lisp.  Un programme Scheme est une séquence de
+impérative et la méta programmation. Sur le plan syntaxique, Scheme hérite la
+syntaxe préfixe parenthétisée de Lisp.  Un programme Scheme est une séquence de
 \textit{s-expressions}.  Chaque \textit{s-expression} correspond soit à une
 constante, une variable ou une forme \texttt{(\textit{<op>} \textit{<arg>...})}
 qui dénote un appel de procédure, un appel de macro, ou une forme spéciale.
 
-Les formes syntaxique spéciales de base en Scheme sont \lstcode{define}, \lstcode{lambda},
+Les formes syntaxiques spéciales de base en Scheme sont \lstcode{define}, \lstcode{lambda},
 \lstcode{let}, \lstcode{if} et \lstcode{set!}.
 \begin{itemize}
   \item La forme \texttt{(define \textit{<name>} \textit{<val>})} associe le nom \textit{<name>} avec
@@ -140,7 +147,7 @@ Les différents types primitifs disponibles dans la norme Scheme
 sont \lstcode{boolean}, \lstcode{pair}, \lstcode{symbol},
 \lstcode{number}, \lstcode{char}, \lstcode{string}, \lstcode{vector},
 \lstcode{port} et \lstcode{procedure}.
-Plusieurs systèmes Scheme offrent des extensions à ces types, tel
+Plusieurs systèmes Scheme offrent des extensions à ces types, tels
 les dictionnaires (``hash tables''), les structures (``records'') et tableaux numériques (par exemple Gambit
 offre le type \lstcode{u8vector} qui est un tableau d'octets).
 
@@ -150,7 +157,7 @@ offre le type \lstcode{u8vector} qui est un tableau d'octets).
 Les procédures sont des objets de première classe, c'est-à-dire pouvant
 être manipulées comme n'importe quels types de données. Elles peuvent
 être passées en tant que paramètre à une procédure et retournées en tant que
-résultat.  Certaines procédures, commme \lstcode{for-each}, \lstcode{map} et
+résultat.  Certaines procédures, comme \lstcode{for-each}, \lstcode{map} et
 \lstcode{fold}, en tire profit.
 
 Les procédures sont définies par la forme \lstcode{lambda} qui prend une liste
@@ -375,11 +382,11 @@ exemple de module simple n'utilisant que la procédure \lstcode{load}.
 
 Le standard R6RS\cite{Scheme:R6RS} renforce le concept de modules avec la
 syntaxe \lstcode{library}.  Un module R6RS est séparé en 4 parties: le nom, une
-sous forme \lstcode{export}, une sous forme \lstcode{import} et le corps du
+sous-forme \lstcode{export}, une sous-forme \lstcode{import} et le corps du
 module. Le nom du module l'identifie de façon unique, il peut contenir une
 spécification de version. La version est spécifiée par une liste d'entiers
 positifs. Une liste vide \lstcode{()} est l'équivalent de ne pas spécifier la
-version. Ensuite, il y a la liste des exportations spécifier par la sous forme
+version. Ensuite, il y a la liste des exportations spécifier par la sous-forme
 \lstcode{export}. Chaque élément de cette liste est soit un identifiant ou une
 sous forme \lstcode{rename} qui renomme l'identifiant exporté.
 L'\lstcode{import} donne la liste des dépendances du module. Chaque dépendance
@@ -412,11 +419,11 @@ permet de manipuler les noms des symboles importés et exportés.\\
 \end{mplisting}
 \end{center}
 
-La forme \lstcode{import} de R6RS permet l'importation d'un ensemble de module.
+La forme \lstcode{import} de R6RS permet l'importation d'un ensemble de modules.
 Chaque spécification d'import \lstcode{<import spec>} peut être une simple
-importation ou un importation avec un niveau. Les différents niveaux d'importation sont:
+importation ou une importation avec un niveau. Les différents niveaux d'importation sont:
 \lstcode{run}, \lstcode{expand} ou \lstcode{(meta <level>)}.  Le niveau méta
-donné par \lstcode{<level>} est un entier exacte. Un niveau d'importation 0
+donné par \lstcode{<level>} est un entier exact. Un niveau d'importation 0
 correspond à \lstcode{run} et un niveau d'importation de 1 correspond
 \lstcode{expand}.
 
@@ -587,8 +594,11 @@ l'ensemble comme suit:
 
 
 \section{Conclusion}
+%
 Les révisions de Scheme ont déjà considéré comment définir un module
-syntaxiquement en partant de R4RS à R7RS. La forme \lstcode{define-library}
+syntaxiquement en partant de R4RS à R7RS. Les module R6RS ont été mentionnés,
+car ils font parti de l'évolution de Scheme. Ils ne sont pas pertinent pour
+dans l'implémentation du système de module.  La forme \lstcode{define-library}
 de R7RS est suffisante pour implémenter le système module et pour implémenter
 des modules mobiles. Elles permettent la création de modules avec des noms
 uniques qui est nécessaire dans le transfert de code.

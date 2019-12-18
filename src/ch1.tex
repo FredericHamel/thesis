@@ -32,7 +32,7 @@ fichier de code qui, à son exécution, communiquera avec le système
 d'exploitation pour accéder à ses services.  Ce genre de fichier exécutable est
 obtenu par une \textit{édition de liens statique} qui combine en un seul
 fichier tous les modules (à l'exception du système d'exploitation).  Par
-rapport à la forme monolithique, cette organisation simplifie le développement
+rapport à la forme monolithique, cette organisation simplifie le développement,
 car le programmeur n'a pas à se soucier du développement des services de base
 comme l'accès aux fichiers, la gestion des processus et de la mémoire, etc.  Le
 programme peut être diffusé à d'autres ordinateurs ayant le même système
@@ -40,10 +40,10 @@ d'exploitation simplement en y transférant le fichier exécutable.
 
 L'édition de lien statique a un certain nombre de défauts. L'état des
 modules utilisés au moment de l'édition de liens est figé au sein du
-programme, ce qui empêche la mise à jour individuelle des modules à des nouvelles versions. Il faut
+programme, ce qui empêche la mise à jour individuelle des modules à de nouvelles versions. Il faut
 recompiler tous les modules qui ont subi une mise à jour et refaire l'édition de liens du
 programme principal. Le coût en temps et l'effort pour un petit changement
-est important.  Le chapitre \ref{ch:loading-model} va détailler plus en profondeur
+sont importants.  Le chapitre \ref{ch:loading-model} va détailler plus en profondeur
 ces problèmes.
 
 % Le même module est chargé plus d'une fois.
@@ -57,9 +57,9 @@ lier les fonctionnalités des modules au programme principal. Le chapitre % chap
 \ref{ch:module_systems} explique plus en profondeur le fonctionnement de l'éditeur de liens
 dynamique. L'avantage principal du chargement dynamique de module est la possibilité de mise à jour
 individuelle d'un module sans avoir à lier le programme principal; dans le
-modèle statique le programme principal doit être lié à nouveau avec les modules.
+modèle statique, le programme principal doit être lié à nouveau avec les modules.
 Les modules chargés dynamiquement par le système d'exploitation peuvent être partagés entre différents
-programmes. Ce type de module, les \textit{bibliothèques partagées}, sont décrits dans
+programmes. Ce type de module, les \textit{bibliothèques partagées}, est décrit dans
 le chapitre \ref{ch:module_systems}.
 
 % % Migration de code dans un système distribué.
@@ -75,11 +75,11 @@ Un \textit{système distribué} est un groupe d'ordinateurs, les
 \textit{nœuds} de calcul, reliés en réseau afin qu'ils puissent
 échanger des messages et coordonner leurs activités.  Chaque nœud peut
 exécuter le même code que les autres nœuds ou bien un code spécialisé
-au rôle qu'il joue au sein du système (e.g.~serveur vs.~client).
+au rôle qu'il joue au sein du système (e.g.~serveur vs ~client).
 D'une façon ou de l'autre on parlera de l'ensemble du code comme étant
 le \textit{programme distribué} qu'ils exécutent.
 
-Les programmes distribués posent des nouveaux problèmes de déploiement
+Les programmes distribués posent de nouveaux problèmes de déploiement,
 car les nœuds sont rarement identiques.  Ils peuvent avoir des
 architectures matérielles différentes, et/ou des ressources et
 périphériques différents, et/ou des systèmes d'exploitation
@@ -98,7 +98,7 @@ d'une de ses parties, que ce soit 1) au niveau matériel et/ou le
 système d'exploitation ou 2) le programme distribué lui-même.  Dans le
 premier cas, la migration de tâche peut être utilisée pour migrer le
 service à un autre nœud le temps que se fasse la mise à jour.  Dans
-le deuxième cas on aimerait utiliser les nouveaux modules
+le deuxième cas, on aimerait utiliser les nouveaux modules
 modifiés sans avoir à arrêter le programme et le redémarrer.
 
 Il apparait donc avantageux que le code du programme distribué prenne
@@ -134,13 +134,13 @@ dans les noms des fonctions du module ou dans des variables globales
 partagées entre plusieurs versions du module.
 
 Nous reviendrons sur les modules versionnés au chapitre
-\ref{ch:module_systems} car ce concept est essentiel dans
+\ref{ch:module_systems}, car ce concept est essentiel dans
 notre approche de modularisation.
 
 \section{Code mobile}
 
 Dans un système distribué, il est utile d'amorcer des calculs sur un
-nœuds à partir d'un autre.
+nœud à partir d'un autre.
 Cela peut se faire avec un appel RPC (\textit{Remote
 Procedure Call}) ou par \textit{migration de tâches}.  Un appel RPC correspond
 à une requête d'exécution d'un calcul sur un nœud distant. Une migration de
@@ -186,7 +186,7 @@ Un exemple concret de migration de code est présenté au chapitre
 \ref{ch:task_migration}.
 
 Notre point de vue est que la migration de code ne devrait pas
-demander une préconfiguration des nœuds car une gestion coordonnée de
+demander une préconfiguration des nœuds, car une gestion coordonnée de
 tous les nœuds d'un système distribué est difficile ou impossible
 lorsqu'il y a plusieurs nœuds et/ou des nœuds de nature différente
 et/ou il n'y a pas un gestionnaire unique de l'ensemble des nœuds.
@@ -200,8 +200,20 @@ langage de programmation Scheme qui offre la possibilité de migrer un
 agent sur un nœud qui ne connait pas à priori le code de l'agent, et
 qui permet à des versions multiples d'un module de coexister.
 
-Le chapitre 2 explique les approches existantes de modularisation
-en Scheme.  Le chapitre 3 ...
+Le chapitre 2 explique les approches existantes de modularisation en Scheme.
+Le chapitre 3 explique les problématiques des dépendances entre des modules
+natifs au sein du système de module. Le chapitre 4 traite de l'implémentation
+des modules dans Gambit. Le chapitre 5 explique les méchanisme de chargement
+des modules implémentés.
+
+-------------------------
+
+Le chapitre 6 traite
+du transfert des modules et de la migration de tâche.
+
+Le chapitre 7 est une évaluation du système de modules avec des
+résultats d'expérience effectuée entre des SE et architectures
+différentes.
 
 
 
