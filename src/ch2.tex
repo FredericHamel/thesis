@@ -1,17 +1,21 @@
 
 \chapter{Bibliothèque Scheme}
 
-La \textit{modularisation} du code mobile est un concept intéressant dans les
-systèmes distribués.  L'approche employée, pour implémenter une application
-avec ce concept, utilise le système Termite, une implémentation du protocole
-d'Erlang avec le langage Scheme. Erlang et Termite sont des langages de
-programmation fonctionnelle pour concevoir les systèmes distribués. La syntaxe
-de Scheme est simple et a la propriété d'homoiconicité, c'est-à-dire que la
-représentation des programmes est aussi une structure de donnée.  La pièce qui
-manque dans Termite est la modularisation des applications. Ce chapitre
-introduit la syntaxe de Scheme et des modules de chacune de ses révisions
-(R4RS, R5RS, R6RS et R7RS). Le choix de la syntaxe pour les modules est
-important.
+Pour développer notre approche de modularisation dans le contexte de
+systèmes distribués nous avons choisi un langage de programmation nous
+permettant de facilement expérimenter avec le code mobile.  Le langage
+Termite Scheme, une variante de Scheme étendue avec des
+fonctionnalités de programmation distribuée inspirées du langage
+Erlang, nous est apparu comme une option intéressante vu sa
+performance, sa portabilité et son support pour la méta programmation
+facilité par son homoiconicité.  Notre travail a donc pu se concentrer
+sur la conception d'un système de module spécialisé aux besoins du
+code mobile.
+
+Ce chapitre introduit la syntaxe de Scheme et les différentes
+approches de modularisation existantes.  Afin de faciliter son
+adoption, le système de module que nous avons développé se base sur
+ces approches.
 
 % Ce concept pose des défis particuliers dans l'implantation.
 %Le tout, pour introduire la syntaxe des modules qui permet de résoudre
@@ -21,12 +25,18 @@ important.
 \section{Scheme et sa syntaxe}
 
 Le langage Scheme\cite{Clinger:2008:SCH:1529966.1529973}, conçu en 1975 par Guy
-L. Steele et Gerald Jay Sussman, est un langage de programmation avec un
+L. Steele et Gerald Jay Sussman, est une variante minimaliste de Lisp.
+Depuis sa conception, plusieurs normes ont vu le jour; les plus connues
+étant le R4RS (1991), R5RS (1998), R6RS (2007) et R7RS (2013).
+
+Scheme est un langage de programmation avec un
 système de type dynamique.  Les types sont associés aux valeurs plutôt qu'aux
 variables et une variable donnée n'est pas contrainte à contenir un type
 particulier.  Il permet la programmation fonctionnelle, la programmation
-impérative et la méta programmation. Sur le plan syntaxique, Scheme hérite la
-syntaxe préfixe parenthétisée de Lisp.  Un programme Scheme est une séquence de
+impérative et la méta programmation.
+
+Sur le plan syntaxique, Scheme hérite la
+syntaxe préfixe parenthésée de Lisp.  Un programme Scheme est une séquence de
 \textit{s-expressions}.  Chaque \textit{s-expression} correspond soit à une
 constante, une variable ou une forme \texttt{(\textit{<op>} \textit{<arg>...})}
 qui dénote un appel de procédure, un appel de macro, ou une forme spéciale.

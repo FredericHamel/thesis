@@ -178,9 +178,10 @@ requiert que le code soit disponible sur le nœud destination.
 Le système de migration en JavaScript utilise des nœuds pour conserver
 le code. Il est basé sur le fait que le code des agents est connu par les
 nœuds spécialisés. Puisque le code des agents est connu, il suffit de
-transmettre l'état de l'agent pour effectuer une migration. Ce modèle
-JavaScript ressemble à celui implémenté dans Gambit lors de la transmission
-de procédures compilées par l'utilisation de nœuds pour conserver le code.
+transmettre l'état de l'agent pour effectuer une migration.
+%Ce modèle
+%JavaScript ressemble à celui implémenté dans Gambit lors de la transmission
+%de procédures compilées par l'utilisation de nœuds pour conserver le code.
 
 Un exemple concret de migration de code est présenté au chapitre
 \ref{ch:task_migration}.
@@ -195,25 +196,23 @@ gestionnaire, il serait avantageux de ne pas interrompre le
 fonctionnement du système distribué lorsque les modules sont
 améliorés.
 
+\section{Survol du mémoire}
+
 Pour ces raisons, nous avons développé un système de module pour le
 langage de programmation Scheme qui offre la possibilité de migrer un
 agent sur un nœud qui ne connait pas à priori le code de l'agent, et
 qui permet à des versions multiples d'un module de coexister.
 
-Le chapitre 2 explique les approches existantes de modularisation en Scheme.
-Le chapitre 3 explique les problématiques des dépendances entre des modules
-natifs au sein du système de module. Le chapitre 4 traite de l'implémentation
-des modules dans Gambit. Le chapitre 5 explique les méchanisme de chargement
-des modules implémentés.
-
--------------------------
-
-Le chapitre 6 traite
-du transfert des modules et de la migration de tâche.
-
-Le chapitre 7 est une évaluation du système de modules avec des
-résultats d'expérience effectuée entre des SE et architectures
-différentes.
+Le chapitre 2 explique les approches existantes de modularisation en
+Scheme.  Le chapitre 3 explique les problématiques des dépendances
+entre des modules natifs au sein du système de module. Le chapitre 4
+traite de l'implémentation du système de module et son intégration
+dans Gambit, un compilateur/interprète pour Scheme. Le chapitre 5
+explique les méchanismes de chargement des modules.  Le chapitre 6
+traite de la diffusion des modules et de la migration de tâche.  Le
+chapitre 7 présente une évaluation du système de modules avec des résultats
+d'expérience effectuée entre des systèmes d'exploitation (SE) et
+architectures différentes.
 
 
 
