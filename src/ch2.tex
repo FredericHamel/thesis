@@ -617,13 +617,14 @@ l'ensemble comme suit:
 
 \section{Conclusion}
 %
-Les révisions de Scheme ont déjà considéré comment définir un module
-syntaxiquement en partant de R4RS à R7RS. Les module R6RS ont été mentionnés,
-car ils font parti de l'évolution de Scheme. Ils ne sont pas pertinent pour
-dans l'implémentation du système de module.  La forme \lstcode{define-library}
-de R7RS est suffisante pour implémenter le système module et pour implémenter
-des modules mobiles. Elles permettent la création de modules avec des noms
-uniques qui est nécessaire dans le transfert de code.
+Les révisions de Scheme qui offre les fonctionnalités requises sont R6RS et
+R7RS.  Elles permettent tous les deux, la modularisation du code et la création
+module avec des noms uniques, ce qui est requis pour le bon fonctionnement du
+code mobile.   Nous avons choisi l'approche avec \lstcode{define-library},
+puisque Gambit se veut compatible avec le R7RS. Cela a permis d'expérimenter
+avec le code mobile. En plus, cela facilite son adoption et sa portabilité
+entre les implémentations de Scheme aussi compatible avec R7RS.
+
 
 % - (import (foo)) ; exportant f1 f2 f3
 % ===>
