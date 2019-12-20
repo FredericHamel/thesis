@@ -242,7 +242,7 @@
 
 \author{Frédéric Hamel}
 
-\copyrightyear{2018}
+\copyrightyear{2019}
 
 \department{Département d'informatique et Recherche Opérationnel}
 
@@ -292,27 +292,27 @@
 \francais{}
 
 \chapter*{Sommaire}
-Le présent mémoire décrit un système de module
+Le présent mémoire décrit et évalue un système de module
 qui améliore la migration de code dans le langage
-distribué Termite. Ce système de module à la possibilité
-d'être utilisé dans les applications non -- distribués
-ou distribué. Ce système de module à pour but de facilité
-une conception des programmes dans un structure modulaire
-et faciliter la migration de code entre des nœuds
+distribué Scheme. Ce système de module a la possibilité
+d'être utilisé dans les applications qu'elle soit distribués ou pas.
+Il a pour but de faciliter
+la conception des programmes dans une structure modulaire
+et faciliter la migration de code entre les nœuds
 d'un système distribué. Le système de module est conçu pour
-Gambit, un compilateur interprète de Scheme.
+Gambit, un compilateur et interprète de Scheme.
 
-Le modèle de module utilisé permet d'identifier les module
+Notre approche permet d'identifier les modules
 de façon unique dans un contexte distribué. La facilité
-d'utilisation et la portabilité ont été des facteurs considéré
+d'utilisation et la portabilité ont été des facteurs importants
 dans la conception du système de module.
 
-Le mémoire décrit la structure des modules Scheme, son implémentation
-dans Gambit et son application. Le capacité du système de module sont
-démontrer par des exemples.
+Le mémoire décrit la structure des modules, leur implémentation
+dans Gambit et leur application. Les qualités du système de module sont
+démontrées par des exemples.
 
 \vspace*{1.5ex}
-\noindent\textbf{Mots clés}: Langage de Programmation fonctionnel,
+\noindent\textbf{Mots clés}: Langage de programmation fonctionnel,
 Scheme, Erlang, Système de module, Système distribué, Agent mobile.
 
 %%------------------------------------------------- %
@@ -322,20 +322,19 @@ Scheme, Erlang, Système de module, Système distribué, Agent mobile.
 \anglais{}
 \chapter*{Summary}
 
-This thesis present a module system for Gambit Scheme
-that allows distributed computing. This module system
-ease the application modularity and ease code migration
-between node of a distributed system. Termite Scheme is
-used to implement the distributed applications.
+This thesis presents a module system for Gambit Scheme that supports
+distributed computing. This module system facilitates application modularity
+and ease code migration between the nodes of a distributed system. The Termite
+Scheme language is used to implement the distributed applications.
 
-This module system uses a naming model for the module
-so they can be uniquely identify in a distributed
-context. Both ease to use and portability were taken
-into account in the system module design.
+Our approach uses a naming model for the modules
+that uniquely identifies in a distributed
+context. Both ease of use and portability were important factors
+in the design of system module.
 
-The thesis will describe the Scheme module structure and how
-it was implemented into Gambit. The capacity of this system
-is shown with application example.
+The thesis will describe the module structure and how
+it was implemented into Gambit. The features of this system
+are shown through application examples.
 
 \vspace*{1.5ex}
 \noindent\textbf{Keywords}: Functional programming, Scheme, Erlang,
@@ -409,6 +408,7 @@ remerciements
 \include{ch5}
 \include{ch6}
 \include{ch7}
+\include{conclusion}
 \newpage
 
 % Utilité d'avoir plus d'une version d'une bibliothèque en mémoire.

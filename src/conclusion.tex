@@ -1,0 +1,47 @@
+
+\chapter{Conclusion}.
+
+Ce mémoire a présenté un système de module spécialisé pour les systèmes
+distribués. Il permet la conception d'applications qui exploite la diffusion de
+modules entre les nœuds. Ce qui permet des appels RPC et la migration de code
+mobile sur un nœud générique. C'est pour cela que le nommage des modules du
+système Scheme, similaire à GoLang.
+
+Nous avons commencé par exposer les limitations du système Termite Scheme par
+des expérimentations dans plusieurs situations. Dans le contexte purement
+interpréter la migration fonctionnait déjà, même dans le cas ou le nœud
+destination ne connait pas le code de l'agent mobile.  C'est dans le contexte
+où les applications sur les nœuds sont compilées que la migration de tâche
+requiert la présence du code de l'agent mobile. Ce qui nous a menés à un
+constat que le nom des identifiants transmit manquait d'information et devait
+être unique au sein du système distribué. La structure des modules présents en
+était la cause, puisque basée sur R5RS. Nous avons ajouté une forme spéciale à
+Gambit pour permettre la création de modules.
+
+Le projet a mené au système de modules spécialisés pour les systèmes distribués
+à commencer par des expérimentations avec Termite. Le résultat présent est
+prometteur, il permet le déploiement de serveurs sur plusieurs machines
+d'architecture et de systèmes d'exploitation différents.
+
+Le système Gambit-C a été amélioré par l'ajout des modules primitifs et aussi
+des modules R7RS. De nouveaux mécanismes de chargement de modules ont été
+ajoutés pour garantir l'ordre et le chargement unique de chaque module.
+
+
+L'installation et la compilation des modules sont effectuées automatiquement
+lorsque demandé.  Les performances du chargement de module sont amorties après
+la première installation et compilation d'un module. L'utilisation interprétée
+de Termite n'utilise pas la compilation et l'installation automatique.
+La vitesse d'exécution après l'amortissement surpasse la version interprétée.
+
+La majorité du temps de module permet des temps de diffusion et d'exécution
+plus courts.
+
+
+
+
+% - Expérimentation dans Termite
+% - Diffusion de module
+% - Code mobile compilé
+% - Approche par module.
+% - Performance
