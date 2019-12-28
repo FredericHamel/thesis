@@ -1,12 +1,15 @@
-\chapter{Interaction entre les modules}
+\chapter{Coexistence de bibliothèques dynamiques}
 \label{ch:module_systems}
 
-Ce chapitre traite du fonctionnement de l'éditeur de liens (\textit{dynamique
-linker}) et des problématiques des bibliothèques dynamiques. Le système de
-modules, présenté dans ce mémoire, supporte le chargement de plusieurs versions
-d'un module. Ce qui peut causer des problèmes d'exécution du programme. Le
-système de module utilise des bibliothèques dynamiques, il est donc nécessaire
-de déterminer la nature de ces situations.
+
+Ce chapitre traite du fonctionnement de l'éditeur de liens du système
+d'exploitation (\textit{dynamique linker}) et des bibliothèques dynamiques. Le
+système de modules, présenté dans ce mémoire, supporte le chargement de
+plusieurs versions d'un module. Cela a le potentiel de causer des problèmes
+d'exécution du programme. Puisque ce système de module utilise des bibliothèques
+dynamiques du système d'exploitation, il est donc nécessaire de déterminer la nature
+de ces situations problématiques. Nous avons procédé à des expériences pour
+déterminer sous quelles conditions des bibliothèques dynamiques peuvent coexister.
 
 \section{Format des modules}
 
@@ -15,30 +18,29 @@ de déterminer la nature de ces situations.
 % fonctions et des données composites. L'ensemble de ces données constitue les
 % fonctionnalités de la bibliothèque.
 
-% Les fonctionnalités d'une bibliothèque
-% peut être copié dans l'exécutable (bibliothèque statique), cela facilité la
-% déploiement puisque que ses dépendances sont inclus dans un seul
-% fichier.
-
-Un module sépare un programme monolithique en plusieurs composantes
-relativement indépendantes. La forme dans laquelle un module est utilisé dépend
-du contexte. Dans les langages interprétés, les modules ont la forme de fichier
-de texte, contenant du code, qui est compréhensible par un humain. Cela
-avantage les modifications du code du module. Par contre, l'interprétation
-de module en format texte est beaucoup plus lente. Les modules compilés sont
-l'alternative aux modules textes.
+% Les fonctionnalités d'une bibliothèque peut être copié dans l'exécutable
+% (bibliothèque statique), cela facilité la déploiement puisque que ses
+% dépendances sont inclus dans un seul fichier.
+La modularisation est utile pour séparer un programme en plusieurs composantes
+relativement indépendantes. Ici nous traitons des modules au niveau du système
+d'exploitation (``system libraries''). La forme dans laquelle un module est
+stocké dépend du contexte. Dans les langages interprétés, les modules ont la
+forme de fichier textuel, contenant du code, qui est compréhensible par un
+humain. Cela facilite les modifications du code du module. Par contre,
+l'interprétation de module en format textuel est beaucoup plus lente. Les
+modules compilés sont l'alternative aux modules textuels.
 
 Un module qui est compilé en format binaire est plus difficile à comprendre
 du point de vue d'un humain, mais est plus rapide à s'exécuter. Le compromis
 est la rapidité contre la lisibilité. Le format binaire peut varier d'un système
 à l'autre. Les systèmes Linux utilisent le format ELF (\textit{Extensible Linking
-Format}), Microsoft Window le format PE (\textit{Portable Executable})
-et MacOSX le format Mach-O (\textit{Mach object}). Ces formats binaires sont
+Format}), Microsoft Windows le format PE (\textit{Portable Executable})
+et macOS le format Mach-O (\textit{Mach object}). Ces formats binaires sont
 utilisés pour les exécutables, les bibliothèques statiques et les bibliothèques
 dynamiques.
 
-Les bibliothèques dynamiques ont des problèmes inexistants avec
-les bibliothèques statiques.
+Les bibliothèques dynamiques ont des problèmes propres comparativement aux
+bibliothèques statiques.
 
 % XXX: bytecodes aussi pour les langage compilé. (or ignore)
 
@@ -56,8 +58,8 @@ les bibliothèques statiques.
 \section{Édition de liens dynamique}
 
 Une application qui utilise une bibliothèque partagée ne contient pas le code
-de la bibliothèque, mais plutôt le nom des fonctionnalités utilisées.  La
-routine qui récupère la fonctionnalité à partir du nom est la
+de la bibliothèque, mais plutôt le nom des bibliothèques utilisées.  La
+routine qui récupère le code à partir du nom est la
 résolution qui est effectuée par le \textit{dynamic loader}.  Lorsqu'un
 programme lié dynamiquement à plusieurs bibliothèques partagées exécute invoque
 une procédure externe, la routine de résolution est démarrée pour résoudre le
@@ -72,40 +74,42 @@ est lié aux bibliothèques système suivantes:
   /lib64/ld-linux-x86-64.so.2 => ...
 \end{verbatim}
 
-La bibliothèque \textit{libc.so.6} contient la plupart des fonctions standards
-du système sous Linux.  Le chargement des bibliothèques s'effectue au début de
-l'application, avant l'exécution de la fonction principale souvent nommée
-\textbf{main}. Plusieurs bibliothèques peuvent coexister simultanément au sein
-d'un même processus sans que l'exécution du programme en soit affectée.
+La bibliothèque \textit{libc.so.6} contient un grand nombre des fonctions
+standards du système sous Linux.  Le chargement des bibliothèques s'effectue au
+début de l'application, avant l'exécution de la fonction principale souvent
+nommée \textbf{main}. Plusieurs bibliothèques peuvent coexister simultanément
+au sein d'un même processus sans que l'exécution du programme en soit affectée.
 
 La résolution des fonctionnalités de ces bibliothèques est effectuée par un
-programme adapté le \textit{program interpreter} du système qui correspond à
+programme appelé le \textit{program interpreter} du système qui correspond à
 \textit{/lib64/ld-linux-x86-64.so.2}.  Il est possible de forcer la résolution
 d'une fonctionnalité d'une bibliothèque de façon manuelle. Ce genre d'interaction
 est possible sur les trois principales plateformes utilisées sur le marché
-(Windows, MacOSX et Linux).
+(Windows, macOS et Linux).
 
 %% TODO: continue here FIXME
 Sur Linux, l'API qui permet d'interagir avec les bibliothèques partagées provient de \textit{libdl.so}.
 Elle contient les fonctions \textit{dlopen}, \textit{dlsym}, \textit{dlerror} et \textit{dlclose} pour gérer
 des bibliothèques de code supplémentaire chargé manuellement à l'exécution.  Pour charger la fonction
 \textit{foo}, qui ne prend pas d'argument et ne retourne rien de la bibliothèque \textit{libFoo.so} en C,
-il faut exécuter les deux appels suivant:
-\begin{center}
+il faut exécuter les deux appels de la figure~\ref{fig:dlsym_dlopen}:
   \begin{figure}[ht]
+    \centering
 \begin{lstlisting}[language=C,frame=single]
   ...
   void *handle = dlopen("./libFoo.so", RTLD_LAZY);
   void (*foo)() = dlsym(handle, "foo");
   ...
 \end{lstlisting}
-\caption{Chargement dynamique de la bibliothèque \textit{libFoo.so} et
-résolution de la fonction \textit{foo} sans gestion d'erreur sous Linux}
-  \end{figure}
-\end{center}
-L'équivalent des bibliothèques partagées sous Window est les DLLs, ils peuvent être chargés de façon similaire dans un
-programme en utilisant les fonctions \textit{LoadLibrary}, \textit{LoadLibraryEx} et \textit{GetProcAddress}. Ils
-fonctionnent de la même façon que leur équivalent Linux. Pour MacOSX, il faut passer par les routines:
+  \caption{Chargement dynamique de la bibliothèque \textit{libFoo.so} et
+    résolution de la fonction \textit{foo} sans gestion d'erreur sous Linux}
+    \label{fig:dlsym_dlopen}
+\end{figure}\\
+L'équivalent des bibliothèques partagées sous Windows est les DLLs, qui peuvent
+être chargées de façon similaire dans un programme en utilisant les fonctions
+\textit{LoadLibrary}, \textit{LoadLibraryEx} et \textit{GetProcAddress}. Ils
+fonctionnent de la même façon que leur équivalent Linux. Pour macOS, il faut
+passer par les routines:
 \begin{itemize}
     \item \textit{NSCreateObjectFileImageFromFile}
     \item \textit{NSLinkModule}
@@ -114,11 +118,11 @@ fonctionnent de la même façon que leur équivalent Linux. Pour MacOSX, il faut
 \end{itemize}
 
 La majorité des langages interprétés permettent l'importation de bibliothèques
-de code natives, via une interface nommée \textit{foreign function interface}.
-Cette interface offre une couche d'abstraction de ces procédures.
+de code natives, via une interface nommée \textit{foreign function interface}
+(FFI).  Cette interface offre une couche d'abstraction de ces procédures.
 Prenons comme exemple les langages Python, Ruby, Lua et Scheme. Python possède
-le module \textbf{ctypes} qui permet de chargé des bibliothèques natives dynamique, Ruby
-possède le module \textbf{ffi}.
+le module \textbf{ctypes} qui permet de charger des bibliothèques natives
+dynamiques, et Ruby possède le module \textbf{ffi}.
 %Ces modules ne font qu'encapsuler les fonction de chargement de bibliotheques
 %native pour qu'il puisse être invoqué dans le langage cible.
 
@@ -127,11 +131,11 @@ possède le module \textbf{ffi}.
 
 Certains langages ont un mécanisme pour charger des bibliothèques natives s'ils
 ont été conçus spécialement.  Dans le langage de programmation Lua, il est
-possible chargé directement une bibliothèque dynamique si elle contient une
+possible de charger directement une bibliothèque dynamique si elle contient une
 fonction \textbf{luaopen\_\textit{libname}} où \textit{libname} est le nom de
 la bibliothèque.  Gambit Scheme utilise un mécanisme équivalent. Il permet le
 chargement de ces modules qui ont été compilés en bibliothèque partagée (DLL)
-avec la fonction \textit{(\textbf{load} "libname")}.
+avec la fonction \texttt{(\textbf{load} "libname")}.
 
 %% Python
 %\begin{figure}[ht]
@@ -160,7 +164,8 @@ end
 # Appel de la fonction foo.
 LibFoo.foo
 \end{lstlisting}
-\caption{Code d'importation de la fonction \textbf{foo} de la bibliothèque \textit{libFoo.so} en Ruby}
+\caption{Code d'importation de la fonction \textbf{foo} de la bibliothèque
+  \textit{libFoo.so} en Ruby}
 \end{figure}
 \end{center}
 
@@ -178,24 +183,26 @@ la bibliothèque passée à \verb|dlsym|.
 \begin{center}
     \begin{figure}[ht]
         \includegraphics{figures/libdeps-ex1.pdf}
-        \caption{Un exemple de dépendance de bibliothèques au sein d'un application simple fictive.
-            La bibliothèque \textit{libA.so} est chargée dans l'application \texttt{main} via
-            les appels aux procédures \textit{dlopen} et \textit{dlsym}. Les fonctionnalités utilisées
-            dans l'exemple sont marquées dans des ellipses.
-        }
+
+        \caption{Un exemple de dépendance de bibliothèques au sein d'un
+          application simple fictive.  La bibliothèque \textit{libA.so} est
+          chargée dans l'application \texttt{main} via les appels aux procédures
+          \textit{dlopen} et \textit{dlsym}. Les fonctionnalités utilisées dans
+          l'exemple sont marquées dans des ellipses.}
+
         \label{fig:deps-ex1}
     \end{figure}
 \end{center}
 
-Dans la situation présentée dans la figure-\ref{fig:deps-ex1}, qu’elles sont les étapes incluses
+Dans la situation présentée dans la figure~\ref{fig:deps-ex1}, qu’elles sont les étapes incluses
 dans l'exécution de ce programme qui invoque la fonctionnalité \texttt{start} de la
 bibliothèque \textit{libA.so}. La fonctionnalité externe \texttt{start} est résolu de façon directe par
 un appel à \verb|dlsym(libA, "start")|, qui commence la recherche de la procédure \texttt{start} dans
-la bibliothèque spécifier dans \texttt{dlsym}. Le programme l'invoque une fois la procédure trouvée.
+la bibliothèque spécifiée dans \texttt{dlsym}. Le programme l'invoque une fois la procédure trouvée.
 L'appel à une procédure non résolue (e.g.\ la procédure \texttt{foo} invoqué dans \texttt{start})
 déclenche une procédure automatique de résolution des fonctionnalités. Cette procédure de résolution
 commence sa recherche à partir de l'exécutable, puis itère la liste des dépendances directe. Si la
-fonctionnalité n'est pas encore trouvé, la recherche continuera à partir de la bibliothèque passée à
+fonctionnalité n'est pas encore trouvée, la recherche continuera à partir de la bibliothèque passée à
 \texttt{dlsym}.
 
 % Stub
@@ -204,28 +211,28 @@ fonctionnalité n'est pas encore trouvé, la recherche continuera à partir de l
 Il est facile d'exploiter l'ordre de recherche du \textit{dynamic linker} pour
 causer un masquage de fonctionnalité dans une application. Ce masquage est
 utilisé dans certains contextes pour déboguer un programme, mais il peut aussi
-nuire à l'exécution du programme. Il y au moins deux structures de programme
-qui cause un masquage. L'application principale est construit comme une
+nuire à l'exécution du programme. Il y a au moins deux structures de programme
+qui causent un masquage. L'application principale est construite comme une
 bibliothèque dynamique exécutable et fournit une fonctionnalité qui porte le
 même nom qu'une fonctionnalité exportée par une bibliothèque externe chargée
 manuellement.  L'application principale est liée avec une bibliothèque qui
 exporte une fonctionnalité qui porte le même nom que celle utilisée dans la
 bibliothèque externe.
 
-La figure-\ref{fig:deps-ex2} est un exemple de masquage qui utilise la seconde
+La figure~\ref{fig:deps-ex2} est un exemple de masquage qui utilise la seconde
 méthode. La première méthode requiert des bibliothèques exécutables qui ne sont pas
 disponibles sur toutes les plateformes. Sous Linux, il est possible de créer une
 bibliothèque exécutable en passant le paramètre \texttt{-rdynamic} à \textit{gcc}
-lors de la construction.
+lors de la construction de la bibliothèque.
 
-\begin{center}
-    \begin{figure}[ht]
-        \includegraphics{figures/libdeps-ex2.pdf}
-        \caption{Exemple de dépendance dans une application cause le masquage de la fonctionnalité \texttt{foo}
-        de la bibliothèque \textit{libfoo.so.1.0} par la bibliothèque \textit{libfoo.so.1.1}}
-        \label{fig:deps-ex2}
-    \end{figure}
-\end{center}
+\begin{figure}[ht]
+  \centering
+  \includegraphics{figures/libdeps-ex2.pdf}
+  \caption{Exemple de dépendance dans une application qui cause le masquage de
+  la fonctionnalité \texttt{foo} de la bibliothèque \textit{libfoo.so.1.0} par
+  la bibliothèque \textit{libfoo.so.1.1}}
+  \label{fig:deps-ex2}
+\end{figure}
 %% BEGIN
 % D'autre langage compilé comme C/C++
 % ne le permette pas directement, la liste des bibliothèques de code utilisé par un
@@ -234,48 +241,47 @@ lors de la construction.
 %% END
 
 
-% TODO: pourquoi est-ce utile?
-% XXX: structure pas final.
+% TODO: pourquoi est-ce utile?  XXX: structure pas final.
 % - Les bibliothèques coexistent dans les application de tous les jours.
-L'analyse des interactions entre des bibliothèques au sein d'un même programme permet de
-mieux comprendre quelles sont les circonstances qui peuvent conduire à des comportements
-non désirés, comme le masquage de fonctionnalité présent l'exemple de la figure-\ref{fig:deps-ex2}.
-Cela permet aussi d'établir les conditions qui permettent d'éviter ces comportements non désirés.
+L'analyse des interactions entre des bibliothèques au sein d'un même programme
+permet de mieux comprendre quelles sont les circonstances qui peuvent conduire
+à des comportements non désirés, comme le masquage de fonctionnalité présent
+dans l'exemple de la figure~\ref{fig:deps-ex2}.  Cela permet aussi d'établir
+les conditions qui permettent d'éviter ces comportements non désirés.
 
 \subsection{Coexistence entre les bibliothèques}
 
 Les bibliothèques coexistent dans deux contextes principaux, de façon passive
-dans un système fichier et de façon active durant l'exécution d'un programme.
-Un système de fichier contient une arborescence hiérarchique de répertoires et
-de fichiers avec une seule racine. Un fichier est l'entité dans un système de
-fichier qui contient le code des bibliothèques.  Les répertoires sont les
-entités qui permette de regrouper plusieurs fichiers de façon logique. La
-racine correspond au sommet de la hiérarchie du système de fichier. La façon de
-référer à un fichier dans un système de fichier est d'utiliser le
-chemin absolu. Cela correspond à la liste des répertoires à parcourir de la
-racine jusqu'au fichier. L'outil responsable d'organiser les bibliothèques sur
-un système est le \textit{package manager}. Il a plusieurs objectifs
-incluant l'installation de bibliothèque, la mise à jour des
-bibliothèques installées, la désinstallation de bibliothèque et la résolution
-des dépendances.
+dans un système de fichier et de façon active durant l'exécution d'un
+programme.  Un système de fichier contient une arborescence hiérarchique de
+répertoires et de fichiers avec une seule racine. Un fichier est l'entité dans
+un système de fichier qui contient le code des bibliothèques.  Les répertoires
+sont les entités qui permettent de regrouper plusieurs fichiers de façon logique.
+La racine correspond au sommet de la hiérarchie du système de fichier. La façon
+de référer à un fichier dans un système de fichier est d'utiliser le chemin
+absolu. Cela correspond à la liste des répertoires à parcourir de la racine
+jusqu'au fichier. L'outil responsable d'organiser les bibliothèques sur un
+système est le \textit{package manager}. Il a plusieurs objectifs incluant
+l'installation de bibliothèque, la mise à jour des bibliothèques installées, la
+désinstallation de bibliothèque et la résolution des dépendances.
 
-Un cas intéressant de coexistence entre bibliothèques est celui qui inclue
+Un cas intéressant de coexistence entre bibliothèques est celui qui inclut
 plusieurs versions d'une bibliothèque. Les problèmes peuvent être liés à
 d'organisation sur le système de fichier et au masquage de fonctionnalité
 durant l'exécution d'un processus.  Il y a aussi plusieurs utilités de
 conserver plusieurs versions d'une bibliothèque, cela permet de supporter des
 applications qui dépendent de bibliothèques antérieures.
 
-Une autre application est de convertir un vieux format de fichier vers un format
-plus récent. Dans le cas où il n'est pas possible de plusieurs versions d'une bibliothèque
-il faut alors écrire un \textit{reader} pour lire le vieux format manuellement ensuite le
-utilise fonctions de la version cible de bibliothèque pour générer le nouveau format du fichier.
-Cette solution à comme problème que le \textit{reader} est beaucoup moins testé que la
-vielle version de la bibliothèque. Cela demande aussi de réécrire qu'est-ce qui à déjà été fait.
+Une autre application est de convertir un vieux format de fichier vers un
+format plus récent. Dans le cas où il n'est pas possible d'avoir en même temps
+plusieurs versions d'une bibliothèque, il faut alors écrire un parseur pour
+lire le vieux format ensuite utiliser les fonctions de la version cible de la
+bibliothèque pour générer le nouveau format du fichier.  Cette solution est
+clairement laborieuse et susceptible à des erreurs de codage.
 
 \begin{figure}[ht]
   \includegraphics[width=30em]{figures/app_convert_v1_to_v2.pdf}
-  \caption{Un exemple d'application de conversion entre deux version d'un format
+  \caption{Un exemple d'application de conversion entre deux versions d'un format
   de fichier comme sqlite2 et sqlite3 exploitant la possibilité de charger plusieurs
   versions d'une bibliothèque.}
 \end{figure}
@@ -310,19 +316,19 @@ vielle version de la bibliothèque. Cela demande aussi de réécrire qu'est-ce q
 %distinguer les deux version de la bibliothèque et aussi répartir les appels à
 %des fonctions de même nom à la bonne version de la bibliothèque.
 
-\section{Conditions entre des versions des bibliothèques}
+\section{Conditions de coexistence}
 %
 Des conditions suffisantes pour que deux bibliothèques puissent coexister
 ensemble au sein d'un processus incluant deux versions de la même bibliothèque
-sont l'absence d'état global ou local, et l'unicité des noms des fonctionnalités.
-L'absence d'état garantit que chaque fonction de la bibliothèque retourne
-toujours un résultat prévisible dans un contexte identique. Un cas extrême est
-la pureté fonctionnelle, qui est avantageux dans un contexte
-\textit{multi-threadé}, car il n'est pas possible d'avoir une condition de
-course sur une donnée partagée. La pureté fonctionnelle garantit qu'il n'y a pas
-d'assignation.  Le fait que chaque fonctionnalité est associée à un nom unique
-cela inhibe la capacité d'une bibliothèque de masquer une fonctionnalité d'une
-autre bibliothèque.
+sont l'absence d'état global ou local, et l'unicité des noms des
+fonctionnalités.  L'absence d'état garantit que chaque fonction de la
+bibliothèque retourne toujours un résultat prévisible dans un contexte
+identique. Un cas extrême est la pureté fonctionnelle, qui est d'autre part
+avantageuse dans un contexte \textit{multi-threadé}, car il n'est pas possible
+d'avoir une condition de course sur une donnée partagée. La pureté
+fonctionnelle garantit qu'il n'y a pas d'affectation et donc pas d'état.  Le
+fait que chaque fonctionnalité soit associée à un nom unique qui empêche une
+bibliothèque de masquer une fonctionnalité d'une autre bibliothèque.
 
 
 % Une condition de courses survient lorsque l'ordre des opérations d'un programme
@@ -335,15 +341,17 @@ autre bibliothèque.
 
 Ces conditions sont suffisantes pour que deux bibliothèques coexistent sans
 problème, mais elles ne sont pas nécessaires. Il existe des bibliothèques qui
-ne respectent pas ces conditions, mais coexistent avec d'autres bibliothèques.
+ne respectent pas ces conditions, mais coexistent avec d'autres versions de la
+bibliothèque.
 Pour tester la coexistence entre plusieurs bibliothèques, des expériences ont
 été effectuées dans plusieurs systèmes de modules existants. Le but de
-l'expérience est d'observer le bon fonctionnement des la bibliothèque au sein
-de même processus.
+l'expérience est d'observer le bon fonctionnement des bibliothèques au sein
+du processus.
 
-Les expériences qui suivent permettent d'observer d'identifier les cas de cohabitation de bibliothèques
-au sein d'une application qui cause des problèmes. Ils permettent aussi d'identifier les capacités d'un
-langage à charger plusieurs versions d'une bibliothèque.
+Les expériences qui suivent permettent d'observer et d'identifier les cas de
+cohabitation de bibliothèques au sein d'une application qui cause des
+problèmes. Ils permettent aussi d'identifier les capacités d'un langage à
+charger plusieurs versions d'une bibliothèque.
 
 % XXX
 %La capacité d'un langage d'interfacer avec d'autre langage via la FFI propage
@@ -353,27 +361,27 @@ langage à charger plusieurs versions d'une bibliothèque.
 \subsection{Bibliothèque C}
 %
 Les bibliothèques dans le langage C sont compilées dans un format natif pour la
-plateforme courante (e.g. Window, MacOSX, Linux). Leur format diffère d'un
+plateforme courante (e.g. Window, macOS, Linux). Leur format diffère d'un
 système d'exploitation à un autre, Window utilise le format \textit{dll}
-(\textit{dynamic loading library}), MacOSX utilise le format \textit{dylib}
+(\textit{dynamic loading library}), macOS utilise le format \textit{dylib}
 (\textit{Mach-O dynamic library}) et Linux utilise le format \textit{so}
-(\textit{shared library}).
+(\textit{shared object}).
 
-Les bibliothèques C consistent de symboles qui correspondent aux fonctions est
+Les bibliothèques C consistent de symboles qui correspondent aux fonctions et
 variables globales exportées. Une bibliothèque est généralement liée à un
-programme C en lors de la création du programme. Les symboles non définis sont
+programme C lors de la création du programme. Les symboles non définis sont
 résolus durant l'exécution du programme.
 
 % TODO: complete
 % - Bibliotheques avec collisions de nom de symboles
 % - Masquage de fonctionnalité d'une des deux bibliothèque
 Les collisions de symboles entre deux bibliothèques causent un masquage de
-fonctionnalité d'une des deux bibliothèques. Un problème est de savoir si cela est
-possible de charger deux bibliothèques avec des collisions de symboles et accéder aux
-fonctionnalités distincts de ces bibliothèques.
+fonctionnalité d'une des deux bibliothèques. Un problème est de savoir si cela
+est possible de charger deux bibliothèques avec des collisions de symboles et
+accéder aux fonctionnalités distinctes de ces bibliothèques.
 
-Pour chargé deux versions d'une même bibliothèque en C, il faut utilisé un
-moyen qui prend en compte des symboles communs.  La résolution des symboles ce
+Pour charger deux versions d'une même bibliothèque en C, il faut utiliser un
+moyen qui prend en compte des symboles communs.  La résolution des symboles se
 fait par un parcourt en largeur dans la liste des symboles des bibliothèques.
 Le résultat est le premier objet qui correspond au nom de symbole recherché.
 L'ordre des bibliothèques utilisé dans la résolution des symboles correspond à
@@ -396,28 +404,28 @@ SDL et SDL2 dans cette ordre.}
 
 La figure \ref{fig:sdl_mask_sdl2} donne la procédure de création d'un
 exécutable lié avec deux versions de SDL.  Les tests ont été effectués sur deux
-versions de SDL, 1.2 et 2, ils peuvent utiliser des ressources communes comme
+versions de SDL, 1.2 et 2. Ces versions peuvent utiliser des ressources communes comme
 les évènements du clavier, la mémoire et le GPU en utilisant OpenGL pour faire
 de l'affichage 2D ou 3D.  Plusieurs situations sont testées, chacune sans thread
 et avec des threads:
 %
 \begin{enumerate}
-    \item Une utilisation de SDL minimaliste qui n'écoute pas les évènements utilisateurs.
-    \item Une utilisation de SDL avec une boucle d'évènements de base.
+    \item Une utilisation de SDL minimaliste qui n'écoute pas les événements utilisateurs.
+    \item Une utilisation de SDL avec une boucle d'événements de base.
     \item Une utilisation de SDL avec une utilisation d'un contexte OpenGL.
 \end{enumerate}
 
 %% SDL1.2 appel ces propres fonctions et SDL2 appel ces propres fonctions.
-Puisque SDL1.2 et SDL2 ont des collisions de symboles (i.e.\ \verb+SDL_Init+,
+Puisque SDL1.2 et SDL2 ont des collisions de symboles (e.g.\ \verb+SDL_Init+,
 \verb+SDL_FillRect+, \verb+SDL_BlitSurface+, \dots), l'une des premières
 observations à effectuer est la bonne répartition des appels de fonctions des
 deux bibliothèques dans le contexte d'une même application. Le problème à
 identifier est un appel invalide à une procédure de SDL2 qui était destiné à
 SDL1.2. Le facteur qui influence laquelle des deux bibliothèques va masquer
-l'autre est l'ordre dans laquelle ils sont liés au programme à la création,
-qui est montrée à la figure-\ref{fig:sdl_mask_sdl2}.
+l'autre est l'ordre dans laquelle elles sont liées au programme à la création,
+qui est montrée à la figure~\ref{fig:sdl_mask_sdl2}.
 
-Le masquage est une problématique qui peut mener à une défaillance du
+Le masquage est un problème qui peut mener à une défaillance du
 programme, car cela peut provoquer la transmission d'une structure incompatible
 de la première bibliothèque à la deuxième. Dans le cas de SDL, la structure
 \verb+SDL_Surface+ à une disposition différente des champs, donc incompatible.
@@ -425,8 +433,10 @@ Le premier champ qui décale l'alignement de ces deux structures est le
 \textit{pitch}, qui dans SDL1.2 est déclaré en Uint16 alors qu'en SDL2 il est
 un int qui sont des types de taille différente. Donc, l'accès au prochain champ
 \texttt{pixels} est différent entre SDL1.2 et SDL2, ce qui peut causer un accès
-non désiré en mémoire si une structure de SDL1.2 est accédé comme une structure
+non désiré en mémoire si une structure de SDL1.2 est accédée comme une structure
 de SDL2.
+
+% XXX: ANTIDOTE_MARKER
 
 \begin{figure}[h]
   \centering
@@ -463,7 +473,7 @@ typedef struct SDL_Surface {
 %tendance à éviter les dépendances avec des bibliothèques qui ont des collisions de fonctionnalités.
 
 La cohabitation entre deux bibliothèques conflictuelles au sein d'une application n'est pas possible
-en lien l'application au bibliothèques durant sa construction~\ref{fig:sdl_mask_sdl2}.
+en lien l'application aux bibliothèques durant sa construction~\ref{fig:sdl_mask_sdl2}.
 Il est peu probable d'avoir une cohabitation entre deux bibliothèques avec des noms de fonctionnalités
 similaires au sein.
 % XXX: continue here
@@ -483,9 +493,9 @@ parallèlement.
 
 %% TODO: expliquer la structure des programmes.
 
-Dans le test minimaliste sans gestion d'évènements, l'exécution des bibliothèque
+Dans le test minimaliste sans gestion d'évènements, l'exécution des bibliothèques
 fonctionne dans les deux cas, séquentiellement et en parallèle. La raison qui
-explique ce bon fonctionnement est la répartition des appels au fonctions
+explique ce bon fonctionnement est la répartition des appels aux fonctions
 des deux bibliothèques et le fait qu'il n'utilise pas de structure commune,
 qui pourrait causer des conditions de course dans le test en parallèle.
 
@@ -544,7 +554,7 @@ int main(int argc, char **argv) {
 \end{center}
 
 Dans le test incluant des évènements, l'hypothèse supposait que les évènements du clavier
-aurait causé des problèmes de conditions de course en parallèle. Le test a aussi fonctionné
+auraient causé des problèmes de conditions de course en parallèle. Le test a aussi fonctionné
 séquentiellement et en parallèle, malgré la dépendance commune du clavier.
 
 Le test qui incluait OpenGL, n'aurait pas dû fonctionner par hypothèse. Les deux versions
@@ -649,17 +659,20 @@ sans causer des problèmes d'exécution.
 % - Petite Conclusion
 
 \clearpage
+%
 \subsection{Bibliothèque Scheme avec FFI}
-La compatibilité entre versions a été testée sur la partie cryptographique
-RSA de OpenSSL, SDL et un générateur aléatoire qui possède un état global.
-Pour observer le comportement de bibliothèque Scheme liant des fonctionnalités
-implémenté dans un autre langage, dans ces exemple C. Ces tests montrent le problème
-de masquage décrit précédemment dans des bibliothèques réelle.
-Pour tester les bibliothèques natives en Scheme, il a fallut écrire des
-un code spécial pour lier les types et les fonction au monde Scheme. Ces
+%
+La compatibilité entre versions a été testée sur la partie cryptographique RSA
+de OpenSSL, SDL et un générateur aléatoire qui possède un état global.  Pour
+observer le comportement de bibliothèque Scheme liant des fonctionnalités
+implémentées dans un autre langage, dans ces exemples C. Ces tests montrent le
+problème de masquage décrit précédemment dans des bibliothèques réelles.  Pour
+tester les bibliothèques natives en Scheme, il a fallut écrire du code spécial
+pour lier les types et les fonctions à des procédure Scheme. Cela a été fait
+par la FFI de Gambit.
 
-Par hypothèse la partie cryptographique des deux versions de OpenSSL peuvent
-coexister. Chacune des fonctions cryptographique de OpenSSL1.0 et OpenSSL1.1
+Par hypothèse, la partie cryptographique des deux versions de OpenSSL peut
+coexister. Chacune des fonctions cryptographiques de OpenSSL1.0 et OpenSSL1.1
 exécute du code disjoint qui n'interfère pas avec une zone mémoire commune.
 Cela implique qu'un appelle à une fonction de OpenSSL1.0 n'affectera pas les
 résultats des appelles futures de OpenSSL1.1. Les fonctions nécessaires
@@ -680,30 +693,33 @@ La structure de donnée utilisée par les fonctions d'OpenSSL pour la cryptograp
 est un pointeur vers un enregistrement RSA. La liaison avec le type C est effectuée avec
 la forme spéciale \lstinline{c-define-type}.
 
-Le test consiste à crypter un message en utilisant une clé publique, décrypter le
-cryptogramme avec la clé privée et comparer le message original avec le message décrypter
-pour les deux versions de OpenSSL chargé dans le même processus. Pour vérifier la bonne
-invocation des fonctions de OpenSSL1.0 et OpenSSL1.1 respectifs, le débogueur \textbf{gdb}
-a été utilisé. Les bibliothèques d'OpenSSL consistent en deux fichiers \url{libssl.so} et \url{libcrypto.so}.
-En déboguant la répartition des appels avec \textit{gdb}, il y a eu l'observation que
-la bibliothèque \url{libcrypto.so} de OpenSSL1.1 masquait la version de OpenSSL1.0 s'il
-n'est pas spécifié explicitement lors de la création de la bibliothèque Scheme \textit{rsa.scm}
-comme à la figure-\ref{fig:scm_masq1}. Les raisons sont liées à plusieurs facteurs qui étaient présents
-durant l'expérience. L'ordre de recherche des symboles qui inclue les symboles des bibliothèques liés à
-l'exécutable qui sont prioritaire qui contenait \url{libssl.so} et \url{libcrypto.so} de OpenSSL1.1.
-Dans ce cas, il était possible de résoudre ce problème en ajoutant une
-dépendance directe à \textit{libcrypto} lors de la construction des bibliothèques Scheme \verb+RSA+
-comme montré dans la figure-\ref{fig:scm_masq_fix1}.
+Le test consiste à crypter un message en utilisant une clé publique, décrypter
+le cryptogramme avec la clé privée et comparer le message original avec le
+message décrypter pour les deux versions de OpenSSL chargé dans le même
+processus. Pour vérifier la bonne invocation des fonctions de OpenSSL1.0 et
+OpenSSL1.1 respectifs, le débogueur \textbf{gdb} a été utilisé. Les
+bibliothèques d'OpenSSL consistent en deux fichiers \url{libssl.so} et
+\url{libcrypto.so}.  En déboguant la répartition des appels avec \textit{gdb},
+il y a eu l'observation que la bibliothèque \url{libcrypto.so} de OpenSSL1.1
+masquait la version de OpenSSL1.0 s'il n'est pas spécifié explicitement lors de
+la création de la bibliothèque Scheme \textit{rsa.scm} comme à la
+figure-\ref{fig:scm_masq1}. Les raisons sont liées à plusieurs facteurs qui
+étaient présents durant l'expérience. L'ordre de recherche des symboles qui
+inclue les symboles des bibliothèques liés à l'exécutable qui sont prioritaire
+qui contenait \url{libssl.so} et \url{libcrypto.so} de OpenSSL1.1.  Dans ce
+cas, il était possible de résoudre ce problème en ajoutant une dépendance
+directe à \textit{libcrypto} lors de la construction des bibliothèques Scheme
+\verb+RSA+ comme montrée dans la figure~\ref{fig:scm_masq_fix1}.
 
 \begin{center}
 \begin{figure}[ht]
 \begin{lstlisting}[frame=single]
-gsc-script -o rsa-1-0-0.o1 \
+gsc -o rsa-1-0-0.o1 \
   -cc-options '-I /usr/include/openssl-1.0' \
   -ld-options '-L /usr/lib/openssl-1.0 -lssl' \
   -prelude '(define-cond-expand-feature|openssl-v10|)' rsa.scm
 
-gsc-script -o rsa-1-1-0.o1 \
+gsc -o rsa-1-1-0.o1 \
   -ld-options "-lssl" rsa.scm
 \end{lstlisting}
 \caption{Création des bibliothèques \textit{rsa.scm} pour OpenSSL1.0 et OpenSSL1.1
@@ -732,16 +748,17 @@ avec la spécification de \textit{libcrypto.so}}
 \begin{center}
 \begin{figure}[ht]
 \includegraphics{figures/libssl_masking.pdf}
-\caption{Schéma des dépendances entre les bibliothèques au sein d'un processus.
-Les dépendances qui ont été lié dynamiquement lors la création de l'application sont représentés par une flèche avec
-trait plein sans annotation. Ceux qui représente les chargement de bibliothèque dynamique via \texttt{dlopen} ont
-l'annotation \textit{dl}. La flèche en pointillé indique un masquage des symboles de la bibliothèque
-source par celle pointée.}
+
+\caption{C'est un schéma des dépendances entre les bibliothèques au sein d'un
+  processus.  Les dépendances qui ont été liées dynamiquement lors la création
+  de l'application sont représentés par une flèche avec trait plein sans
+  annotation. Ceux qui représentent les chargements de bibliothèque dynamique via
+  \texttt{dlopen} ont l'annotation \textit{dl}. La flèche en pointillé indique
+  un masquage des symboles de la bibliothèque source par une ligne pointée.}
+
 \label{fig:scm_masq_schema}
 \end{figure}
 \end{center}
-
-TODO: rng générator
 
 %\begin{lstlisting}[frame=single]
 %(c-define-type RSA* (pointer "RSA"))
@@ -852,10 +869,14 @@ globale \textit{value} de D.
 
 Le programme principal A commence par charger B et C. Ensuite lit la valeur de \textit{B.D.value}
 puis modifie \textit{C.D.value} et relit \textit{B.D.value}. Le test réussi si la valeur de
-\textit{B.D.value} reste inchangé par la modification de \textit{C.D.value}. Cela implique que
+\textit{B.D.value} reste inchangée par la modification de \textit{C.D.value}. Cela implique que
 les références vers la bibliothèque D est différentes de via B et via C.
 
 Dans NodeJS, un module peut être installé via un dossier, une archive tarball, un dépôt de code source git ou
 directement via Npmjs. Puisqu’un module publié dans Npmjs ne peut pas être retiré facilement étant donné
 la politique liée au module (\url{https://docs.npmjs.com/cli/unpublish}).
 %L'expérience va utilisé un serveur git qui est auto-hébergé.
+
+
+\section{Conclusion}
+TODO!!!

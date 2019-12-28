@@ -147,19 +147,20 @@ Procedure Call}) ou par \textit{migration de tâches}.  Un appel RPC correspond
 tâche copie l'état courant de la tâche et l'envoie sur le nœud distant où son
 exécution est continuée.
 
-Les appels RPC sont présents dans beaucoup de systèmes et langages de
+Les appels RPC sont présents dans plusieurs de systèmes et langages de
 programmation.  Le protocole \texttt{ssh} permet une forme d'appel RPC par
 invocation de processus sur un système distant. Java offre les appels distants par un
 mécanisme similaire au RPC nommé RMI (\textit{Remote Method Invocation}).
 Le langage C offre des bibliothèques qui implémentent un protocole de RPC.
-Les variantes de RPC sont limitées aux fonctionnalités fournies par le nœud distant.
+Ces variantes de RPC sont limitées aux fonctionnalités fournies par le nœud distant.
 Pour le bon fonctionnement de cette approche, il est nécessaire que le
-service demandé soit déjà en place sur la machine distante.
+service demandé soit déjà déployé sur la machine distante.
 
 La migration de tâche permet de transférer une tâche d'un nœud à un autre.  Ce
 mécanisme a été implémenté dans différents langages comme
 Erlang~\cite{M_mobileintelligent}, Java~\cite{And98transparentmigration},
-Scheme~\cite{Sumii00animplementation}\cite{TermiteScheme},
+Scheme~\cite{Sumii00animplementation}\cite{DBLP:conf/erlang/Germain06},
+ % \cite{TermiteScheme},
 JavaScript~\cite{DEV2017transparentmigration}. Ce mécanisme requiert
 typiquement que l'ensemble du code soit disponible sur le système distant.
 
@@ -207,7 +208,7 @@ Le chapitre 2 explique les approches existantes de modularisation en
 Scheme.  Le chapitre 3 explique les problématiques des dépendances
 entre des modules natifs au sein du système de module. Le chapitre 4
 traite de l'implémentation du système de module et son intégration
-dans Gambit, un compilateur/interprète pour Scheme. Le chapitre 5
+dans Gambit, un compilateur/interprète performant pour Scheme. Le chapitre 5
 explique les méchanismes de chargement des modules.  Le chapitre 6
 traite de la diffusion des modules et de la migration de tâche.  Le
 chapitre 7 présente une évaluation du système de modules avec des résultats
