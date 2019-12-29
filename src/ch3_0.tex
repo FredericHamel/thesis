@@ -800,6 +800,10 @@ avec la spécification de \textit{libcrypto.so}}
 % - Résultat
 % - Petite Conclusion
 
+L'équivalent des tests effectués avec les bibliothèques dynamiques du système d'exploitation
+ont été effectué avec les bibliothèques JavaScript pour montrer la coexistence de bibliothèque
+dans un langage interprété.
+
 Pour effectuer des tests sur la coexistence de différente version d'une bibliothèque
 JavaScript dans NodeJS, il faut tout d'abord permettre l'importation de plusieurs
 versions d'une même bibliothèque. Dans NodeJS, l'importation de modules s'effectue
@@ -858,25 +862,72 @@ versions est le même. Dans ce cas, c'est la bibliothèque dont la fonction
 la ressource qui inhibe la coexistence de ces modules au sein d'un même processus
 est liée au \textit{socket}.
 
-\subsection{Variables globales communs}
+\subsection{Variables globales communes}
 
-Puisque qu'il n'existe qu'une seule instance de chaque bibliothèque en mémoire, cela implique
-que les variables globales d'une bibliothèque.
+Les bibliothèques au sein d'un application sont chargé de façon unique.
+Puisque qu'il n'existe qu'une seule instance de chaque bibliothèque en dans un
+processus, les variables globales d'une bibliothèque sont partagées. Ces variables
+composent l'état de la bibliothèque.
 
-Définissons 3 bibliothèques B, C et D telle que D a une variable globale nommée \textit{value}.
-B et C ont chacun une dépendance directe vers D, et exportent une référence de la variable
-globale \textit{value} de D.
+L'expérience définit 3 bibliothèques \texttt{B}, \texttt{C} et \texttt{D}. La bibliothèque
+\texttt{D} exporte une variables globale. Les bibliothèques \texttt{B} et \texttt{C} dépendent
+de \texttt{D}. Le programme principale utilise les bibliothèques \texttt{B} et \texttt{C}.
+La figure~\ref{fig:libdep_experience_global_var} est une représentation graphique des dépendences
+présente dans l'expérience.
 
-Le programme principal A commence par charger B et C. Ensuite lit la valeur de \textit{B.D.value}
-puis modifie \textit{C.D.value} et relit \textit{B.D.value}. Le test réussi si la valeur de
-\textit{B.D.value} reste inchangée par la modification de \textit{C.D.value}. Cela implique que
-les références vers la bibliothèque D est différentes de via B et via C.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.75]{figures/libdep_experience_global_var}
+  \caption{Cette figure présente le graphe de dépendence des bibliothèques \texttt{B}, \texttt{C} et \texttt{D}
+    avec l'application \texttt{Programme}.}
+  \label{fig:libdep_experience_global_var}
+\end{figure}
 
-Dans NodeJS, un module peut être installé via un dossier, une archive tarball, un dépôt de code source git ou
-directement via Npmjs. Puisqu’un module publié dans Npmjs ne peut pas être retiré facilement étant donné
-la politique liée au module (\url{https://docs.npmjs.com/cli/unpublish}).
-%L'expérience va utilisé un serveur git qui est auto-hébergé.
+La notation \texttt{X.Y.val} exprime une références à la variables \texttt{val}
+de \texttt{Y} à partir de la bibliothèque \texttt{X}.
+
+Les étapes exécutés par le programme dans l'expériences sont les suivantes:
+\begin{enumerate}
+  \item charge les bibliothèques \texttt{B} et \texttt{C};
+  \item affiche le contenu de \texttt{B.D.value} et \texttt{C.D.value};
+  \item modifie le contenu de \texttt{B.D.value};
+  \item affiche le contenu de \texttt{B.D.value} et \texttt{C.D.value}.
+\end{enumerate}
+L'expérience indique si la référence à la variable globale \texttt{value} défini
+dans \texttt{D} est partagé entre les bibliothèques \texttt{B} et \texttt{C}.
+Les valeur de \texttt{B.D.value} et \texttt{C.D.value} doivent être égales à l'étape 2.
+Les variables sont partagé si la valeur \verb+B.D.value == C.D.value+ après l'étape
+3 de l'expérience.\\
+\begin{figure}[ht]
+  \centering
+  \lstset{frame=single}
+  \begin{mplisting}{0.5}
+1- B.D.value: 0,  C.D.value: 0
+2- set B.D.value 42
+3- B.D.value: 42,  C.D.value: 42
+\end{mplisting}
+  \caption{Les résultat de l'expérience avec des bibliothèques natives du système d'exploitation sous Linux.}
+  \label{fig:result_global_var_experiment}
+\end{figure}
+
+Le résultat de l'expérience de la figure~\ref{fig:result_global_var_experiment} montre
+que chacune des variables globales d'une bibliothèques partagées existent qu'en une seule
+instance.
+
+
+% Le programme principal commence par charger les bibliothèques \texttt{B} et \texttt{C}.
+% Ensuite affiche le contenu de \textit{B.D.value}
+% puis modifie \textit{C.D.value} et relit \textit{B.D.value}. Le test réussi si la valeur de
+% \textit{B.D.value} reste inchangée par la modification de \textit{C.D.value}. Cela implique que
+% les références vers la bibliothèque D est différentes de via B et via C.
+
+%Dans NodeJS, un module peut être installé via un dossier, une archive tarball, un dépôt de code source git ou
+%directement via Npmjs. Puisqu’un module publié dans Npmjs ne peut pas être retiré facilement étant donné
+%la politique liée au module (\url{https://docs.npmjs.com/cli/unpublish}).
+%%L'expérience va utilisé un serveur git qui est auto-hébergé.
 
 
 \section{Conclusion}
-TODO!!!
+Ce chapitre a traité du fonctionnement de l'éditeur de lien et des bibliothèques dynamiques.
+
+CONTINUE...
