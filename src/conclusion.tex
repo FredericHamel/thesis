@@ -1,22 +1,33 @@
 
-\chapter{Conclusion}.
+\chapter{Conclusion}
 
 Ce mémoire a présenté un système de module spécialisé pour les systèmes
 distribués. Il permet la conception d'applications qui exploite la diffusion de
-modules entre les nœuds. Ce qui permet des appels RPC et la migration de code
-mobile sur un nœud générique. C'est pour cela que le nommage des modules du
-système Scheme, similaire à GoLang.
+modules entre les nœuds. Ce qui permet des d'effectuer des appels RPC et de la
+migration de code mobile vers un nœud destination générique. Chaque module
+diffusé a un nom unique basé sur l'URL du dépôt de code qui permet de le
+récupérer. La diffusion se fait par le nom des identifiants qui contient l'URL
+du module. Le nommage des modules ce système ressemble à celui du langage de
+programmation Go.
 
 Nous avons commencé par exposer les limitations du système Termite Scheme par
 des expérimentations dans plusieurs situations. Dans le contexte purement
-interpréter la migration fonctionnait déjà, même dans le cas ou le nœud
+interpréter, la migration fonctionnait parfaitement même dans le cas ou le nœud
 destination ne connait pas le code de l'agent mobile.  C'est dans le contexte
-où les applications sur les nœuds sont compilées que la migration de tâche
-requiert la présence du code de l'agent mobile. Ce qui nous a menés à un
-constat que le nom des identifiants transmit manquait d'information et devait
-être unique au sein du système distribué. La structure des modules présents en
-était la cause, puisque basée sur R5RS. Nous avons ajouté une forme spéciale à
-Gambit pour permettre la création de modules.
+où les applications de chaque nœud sont compilées que la migration de tâche
+est un défi, car elle requiert la présence du code de l'agent mobile sur l'ensemble
+des nœuds.
+
+Nous avons exploré plusieurs méthodes de chargement automatique des modules.
+Le langage Scheme permet le chargement de module à la demande.
+
+Ce qui nous a menés à un constat que le nom des identifiants transmit manquait
+d'information et devait être unique au sein du système distribué. Les modules
+présents, basés sur R5RS, n'offraient pas la possibilité d'avoir des
+identifiants uniques.
+
+Nous avons ajouté une forme spéciale à Gambit pour
+permettre la création de modules.
 
 Le projet a mené au système de modules spécialisés pour les systèmes distribués
 à commencer par des expérimentations avec Termite. Le résultat présent est
