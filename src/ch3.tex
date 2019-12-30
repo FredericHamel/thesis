@@ -2,12 +2,12 @@
 \chapter{Implémentation des modules}
 \label{ch:modules_implementation}
 
-La syntaxe des modules se veut portable entre les différentes implémentations de
-Scheme.  Gambit est un système qui se veut conforme R7RS.  La syntaxe choisit
-pour les modules, est celle qui utilise \lstcode{define-library} dans R7RS.
-Cette forme offre plus de flexibilité que la forme \lstcode{library} dans R6RS.
-Le standard R7RS est une simplification du standard R6RS qui offre des
-fonctionnalités équivalentes.
+Ce chapitre traite de notre implémentation des modules qui se veut portable
+entre les différentes implémentations de Scheme.  Notre approche des modules se
+base sur la syntaxe de R7RS.  Notre implémentation des modules utilise des
+formes déjà existantes et aussi de nouvelles formes qui ont été ajoutées au
+besoin.  Ces nouvelles formes nous ont permis d'intégrer la syntaxe des modules
+R7RS avec les modules primitifs de Gambit.
 
 Les formats des modules R7RS, construits avec \lstcode{define-library}, contiennent
 plusieurs composantes. L'espace de nom du module qui regroupe toutes les
