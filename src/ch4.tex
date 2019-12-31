@@ -2,10 +2,15 @@
 \chapter{Modèle de chargement}
 \label{ch:loading-model}
 
+Ce chapitre traite des mécanismes de chargement implémenté pour
+le système de module. Notre approche de chargement des modules
+permet de garantir l'ordre dans lequel ils sont chargés et aussi
+le chargement unique de chaque module.
+
 Un système est composé d'un ensemble d'éléments (modules) qui interagissent
-entre eux. L'interaction entre les module est dans un contexte statique ou
-dynamique. Dans le contexte statique les modules sont incorporés au sein de
-l'application. Dans le contexte dynamique les modules sont externe à
+entre eux. L'interaction entre les modules est dans un contexte statique ou
+dynamique. Dans le contexte statique, les modules sont incorporés au sein de
+l'application. Dans le contexte dynamique, les modules sont externes à
 l'application.
 
 \section{Chargement des bibliothèques}
@@ -15,36 +20,37 @@ l'application.
 % TODO: voir chargé
 Le chargement d'une bibliothèque Scheme (ou module) dans Gambit est séparé en
 plusieurs niveaux. Il y a la phase recherche du module et de ces dépendances
-qui valide la présence de toutes les modules nécessaire.  Ensuite le module et
+qui valide la présence de tous les modules nécessaire.  Ensuite le module et
 ses dépendances sont chargés dans un ordre qui suit les relations de
 dépendance.  Un module est soit sur le disque ou déjà en mémoire.
 L'emplacement des bibliothèques sur le système de fichier est lié par défaut
-aux chemin spécifié par le \lstinline{##module-search-order} a comme défaut
+aux chemins spécifiés par le \lstinline{##module-search-order} a comme défaut
 \lstinline{~~lib} et \lstinline{~~userlib}.
 
 La procédure exacte de chargement des bibliothèques par \verb|import| n'est pas
-spécifier par le standard R7RS. Le standard spécifie seulement une syntaxe de
+spécifié par le standard R7RS. Le standard spécifie seulement une syntaxe de
 base et le de comportement principal qui est requis. L'importation d'une
 bibliothèque doit chargé la bibliothèque et rendre c'est fonctionnalité
-disponible dans le contexte l'importation a eu lieu qui peut soit ovenir d'un
-programme principale ou d'une bibliothèque.
+disponible dans le contexte l'importation a eu lieu qui peut soit venir d'un
+programme principal ou d'une bibliothèque.
 
 Le chargement d'une bibliothèque peut-être effectuée à l'exécution par
 l'utilisation de \texttt{eval} (par \texttt{load}) pour les fichiers source et
 \texttt{load-object-file} pour les bibliothèques compilées. Cette recherche
-peut aussi avoir lieu durant l'édition des lien en utilisant les méta-infos
-contenus dans les \textbf{.c} qui sont chacun compilé par le compilateur C
-en \textbf{.o} et lié par le \textit{linker}.
+peut aussi avoir lieu durant l'édition des liens en utilisant les méta-infos
+contenues dans les \textbf{.c} qui sont chacun compilés par le compilateur C
+en \textbf{.o} et lié par l'éditeur de lien.
+
 \section{Modèle statique}
 
-Le modèle de bibliothèque statique consiste à intégrer la bibliothèques
-dans l'application finale. La bibliothèque n'a pas besoin d'être chargé
+Le modèle de bibliothèque statique consiste à intégrer la bibliothèque
+dans l'application finale. La bibliothèque n'a pas besoin d'être chargée
 durant l'exécution. L'avantage du modèle statique est le déploiement.
-Puisque tout les dépendances sont dans l'application finale¸ il suffit
-de distribué celle-ci. Le compilateur Gambit support un modèle statique
-pour des programme simple. Compiler un application lié statiquement est
-possible de façon manuelle. Pour lié statiquement deux fichiers Scheme
-simple il suffit d'invoquer le \texttt{gsc} comme suit:
+Puisque toutes les dépendances sont dans l'application finale¸ il suffit
+de distribuer celle-ci. Le compilateur Gambit support un modèle statique
+pour des programmes simples. Compiler une application liée statiquement est
+possible de façon manuelle. Pour lier statiquement deux fichiers Scheme
+simples, il suffit d'invoquer le \texttt{gsc} comme suit:
 
 \begin{center}
   \lstset{language={Scheme}}
@@ -84,11 +90,11 @@ simple il suffit d'invoquer le \texttt{gsc} comme suit:
 % \todo{Citation}
 
 Un des problèmes du modèle statique est le coût lié à la maintenance.  Les
-programmes qui utilise des bibliothèques statiques ne permettent pas une
+programmes qui utilisent des bibliothèques statiques ne permettent pas une
 construction modulaire. La mise à niveau d'une des bibliothèques statiques
 nécessite la recompilation du programme au complet. En plus, cela n'est pas
-adapté pour des applications évolutifs qui peuvent être étendu
-par l'utilisateur. Une solution qui a été adopté est le
+adapté pour des applications évolutives qui peuvent être étendues
+par l'utilisateur. Une solution qui a été adoptée est le
 modèle dynamique~\ref{sec:ch4_model_dynamic}. Cela offre une plus grande
 liberté dans la conception des programmes.
 
@@ -96,14 +102,14 @@ liberté dans la conception des programmes.
 \section{Modèle dynamique}
 \label{sec:ch4_model_dynamic}
 
-Dans le modèle dynamique chaque module est séparé durant l'exécution.
+Dans le modèle dynamique, chaque module est séparé durant l'exécution.
 L'application contient les informations pour extraire les fonctionnalités des
-modules durant l'exécution. Le déploiement d'un application nécessite la
-distribution de toutes les dépendance.  Les bibliothèques partagés offre
-plusieurs avantages par rapport aux bibliothèques statique.
+modules durant l'exécution. Le déploiement d'une application nécessite la
+distribution de toutes les dépendances.  Les bibliothèques partagées offrent
+plusieurs avantages par rapport aux bibliothèques statiques.
 
-Dans ce modèle les bibliothèques sont lié au programme durant l'exécution. Cela
-nécessite que les bibliothèques soit organisé sur le système de fichier d'une façon
+Dans ce modèle les bibliothèques sont liées au programme durant l'exécution. Cela
+nécessite que les bibliothèques soient organisées sur le système de fichier d'une façon
 distinguable. Chaque module doit posséder un nom unique qui permet d'y référer.
 Ce nom unique va être utilisé lors de la collection des dépendances.
 
@@ -113,13 +119,13 @@ Ce nom unique va être utilisé lors de la collection des dépendances.
 %où le N correspond à la version du binaire qui commence à 1.
 
 
-La recherche des bibliothèques est effectué dans un ordre spécifique
+La recherche des bibliothèques est effectuée dans un ordre spécifique
 indépendant de la spécification.  L'algorithme de recherche les bibliothèques
-prend entré le nom de la bibliothèque et retourne le chemin absolu
-correspondant à sont emplacement dans l'arborescence du système de fichier. Les
+prend en paramètre le nom de la bibliothèque et retourne le chemin absolu
+correspondant à son emplacement dans l'arborescence du système de fichier. Les
 bibliothèques sont situées dans différents répertoires l'origine du programme,
 le répertoire des bibliothèques système (\lstinline{~~lib}) et le
-répertoire de bibliothèque utilisateur (\lstinline{~~userlib}).
+répertoire des bibliothèques utilisateur (\lstinline{~~userlib}).
 
 % \begin{itemize}
 %   %% XXX: directory where the executable is located (usefull for devel no need to install the module). collecté
@@ -133,8 +139,8 @@ répertoire de bibliothèque utilisateur (\lstinline{~~userlib}).
 
 Chaque module possède trois niveaux d'initialisation dans le système numérotés de
 0 à 2. Le niveau 0 indique que le module est collecté, mais non initialisé. Le
-niveau 1 indique que le descripteur du module à été récupéré. Le niveau 2 marque
-les module chargé qui sont près à être utilisé. \\
+niveau 1 indique que le descripteur du module a été récupéré. Le niveau 2 marque
+les modules chargés prêt à être utilisé. \\
 
 % \begin{figure}[h]
 %   \lstset{language={Scheme},frame=single}
@@ -166,7 +172,7 @@ les module chargé qui sont près à être utilisé. \\
 \end{mplisting}
   \caption{Un exemple qui montre la collection des modules à partir du module
     \texttt{\_zlib} suivit de l'initialisation des modules collectés. La collection
-    des modules est éffectuée par la procédure \texttt{\#\#collect-module}. L'ensemble
+    des modules est effectuée par la procédure \texttt{\#\#collect-module}. L'ensemble
     des modules retournés sont initialisés par la procédure \texttt{\#\#init-modules}.
     Les enregistrements des modules \texttt{\_zlib} et \texttt{\_digest} sont montrer
     par la variable \texttt{\#\#registered-modules}.}
@@ -175,7 +181,7 @@ les module chargé qui sont près à être utilisé. \\
 \begin{figure}[ht]
   \includegraphics{figures/system-example}
   \caption{Un exemple d'un système fictif composé de différents modules.
-  Le module principale se nomme \textbf{main.scm} avec l'extension \textbf{.scm}
+  Le module principal se nomme \textbf{main.scm} avec l'extension \textbf{.scm}
   et les bibliothèques ont l'extension \textbf{.sld}}
   \label{fig:system-dependency-example}
 \end{figure} % TODO: use yed for that graph
@@ -184,9 +190,9 @@ les module chargé qui sont près à être utilisé. \\
 Dans l'exemple~\ref{fig:system-dependency-example}, l'exécution du module principal
 \textbf{main.scm} déclenche la collection des modules X et Y, qui récursivement
 déclenche la collection de W et Z.  L'algorithme de collection des modules gère
-les modules qui apparaisse plusieurs fois au sein du graphe.  Une fois la
-collection de tous ces modules est complété le descripteur de module est
-récupéré par un appels aux primitives du système d'exploitation si compilé.
+les modules qui apparaissent plusieurs fois au sein du graphe.  Après la
+collection de tous ces modules, le descripteur de module est
+récupéré par un appel aux primitives du système d'exploitation si compilé.
 
 
 \subsection{Module compilé dans Gambit}
@@ -208,8 +214,8 @@ récupéré par un appels aux primitives du système d'exploitation si compilé.
 % occurrence trouvée, il n'y a rien qui empêche d'avoir plus d'une fonctionnalité
 % associée au même nom.
 
-Les modules dans Gambit peuvent être compilé pour plus de performance en
-bibliothèque dynamique. Les programmes principaux peuvent être compilé en
+Les modules dans Gambit peuvent être compilés pour plus de performance en
+bibliothèque dynamique. Les programmes principaux peuvent être compilés en
 exécutable.  Gambit permet de l'utilisation de bibliothèques statiques et
 dynamiques.\\
 
@@ -230,25 +236,25 @@ dynamiques.\\
 \end{figure}
 
 \vspace{-20pt}
-La construction d'un bibliothèque dynamique à partir du fichier \texttt{fib.scm}
+La construction d'une bibliothèque dynamique à partir du fichier \texttt{fib.scm}
 de la figure \ref{fig:basic_fib_module} s'effectue par le compilateur de Gambit
 qui nomme \texttt{gsc}. Cela produit un fichier avec l'extension \texttt{.oN}
-où le \texttt{N} correspond à la version généré de la bibliothèque qui commence à 1.
+où le \texttt{N} correspond à la version générée de la bibliothèque qui commence à 1.
 
 
 \section{Module hébergé}
 
 Un module qui est hébergé est un module qui dont son contenu
 se retrouve sur un domaine comme \url{github.com}. La syntaxe
-des noms de domaine est inspiré du RFC-2396~\cite{RFC:URI-2396}.
+des noms de domaine est inspirée du RFC-2396~\cite{RFC:URI-2396}.
 La différence avec la spécification du \textit{hostname} dans le RFC-2396
 est que le \textit{hostname} ne peut pas finir par un point et doit contenir
-au moins un \verb|domainlabel|. C'est pour permettre de distingué
+au moins un \verb|domainlabel|. C'est pour permettre de distinguer
 un module local et un module hébergé. \\
 
-\begin{center}
-  \lstset{caption={Grammaire BNF représentant un hostname selon un sous
-  ensemble du RFC-2396.},captionpos=b,frame=single}
+\begin{figure}[ht]
+  \centering
+  \lstset{frame=single}
   \begin{mplisting}{0.9}
 hostname      = +( domainlabel "." ) toplabel
 domainlabel   = alphanum | alphanum *( alphanum | "-" ) alphanum
@@ -257,8 +263,10 @@ alphanum      = alpha | digit
 alpha         = [a-zA-Z]
 digit         = [0-9]
 \end{mplisting}
+  \caption{Grammaire BNF représentant un hostname selon un sous
+    ensemble du RFC-2396.}
   \label{lst:hostname->grammar}
-\end{center}
+\end{figure}
 
 
 \subsection{Installation automatique}
@@ -266,10 +274,10 @@ digit         = [0-9]
 L'installation automatique d'un module dépend du contenu de la
 \textit{whitelist}.  La \textit{whitelist} contient une liste de préfixe
 utilisé pour valider les \textit{<module-ref>}. La validation consiste
-a trouvé un élément dans la \textit{whitelist} qui correspond à un
+à trouver un élément dans la \textit{whitelist} qui correspond à un
 préfixe du \textit{<module-ref>}.
 
-Un élément est considéré un préfixe si chaque composants sont inclus dans le
+Un élément est considéré un préfixe si chaque composant sont inclus dans le
 \textit{<module-ref>} dans le même ordre. L'élément \texttt{github.com/gambit}
 est un préfixe de \texttt{github.com/gambit/hello}, car les parties
 \textit{github.com} et \textit{gambit} font partie du \textit{<module-ref>}. Le
@@ -277,11 +285,10 @@ module \textit{github.com/gambitXYZ/hello} ne contient pas le préfixe
 \textit{gihtub.com/gambit}, car \textit{gambit} est différent de
 \textit{gambitXYZ}.
 
-
 Par défaut \texttt{github.com/gambit} est inclus dans cette liste. 
 Cela implique que tous les modules sous \texttt{github.com/gambit}
-peuvent être installé automatiquement. La \textit{whitelist} peut
-être modifié par un option de l'interprète:
+peuvent être installés automatiquement. La \textit{whitelist} peut
+être modifiée par une option de l'interprète:
 
 \begin{center}
   \begin{mplisting}{0.4}
@@ -296,18 +303,18 @@ Le mode d'installation indique si l'installation demande une confirmation
 à l'usager lors de l'installation d'un module qui n'est pas dans la
 \textit{whitelist}. Il y a trois modes d'installation.
 \begin{itemize}
-  \item \textbf{never}: il y a seulement les modules qui sont dans la
-    \textit{whitelist} qui peuvent être installé.
+  \item \textbf{never}: il y a seulement les modules, qui sont dans la
+    \textit{whitelist}, qui peuvent être installés.
 
   \item \textbf{repl}: les modules qui ne sont pas dans la \textit{whitelist}
-    peuvent être installé avec la confirmation textuelle de l'usager s'il y a
+    peuvent être installés avec la confirmation textuelle de l'usager s'il y a
     une \textit{repl}.
 
   \item \textbf{ask-always}: les modules qui ne sont pas dans la \textit{whitelist}
-    peuvent être installé avec la confirmation textuelle de l'usager.
+    peuvent être installés avec la confirmation textuelle de l'usager.
 \end{itemize}
 
-Le mode d'installation est spécifié par le \textit{runtime option} nommé
+Le mode d'installation est spécifié par le \textit{runtime option} nommée
 \textit{ask-install}.
 \begin{figure}[h]
   \lstset{language={Scheme}}
@@ -326,6 +333,10 @@ Download and install (y/n)? n
     Il ne se fait pas installé.}
 \end{figure}
 
+
+\section{Conclusion}
+
+TODO!
 
 % \subsection{Module \texttt{\_git}}
 
