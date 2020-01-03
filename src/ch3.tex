@@ -348,7 +348,7 @@ d'entête s'il existe et un \lstcode{##demand-module} du module.  L'importation
 
 
 \section{Implémentation des modules R7RS}
-% XXX: Implémentation
+
 Pour que le système de module soit compatible avec d'autres implémentations
 Scheme,  les modules haut niveau sont définis dans le standard R7RS
 Small~\cite{Scheme:R7RS}. Les modules sont définis par la forme
@@ -429,7 +429,6 @@ figure~\ref{fig:import->expand-r7rs-namespace}.
   \label{fig:import->expand-r7rs}
 \end{figure}
 
-% TODO: Différent namespaces généré par import.
 
 \begin{figure}[ht]
   \centering
@@ -568,4 +567,14 @@ méta informations respectifs.
 
 \section{Conclusion}
 
-TODO!!!
+Notre implémentation des modules utilise une forme de plus en plus compatible avec
+les autres implémentations de Scheme. En plus, les extensions que nous avons ajoutées
+offrent une interface avec les modules système de Gambit. L'implémentation actuelle des modules
+est suffisante pour permettre la diffusion de code, car elle offre des identifiants uniques pour
+les modules.
+
+Notre approche supporte la création de modules qui dépendent de bibliothèques
+du système d'exploitation.  Cela est fait par les extensions de la forme
+\texttt{define-library} et par la FFI de Gambit. L'expansion de \texttt{define-library}
+est optimisée pour prendre le moins d'espace possible.
+
