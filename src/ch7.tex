@@ -1,4 +1,13 @@
 \chapter{Évaluation}
+
+Ce chapitre évalue les performance du système de modules.
+Notre approche d'évalution recycle trois benchmarks
+de taille différente. Nous les avons adapté pour qu'ils
+testent la diffusion des modules. 
+
+
+\section{Description des expériences}
+
 % NOTE: distingué version .oN et version du code.
 La gestion des modules permet plusieurs versions d'un
 module d'être installé. Au sein d'un application, il
@@ -25,64 +34,12 @@ code qui est migré dessus.
 
 
 \section{Spécification des machines}
-L'ensemble des expériences ont été faites sur trois machine: arctic, gambit et tictoc.
-
-\begin{figure}[ht]
-  \centering
-\begin{mplisting}{1}
-Architecture:          x86_64
-CPU op-mode(s):        32-bit, 64-bit
-CPU(s):                4
-Thread(s) per core:    1
-Core(s) per socket:    4
-Vendor ID:             GenuineIntel
-Model name:            Intel(R) Core(TM) i7-7700K CPU @ 4.20GHz
-CPU MHz:               4200.000
-CPU min MHz:           800.0000
-Storage:               216GB (NVME)
-RAM:                   16GB
-Swap:                  16GB
-C Compiler             gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
-Ethernet Speed         1Gbps
-\end{mplisting}
-  \caption{La spécification de la machine arctic qui est utilisé comme nœud de destination dans
-  l'ensemble des tests. Cette machine, nommé \textbf{Arctic} est refroidit au liquide.}
-\end{figure}
-
-\begin{figure}[h]
-  \begin{mplisting}{1}
-Architecture:        armv7l
-Byte Order:          Little Endian
-CPU(s):              4
-Thread(s) per core:  1
-Core(s) per socket:  4
-Vendor ID:           ARM
-Model name:          Cortex-A72
-CPU max MHz:         1500.0000
-CPU min MHz:         600.0000
-OS:                  Linux tictoc 4.19.66-v7l+ #1253 SMP
-Storage:             26GB (sdcard)
-RAM:                 2GB
-Swap:                2GB
-C Compiler           gcc (Raspbian 8.3.0-6+rpi1) 8.3.0
-Ethernet Speed       1Gbps
-\end{mplisting}
-  \caption{La spécification du CPU du Raspberry Pi utilisé dans les tests.
-  Cette machine se nomme \textbf{tictoc}.}
-\end{figure}
-
-\begin{figure}[h]
-  \begin{mplisting}{1}
-Architecture:        x86_64
-CPU(s):              12
-Thread(s) per core:  2
-Core(s) per socket:  6
-Model name:          Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz
-Storage:             1TB (SSD)
-RAM:                 8GB
-Network Speed:       1Gbps
-\end{mplisting}
-\end{figure}
+Les machines sur lesquelles les tests ont été effectués sont:
+\begin{itemize}
+  \item arctic, une machine \texttt{x86\_64} roulant Linux
+  \item gambit, une machine \texttt{x86\_64} roulant macOS.
+  \item tictoc, un RaspBerry Pi \texttt{ARM} roulant Linux.
+\end{itemize}
 
 \section{Résultats}
 Les résultat lié au transfert est affecté par les pertes de paquets.

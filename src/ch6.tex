@@ -1,16 +1,23 @@
 \chapter{Migration de code}
 \label{ch:task_migration}
 
-Les systèmes distribués sont constitué d'un ensemble de nœuds interconnecter
-de calculs. Les nœuds interagissent par l'envoie et la réception de message
-au sein d'un réseau de communication. Chaque nœud a but spécifique. Le
-\textit{World Wide Web} est un exemple notable qui permet d'avoir un aperçu.
-Ils est composé de clients et de serveurs qui roulent des application
-clients et serveurs différent.
+Ce chapitre traite du mécanisme de diffusion de modules qui est utilisé dans
+la migration de code. Notre approche exploite la sérialisation des objets
+Scheme, le langage Termite et l'installation automatique des modules durant
+l'exécution.
+
+\section{Systèmes distribués}
+
+Les systèmes distribués sont constitués d'un ensemble de nœuds interconnecter
+de calculs. Les nœuds interagissent par l'envoi et la réception de message
+au sein d'un réseau de communication. Chaque nœud a un but spécifique. Le
+\textit{Web} est un exemple notable qui permet d'avoir un aperçu.
+Ils est composé de clients et de serveurs qui roulent des applications
+des applications clients et serveurs différent.
 
 L'implémentation d'un système distribué inclut le développement des applications
 installé sur les nœuds et la logique d'interaction entre les nœuds. Il est
-possible de voir l'ensemble des programme sur les nœuds comme un programme
+possible de voir l'ensemble des programmes sur les nœuds comme un programme
 global. Les problèmes discutés dans ce chapitre sont les suivant:
 
 \begin{itemize}
@@ -259,4 +266,6 @@ exécute la boucle de la figure \ref{fig:termite-clock@v1}.
   \vspace*{4ex}
 \end{figure}
 
-
+\section{Conclusion}
+Ce chapitre présenté le mécanisme de diffusion des modules utilisés
+dans la migration de code.
