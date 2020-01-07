@@ -5,8 +5,8 @@
 Ce chapitre traite du fonctionnement de l'éditeur de liens du système
 d'exploitation (\textit{dynamique linker}) et des bibliothèques dynamiques. Le
 système de modules, présenté dans ce mémoire, supporte le chargement de
-plusieurs versions d'un module. Une version d'un module correspond à une
-capture des fonctionnalités du module à un moment précis dans son évolution.
+plusieurs versions d'un module. Une version d'un module correspond à un
+état de son code à un moment précis dans son évolution.
 Cela a le potentiel de causer des problèmes d'exécution du programme. Puisque
 ce système de module utilise des bibliothèques dynamiques du système
 d'exploitation, il est donc nécessaire de déterminer la nature de ces
@@ -60,12 +60,11 @@ bibliothèques statiques.
 \section{Édition de liens dynamique}
 
 Une application qui utilise une bibliothèque partagée ne contient pas le code
-de la bibliothèque, mais plutôt le nom des bibliothèques utilisées.  La
-routine qui récupère le code à partir du nom est la
-résolution qui est effectuée par le \textit{dynamic loader}.  Lorsqu'un
-programme lié dynamiquement à plusieurs bibliothèques partagées exécute invoque
-une procédure externe, la routine de résolution est démarrée pour résoudre le
-code de cette procédure.
+de la bibliothèque, mais plutôt le nom des bibliothèques utilisées. La
+récupèration le code à partir du nom est la résolution qui est effectuée par le
+\textit{dynamic loader}.  Lorsqu'un programme lié dynamiquement à plusieurs
+bibliothèques partagées exécute un appel à une procédure externe, la routine de
+résolution est démarrée pour résoudre le code de cette procédure.
 
 %% Bibiothèque dynamique native.
 Par exemple, sous Linux l'utilitaire <<yes>>, qui est écrit en C,
@@ -77,17 +76,19 @@ est lié aux bibliothèques système suivantes:
 \end{verbatim}
 
 La bibliothèque \textit{libc.so.6} contient un grand nombre des fonctions
-standards du système sous Linux.  Le chargement des bibliothèques s'effectue au
-début de l'application, avant l'exécution de la fonction principale souvent
-nommée \textbf{main}. Plusieurs bibliothèques peuvent coexister simultanément
-au sein d'un même processus sans que l'exécution du programme en soit affectée.
+standards du système sous Linux telles que \lstcode{fopen}, \lstcode{fclose},
+\dots.  Le chargement de certaines bibliothèques utilisé par le \textit{dynamic
+loader} est effectué au début de l'application, avant l'exécution de la fonction
+principale souvent nommée \textbf{main}.  Plusieurs bibliothèques peuvent
+coexister simultanément au sein d'un même processus sans que l'exécution du
+programme en soit affectée.
 
 La résolution des fonctionnalités de ces bibliothèques est effectuée par un
 programme appelé le \textit{program interpreter} du système qui correspond à
-\textit{/lib64/ld-linux-x86-64.so.2}.  Il est possible de forcer la résolution
-d'une fonctionnalité d'une bibliothèque de façon manuelle. Ce genre d'interaction
-est possible sur les trois principales plateformes utilisées sur le marché
-(Windows, macOS et Linux).
+\textit{/lib64/ld-linux-x86-64.so.2}.  Il est aussi possible de forcer la
+résolution d'une fonctionnalité d'une bibliothèque de façon manuelle. Ce genre
+d'interaction est possible sur les trois principales plateformes utilisées sur
+le marché (Windows, macOS et Linux).
 
 %% TODO: continue here FIXME
 Sur Linux, l'API qui permet d'interagir avec les bibliothèques partagées provient de \textit{libdl.so}.
@@ -172,11 +173,11 @@ LibFoo.foo
 \end{center}
 
 La résolution des fonctionnalités effectuée par le \textit{dynamic linker}
-utilise un ordre de recherche définit. Cet ordre de recherche inclut
+utilise un ordre de recherche défini. Cet ordre de recherche inclut
 l'exécutable courant, les dépendances de l'exécutable, la bibliothèque passée à
 \textit{dlsym}. Une résolution d'une fonctionnalité est soit directe ou
 indirecte. La résolution d'une fonctionnalité par \textit{dlsym} qui n'engendre
-pas la résolution d'un autre fonctionnalité externe est directe. Une résolution
+pas la résolution d'une autre fonctionnalité externe est directe. Une résolution
 directe n'utilise pas le programme principal dans l'ordre de recherche.
 Les résolutions de fonctionnalité provenant d'appels indirects au
 \textit{dynamic linker} inclut le programme principal et ses dépendances avant
@@ -198,7 +199,7 @@ la bibliothèque passée à \verb|dlsym|.
 
 Dans la situation présentée dans la figure~\ref{fig:deps-ex1}, quelles sont les étapes incluses
 dans l'exécution de ce programme qui invoque la fonctionnalité \texttt{start} de la
-bibliothèque \textit{libA.so}. La fonctionnalité externe \texttt{start} est résolu de façon directe par
+bibliothèque \textit{libA.so}? La fonctionnalité externe \texttt{start} est résolu de façon directe par
 un appel à \verb|dlsym(libA, "start")|, qui commence la recherche de la procédure \texttt{start} dans
 la bibliothèque spécifiée dans \texttt{dlsym}. Le programme l'invoque une fois la procédure trouvée.
 L'appel à une procédure non résolue (e.g.\ la procédure \texttt{foo} invoqué dans \texttt{start})
@@ -669,15 +670,15 @@ de OpenSSL, SDL et un générateur aléatoire qui possède un état global.  Pou
 observer le comportement de bibliothèque Scheme liant des fonctionnalités
 implémentées dans un autre langage, dans ces exemples C. Ces tests montrent le
 problème de masquage décrit précédemment dans des bibliothèques réelles.  Pour
-tester les bibliothèques natives en Scheme, il a fallut écrire du code spécial
-pour lier les types et les fonctions à des procédure Scheme. Cela a été fait
+tester les bibliothèques natives en Scheme, il a fallu écrire du code spécial
+pour lier les types et les fonctions à des procédures Scheme. Cela a été fait
 par la FFI de Gambit.
 
 Par hypothèse, la partie cryptographique des deux versions de OpenSSL peut
 coexister. Chacune des fonctions cryptographiques de OpenSSL1.0 et OpenSSL1.1
 exécute du code disjoint qui n'interfère pas avec une zone mémoire commune.
-Cela implique qu'un appelle à une fonction de OpenSSL1.0 n'affectera pas les
-résultats des appelles futures de OpenSSL1.1. Les fonctions nécessaires
+Cela implique qu'un appel à une fonction de OpenSSL1.0 n'affectera pas les
+résultats des appels futurs de OpenSSL1.1. Les fonctions nécessaires
 pour tester la partie cryptographique RSA sont:
 \begin{itemize}
     \item \lstinline{PEM_read_bio_RSA_PUBKEY} et \lstinline{PEM_read_bio_RSAPrivateKey}:
@@ -706,12 +707,12 @@ il y a eu l'observation que la bibliothèque \url{libcrypto.so} de OpenSSL1.1
 masquait la version de OpenSSL1.0 s'il n'est pas spécifié explicitement lors de
 la création de la bibliothèque Scheme \textit{rsa.scm} comme à la
 figure-\ref{fig:scm_masq1}. Les raisons sont liées à plusieurs facteurs qui
-étaient présents durant l'expérience. L'ordre de recherche des symboles qui
-inclue les symboles des bibliothèques liés à l'exécutable qui sont prioritaire
-qui contenait \url{libssl.so} et \url{libcrypto.so} de OpenSSL1.1.  Dans ce
-cas, il était possible de résoudre ce problème en ajoutant une dépendance
-directe à \textit{libcrypto} lors de la construction des bibliothèques Scheme
-\verb+RSA+ comme montrée dans la figure~\ref{fig:scm_masq_fix1}.
+étaient présents durant l'expérience. L'ordre de recherche des symboles inclut
+les symboles des bibliothèques liés à l'exécutable, qui est prioritaire, est
+suivi de \url{libssl.so} et \url{libcrypto.so} de OpenSSL1.1.  Dans ce cas, il
+était possible de résoudre ce problème en ajoutant une dépendance directe à
+\textit{libcrypto} lors de la construction des bibliothèques Scheme \verb+RSA+
+comme montrée dans la figure~\ref{fig:scm_masq_fix1}.
 
 \begin{center}
 \begin{figure}[ht]
@@ -733,12 +734,12 @@ sans la spécification de \textit{libcrypto.so}}
 \begin{center}
 \begin{figure}[ht]
 \begin{lstlisting}[frame=single]
-gsc-script -o rsa-1-0-0.o1 \
+gsc -o rsa-1-0-0.o1 \
   -cc-options '-I /usr/include/openssl-1.0' \
   -ld-options '-L /usr/lib/openssl-1.0 -lssl -lcrypto' \
   -prelude '(define-cond-expand-feature|openssl-v10|)' rsa.scm
 
-gsc-script -o rsa-1-1-0.o1 \
+gsc -o rsa-1-1-0.o1 \
   -ld-options "-lssl -lcrypto" rsa.scm
 \end{lstlisting}
 \caption{Création des bibliothèques \textit{rsa.scm} pour OpenSSL1.0 et OpenSSL1.1
@@ -751,9 +752,9 @@ avec la spécification de \textit{libcrypto.so}}
 \begin{figure}[ht]
 \includegraphics{figures/libssl_masking.pdf}
 
-\caption{C'est un schéma des dépendances entre les bibliothèques au sein d'un
+\caption{Schéma des dépendances entre les bibliothèques au sein d'un
   processus.  Les dépendances qui ont été liées dynamiquement lors la création
-  de l'application sont représentés par une flèche avec trait plein sans
+  de l'application sont représentées par une flèche avec trait plein sans
   annotation. Ceux qui représentent les chargements de bibliothèque dynamique via
   \texttt{dlopen} ont l'annotation \textit{dl}. La flèche en pointillé indique
   un masquage des symboles de la bibliothèque source par une ligne pointée.}
@@ -802,18 +803,17 @@ avec la spécification de \textit{libcrypto.so}}
 % - Résultat
 % - Petite Conclusion
 
-L'équivalent des tests effectués avec les bibliothèques dynamiques du système d'exploitation
-ont été effectué avec les bibliothèques JavaScript pour montrer la coexistence de bibliothèque
-dans un langage interprété.
+Des tests similaires ont été effectués avec les bibliothèques JavaScript pour
+montrer la coexistence de bibliothèques dans un langage interprété.
 
 Pour effectuer des tests sur la coexistence de différente version d'une bibliothèque
 JavaScript dans NodeJS, il faut tout d'abord permettre l'importation de plusieurs
 versions d'une même bibliothèque. Dans NodeJS, l'importation de modules s'effectue
 avec la fonction \verb|require(module-name)|. Puisque l'information de version
 de la bibliothèque n'est pas fournie en paramètre à la fonction, il faut donc
-utilisé une autre méthode de forcer plusieurs versions des bibliothèques.
+utiliser une autre méthode pour forcer plusieurs versions des bibliothèques.
 La configuration d'un module dans NodeJS utilise le format JSON pour spécifier
-le nom, la version, les dépendances \dots.
+le nom, la version, les dépendances, etc.
 
 Les dépendances sont conservées sous la forme d'un arbre, chaque module à ses dépendances directes
 qui ont aussi des dépendances indirectes.  Lors de l'écriture d'un module JavaScript, il est possible
@@ -851,16 +851,18 @@ function start() {
 }
 exports.start = start;
 \end{lstlisting}
+  \caption{Structure du module JavaScript utilisé comme proxy vers deux version
+    de la bibliothèque \texttt{express}.}
+  \label{fig:express}
 \end{figure}
-\label{fig:express}
 \end{center}
 Le programme principal ne fait qu'importer les deux encapsulations de bibliothèque
 et invoque la fonction \textit{start}.
 
 Le résultat attendu dans cette expérience est que ces deux versions de la bibliothèque
-express coexistent sans problème, sauf dans le cas où le port tcp utilisé par les deux
-versions est le même. Dans ce cas, c'est la bibliothèque dont la fonction
-\textit{start} a été invoqué en premier qui va monopoliser le tcp port. Dans ce cas
+express coexistent sans problème, sauf dans le cas où le port TCP utilisé par les deux
+versions est le même. Si le port TCP est le même, c'est la bibliothèque dont la fonction
+\textit{start} a été invoqué en premier qui va monopoliser le port TCP. Dans ce cas
 la ressource qui inhibe la coexistence de ces modules au sein d'un même processus
 est liée au \textit{socket}.
 
@@ -932,18 +934,25 @@ instance.
 \section{Conclusion}
 %
 Ce chapitre a traité du fonctionnement de l'éditeur de lien et des
-bibliothèques dynamiques. Les expériences effectuées pour déterminer
+bibliothèques dynamiques. Des expériences ont été effectuées pour déterminer
 les conditions sous lesquelles des bibliothèques dynamiques peuvent
 coexister. Les résultats des expériences nous ont permis de déterminer
 que les bibliothèques dynamiques sont en conflit lorsqu'ils exportent
 les mêmes identifiants ou utilisent des ressources communes (e.g. clavier,
-souris). Ces conflits présents dans les bibliothèques dynamiques
+souris).
+Nous avons aussi déterminé que l'utilisation de variables globales peut entraîner
+des problèmes de coexistence entre des bibliothèques. Ils apparaissent dans
+plusieurs langages de programmation interprétés. Les états globaux dans
+une bibliothèque doivent être évités.
+Ces conflits présents dans les bibliothèques dynamiques
 du système d'exploitation peuvent être propagés par la FFI du langage
 de programmation.
 
-Nous avons déterminé que l'utilisation de variables globales peut entraîner
-des problèmes de concurrence entre des bibliothèques. Ils apparaissent dans
-plusieurs langages de programmation interprétés. Les états globaux dans
-une bibliothèque doivent être évités.
+Le système de module que nous avons développé pour Scheme permet en principe la
+coexistence de différentes versions d'un module. Cependant, si la FFI est utilisée
+pour interfacer `a des bibliothèques dynamiques du système d'exploitation qui ne
+ne peuvent pas coexister cela va indirectement empêcher la coexistence des modules en
+qui en dépendent. C'est un problème incontournable qu'il faut garder à l'esprit
+lors de la conception des modules Scheme.
 
 
