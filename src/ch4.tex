@@ -2,37 +2,43 @@
 \chapter{Modèle de chargement}
 \label{ch:loading-model}
 
-Ce chapitre traite des mécanismes de chargement implémenté pour
-le système de module. Notre approche de chargement des modules
-permet de garantir l'ordre dans lequel ils sont chargés et aussi
-le chargement unique de chaque module.
+Ce chapitre traite des mécanismes de chargement implémenté pour le système de
+module.  Dans notre implémentation, les sont référé par un nom symbolique
+plutôt que son emplacement. Elle garantit l'ordre dans lequel ils sont chargés
+et aussi le chargement unique de chaque module. Pour permettre la diffusion des
+modules, nous avons ajouté un mécanisme d'installation automatique et de
+chargement des modules à la volé.
 
-Un système est composé d'un ensemble d'éléments (modules) qui interagissent
+Un système est composé d'un ensemble de modules qui interagissent
 entre eux. L'interaction entre les modules est dans un contexte statique ou
 dynamique. Dans le contexte statique, les modules sont incorporés au sein de
-l'application. Dans le contexte dynamique, les modules sont externes à
-l'application.
+l'application, ils n'ont pas besoin d'être chargés. Dans le contexte dynamique,
+les modules sont externes à l'application et requièrent un chargement.
+Le chargement de modules est une partie importante dans un système de modules,
+il permet l'utilisation de modules externes.
+
+La diffusion des modules requiert que le chargement de modules qui ne sont
+pas encore installés soit effectué durant l'exécution.
 
 \section{Chargement des bibliothèques}
 
 %La collection des modules s'effectue au sein d'un
 
-% TODO: voir chargé
 Le chargement d'une bibliothèque Scheme (ou module) dans Gambit est séparé en
-plusieurs niveaux. Il y a la phase recherche du module et de ces dépendances
+plusieurs niveaux. Il y a la phase recherche du module et de ses dépendances
 qui valide la présence de tous les modules nécessaire.  Ensuite le module et
-ses dépendances sont chargés dans un ordre qui suit les relations de
+ses dépendances sont chargés dans un ordre qui respecte les relations de
 dépendance.  Un module est soit sur le disque ou déjà en mémoire.
 L'emplacement des bibliothèques sur le système de fichier est lié par défaut
-aux chemins spécifiés par le \lstinline{##module-search-order} a comme défaut
+aux chemins spécifiés par le \lstinline{##module-search-order} qui a comme défaut
 \lstinline{~~lib} et \lstinline{~~userlib}.
 
-La procédure exacte de chargement des bibliothèques par \verb|import| n'est pas
-spécifié par le standard R7RS. Le standard spécifie seulement une syntaxe de
-base et le de comportement principal qui est requis. L'importation d'une
-bibliothèque doit chargé la bibliothèque et rendre c'est fonctionnalité
-disponible dans le contexte l'importation a eu lieu qui peut soit venir d'un
-programme principal ou d'une bibliothèque.
+La procédure exacte de chargement des bibliothèques par \texttt{import} n'est pas
+spécifiée par le standard R7RS. Le standard spécifie seulement une syntaxe de
+base et le comportement principal qui est requis. L'importation d'une
+bibliothèque doit charger la bibliothèque et rendre ses fonctionnalités
+disponibles dans le contexte où l'importation a eu lieu (qui peut soit venir d'un
+programme principal ou d'une bibliothèque).
 
 Le chargement d'une bibliothèque peut-être effectuée à l'exécution par
 l'utilisation de \texttt{eval} (par \texttt{load}) pour les fichiers source et
@@ -184,7 +190,7 @@ les modules chargés prêt à être utilisé. \\
   Le module principal se nomme \textbf{main.scm} avec l'extension \textbf{.scm}
   et les bibliothèques ont l'extension \textbf{.sld}}
   \label{fig:system-dependency-example}
-\end{figure} % TODO: use yed for that graph
+\end{figure}
 
 
 Dans l'exemple~\ref{fig:system-dependency-example}, l'exécution du module principal
@@ -336,7 +342,21 @@ Download and install (y/n)? n
 
 \section{Conclusion}
 
-TODO!
+Ce chapitre a traité des méthodes de chargement de module et des mécanismes
+d'installation automatique qui sont requis dans la diffusion des modules.
+Notre implémentation du chargement des modules garantit le chargement unique
+des modules dans un ordre qui respecte les dépendances. Ceci est demandé dans
+l'implémentation des modules Scheme R7RS.
+
+Notre approche nous permet l'installation automatique de modules qui sont
+inclus dans la \textit{whitelist} lorsque demandé.  Cela offre une restriction
+sur les modules qui peuvent s'installer automatiquement sur un nœud du système
+distribué. Cela offre la diffusion des modules entre les nœuds d'un tel système
+pour permettre des appels RPC sur un nœud ne connaissant pas le code demandé.
+
+
+
+
 
 % \subsection{Module \texttt{\_git}}
 
