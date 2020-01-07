@@ -59,8 +59,8 @@ Les formes syntaxiques spéciales de base en Scheme sont \lstcode{define}, \lstc
 
   %% XXX: Too much???
   \item L'évaluation conditionnelle est obtenue par la forme \texttt{(if
-    \textit{<e1>} \textit{<e2>} \textit{<e3>})}.  L'expression \textit{<e1>}
-    est exécutée si la valeur de l'expression \textit{<e2>} est vraie sinon
+    \textit{<e1>} \textit{<e2>} \textit{<e3>})}.  L'expression \textit{<e2>}
+    est exécutée si la valeur de l'expression \textit{<e1>} est vraie sinon
     l'expression \textit{<e3>} est exécutée.
 
   \item La forme \texttt{(set! \textit{<name>} \textit{<val>})} modifie le contenu de la variable
@@ -240,14 +240,14 @@ extensions au langage sont les macros.
 
 En C et C++, les macros sont basées sur un modèle de remplacement textuel simple
 et ne permettent pas de récursion se référant à elle-même.  Un appel à la macro
-est remplacé par le corps de celle-ci. Les macros de style LISP permettent des
+est remplacé par le corps de celle-ci. Les macros de style Lisp permettent des
 transformations qui se font avec
 l'ensemble des procédures du langage, ce qui leur donne plus de flexibilité.  La
 différence entre les procédures et les macros est le mode de passage de
 paramètres.  Les paramètres sont passés à la macro sans être évalués.
 Certaines implémentations de Scheme offrent la forme \lstcode{define-macro}
 pour définir les macros.  Cette forme est équivalente au \lstcode{defmacro} de
-LISP. Elle accepte en entrée des \textit{s-expression}s et retourne une
+Lisp. Elle accepte en entrée des \textit{s-expression}s et retourne une
 \textit{s-expression}.
 
 \begin{figure}[htbp]
@@ -297,13 +297,12 @@ pertinentes à ce mémoire.
   (lambda (stx)
     (syntax-case stx ()
       ((_ filename)
-       (let ((filename ))
-         (let ((content
-                 (call-with-input-file
-                    (syntax->datum (syntax filename))
-                    (lambda (port)
-                      `(begin ,@(read-all port))))))
-           (datum->syntax stx content)))))))
+       (let ((content
+               (call-with-input-file
+                  (syntax->datum (syntax filename))
+                  (lambda (port)
+                    `(begin ,@(read-all port))))))
+         (datum->syntax stx content))))))
 \end{mplisting}\\\hline
 
 \end{tabular}
@@ -319,7 +318,7 @@ Les bibliothèques, aussi appelées modules, facilitent le partage de
 fonctionnalités entre plusieurs programmes. Dans le standard
 R4RS\cite{Scheme:R4RS} et R5RS\cite{Scheme:R5RS} les modules consistent en des
 fichiers Scheme qui contiennent des définitions de procédures et de macros. Ils
-sont chargés dans le module courant par la procédure \lstcode{load}. Certaines
+sont chargés dans l'environnement global par la procédure \lstcode{load}. Certaines
 implémentations de Scheme ont la forme spéciale \lstcode{include} qui permet de
 séparer un module Scheme en plusieurs parties. Cette forme peut s'ajouter
 facilement au langage (tel que montré à la figure
@@ -360,7 +359,7 @@ est effectuée après l'analyse syntaxique et l'expansion des macros. D'autres s
 Scheme permettent le chargement des macros par \lstcode{load}.
 
 Dans un module, il y a du code qui est exécuté lors de l'expansion (les macros)
-et à l'évaluation. La procédure \lstcode{load} donne accès aux procédures définit
+et à l'évaluation. La procédure \lstcode{load} donne accès aux procédures définies
 dans le module, mais pas aux macros, car elles sont expansées.  Après un
 \lstcode{load}, il ne reste que les procédures et variables globales qui
 résultent de l'expansion des macros.  Pour avoir accès aux macros, il faut
@@ -401,13 +400,13 @@ exemple de module simple n'utilisant que la procédure \lstcode{load}.
 % - Import
 % - Corps de module
 
-Le standard R6RS\cite{Scheme:R6RS} renforce le concept de modules avec la
+Le standard R6RS\cite{Scheme:R6RS} renforce le concept de module avec la
 syntaxe \lstcode{library}.  Un module R6RS est séparé en 4 parties: le nom, une
 sous-forme \lstcode{export}, une sous-forme \lstcode{import} et le corps du
 module. Le nom du module l'identifie de façon unique, il peut contenir une
 spécification de version. La version est spécifiée par une liste d'entiers
-positifs. Une liste vide \lstcode{()} est l'équivalent de ne pas spécifier la
-version. Ensuite, il y a la liste des exportations spécifier par la sous-forme
+positifs. Une liste vide \lstcode{()} correspond à ne pas spécifier la
+version. Ensuite, il y a la liste des exportations qui est spécifiée par la sous-forme
 \lstcode{export}. Chaque élément de cette liste est soit un identifiant ou une
 sous-forme \lstcode{rename} qui renomme l'identifiant exporté.
 L'\lstcode{import} donne la liste des dépendances du module. Chaque dépendance
@@ -426,7 +425,7 @@ d'expressions. Une définition peut être locale ou exportée. Les expressions
 initialisent le module lors de l'exécution.  Le R6RS ajoute aussi la forme
 \lstcode{import} pour l'importation d'un module et enlève la procédure
 \lstcode{load}.  Contrairement au \lstcode{load}, la forme \lstcode{import}
-empêche le chargement multiple d'un module.  La syntaxe du \lstcode{import}
+garanti le chargement unique d'un module.  La syntaxe du \lstcode{import}
 permet de manipuler les noms des symboles importés et exportés.\\
 \begin{figure}[ht]
   \lstset{language={scheme},
@@ -470,7 +469,7 @@ contrôle lors de l'importation des modules au prix d'une sémantique plus compl
 
 Les déclarations d'un module R6RS sont dans un espace distinct de l'espace global et
 des autres modules. Les déclarations d'un module ne peuvent pas être en conflit avec
-des déclarations globales ou d'autre module. L'élément qui permet de distinguer deux modules
+des déclarations globales ou d'autres modules. L'élément qui permet de distinguer deux modules
 est leurs identifications (nom avec version). Le nom du module correspond à l'espace de nom du module.
 C'est ce qui unit les déclarations au module et empêche les conflits de nom entre
 les modules.
@@ -531,12 +530,12 @@ bloc \lstcode{begin}.
   \item La déclaration \lstcode{export} est idem au R6RS.
 
   \item Les déclarations \lstcode{include} et \lstcode{include-ci} permettent
-    l'inclusion d'un fichier en tant qu'un bloc de code.  La seconde version
+    l'inclusion d'un fichier en tant qu'un bloc de code.  La seconde forme
     non sensible à la casse des caractères.
 
   \item La déclaration \lstcode{cond-expand} est une extension du
     \texttt{SRFI-0}~\cite{SRFI-0} dans le contexte d'une bibliothèque
-    permettent l'inclusion conditionnelle de code.
+    permettant l'inclusion conditionnelle de code.
 
 \end{itemize}
 
@@ -619,7 +618,7 @@ l'ensemble comme suit:
 %
 Pour notre objectif de modularisation dans les systèmes distribués, les
 révisions de Scheme qui offrent les fonctionnalités requises sont R6RS et R7RS.
-Elles permettent toutes les deux, la modularisation du code et la création de
+Elles permettent toutes les deux la modularisation du code et la création de
 modules avec des noms uniques, ce qui est requis pour le bon fonctionnement du
 code mobile.   Nous avons choisi l'approche avec \lstcode{define-library},
 puisque Gambit se veut compatible avec le R7RS. Cela a permis d'expérimenter
