@@ -8,12 +8,12 @@ l'exécution.
 
 \section{Systèmes distribués}
 
-Les systèmes distribués sont constitués d'un ensemble de nœuds interconnecter
+Les systèmes distribués sont constitués d'un ensemble de nœuds interconnectés
 de calculs. Les nœuds interagissent par l'envoi et la réception de message
 au sein d'un réseau de communication. Chaque nœud a un but spécifique. Le
 \textit{Web} est un exemple notable qui permet d'avoir un aperçu.
-Ils est composé de clients et de serveurs qui roulent des applications
-des applications clients et serveurs différent.
+Il est composé de clients et de serveurs qui exécutent
+des applications clients et serveurs différentes.
 
 L'implémentation d'un système distribué inclut le développement des applications
 installé sur les nœuds et la logique d'interaction entre les nœuds. Il est
@@ -22,60 +22,61 @@ global. Les problèmes discutés dans ce chapitre sont les suivant:
 
 \begin{itemize}
 
-  \item {\bf RPC:} Comment l'appelle distant à une procédure (RPC)
-    implémenté quand l'envoyeur et le receveur ne sont pas conçu
+  \item {\bf RPC:} Comment l'appel distant à une procédure (RPC)
+    implémentée quand l'envoyeur et le receveur ne sont pas conçus
     ensemble?
 
   \item {\bf Mise à jour de code:} Comment la mise à jour du programme d'un
-    nœud est effectué lors d'un \textit{bugfix} ou une nouvelle
+    nœud est effectuée lors d'un \textit{bugfix} ou lorsqu'une nouvelle
     version est disponible?
 
   \item {\bf Migration de tâche:} Comment déplacer un service sur un nouveau
     nœud quand le système sous-jacent est sur un système d'exploitation
-    différent, a un architecture différente, \dots?
+    différent, à une architecture différente, etc.?
 
   \item {\bf Opération continue:} Comment éviter les interruptions dans les
     situations précédentes?
 
 \end{itemize}
 
-Le langage Termite Scheme\cite{DBLP:conf/erlang/Germain06} a été conçu
+Le langage Termite Scheme~\cite{DBLP:conf/erlang/Germain06} a été conçu
 pour simplifier l'implémentation de systèmes distribués et fournit
-certaine solution au problèmes de ces système. Le langage Termite Scheme est
+certaines solutions aux problèmes de ces systèmes. Le langage Termite Scheme est
 fortement inspiré des concepts du langage de programmation d'Erlang avec la
 syntaxe et la sémantique de Scheme. Une fonctionnalité intéressante qui est
-absent en Erlang est la capacité d'envoyer une continuation en message.
-Termite Scheme est implémenté sur le système Gambit Scheme qui offre la
+absente en Erlang est la capacité d'envoyer une continuation en message.
+Termite Scheme est implémenté sur le système Gambit Scheme qui offre
 une façon de sérialiser la plupart des objets Scheme incluant les
 procédures et les continuations.
 
-La sérialisation de procédures est un outil utile dans pour implémenter
+La sérialisation de procédures est un outil utile pour implémenter
 un protocole RPC. En plus des procédures, il est possible de sérialiser
 des continuations. Une continuation est une structure de donnée qui capture
 l'état d'un processus. Donc il est possible de transmettre l'état d'un
 processus sur un autre nœud.
 
-L'implémentation original de Termite avait certaines limitations
+L'implémentation originale de Termite avait certaines limitations
 lors de la sérialisation des procédures et des continuations. Dans
-le cas interprété les procédures et les continuations sont transmis
+le cas interprété, les procédures et les continuations sont transmises
 sans problème entre les nœuds. Dans le cas compilé, il faut que
-chaque nœud possède la définition des procédures qui sont transmis.
+chaque nœud possède le code compilé des procédures qui sont transmises.
 
 
 \section{Le langage Termite}
 
-Ce langage conçu par Guillaume Germain en 2006 est l'implémentation
-du style de programmation par message d'Erlang dans Gambit Scheme.
-Les processus sont représentés par les threads de Scheme. La communication
-entre ces processus est effectué par un système de boîte de message
-présent dans Gambit. Chaque thread possède une queue de message entrant.
+Ce langage, conçu par Guillaume Germain en 2006, est l'implémentation du style
+de programmation par message d'Erlang dans Gambit Scheme.  Les processus sont
+représentés par les threads de Scheme. La communication entre ces processus est
+effectuée par un système de boîte de message présent dans Gambit. Chaque thread
+possède une file d'attente de messages entrants.
 
 Termite expose plusieurs procédures pour gérer les processus et la transmission
 de message entre chacun des nœuds.
 
 \begin{itemize}
   \item La procédure \texttt{(spawn \textit{<thunk>} \#!key \textit{<name>})} permet de
-    créer des processus Termite.
+    créer des processus Termite. Le paramètre \textit{<thunk>} est la procédure principale
+    du thread. Le paramètre \textit{<name>} est un paramètre associatif optionnel.V
 
   \item La procédure \texttt{(! \textit{<node>} \textit{<msg>})} envoie le message
     \lstcode{msg} au nœud \lstcode{node}.
@@ -87,26 +88,27 @@ de message entre chacun des nœuds.
     nœud \lstcode{node} et attend la réponse.
 
   \item La macro \texttt{(recv (\textit{<pattern>} \textit{<expr1>} \dots) \dots)}
-    permet un \textit{pattern-matching} sur les message reçu du nœud courant.
+    permet un filtrage par motif des messages reçus du nœud courant.
 
 \end{itemize}
 
 \section{\textit{Hook} des procédures inconnues}
+%
 Le système Termite permet la migration de code compilé avec les procédures
 \lstcode{object->u8vector} et \lstcode{u8vector->object}. Ces procédures
 effectuent respectivement la sérialisation et la désérialisation.
-La sérialisation d'une procédure est encodé par le nom de la procédure et
-un id.
+La sérialisation d'une procédure est encodée par le nom de la procédure et
+un entier qui l'identifie (\texttt{id}).
 
 Le nom qualifié de la procédure (i.e. qui contient un \texttt{\#}) est composé
 de l'espace de nom et du nom court. La procédure \lstcode{_hamt#make-hamt} est
 dans l'espace de nom \lstcode{_hamt} et à un nom court \lstcode{make-hamt}.
 L'espace de nom dans un module qui est hébergé correspond au \lstcode{module-ref}
-qui correspond dans le cas des modules hébergés à l'url du dépôt content
+qui est dans le cas des modules hébergés l'URL du dépôt contenant
 le code du module.
 
-Dans le processus de désérialisation le nom de la procédure et le id
-est utilisé pour retrouvé la procédure. Un \textit{hook} est invoqué
+Dans le processus de désérialisation, le nom de la procédure et le \texttt{id}
+sont utilisés pour retrouver la procédure. Un \textit{hook} est invoqué
 si la procédure n'existe pas dans le processus courant. Le but de
 ce \textit{hook} est de dynamiquement installer et charger le module 
 qui implémente la procédure inconnue.
@@ -114,19 +116,19 @@ qui implémente la procédure inconnue.
 %\newpage
 \section{Exemple de migration de code}
 
-L'exemple d'application est un horloge programmable implémenté
-en Scheme avec Termite. L'exemple montre un exemple de migration
-de tâche qui contient du code nom présent sur le nœud destination.
+L'exemple d'application est une horloge programmable implémenté
+en Scheme avec Termite. C'est montre un exemple de migration
+de tâche qui contient du code non présent sur le nœud destination.
 Cette horloge offre un API simple:
 \begin{itemize}
   \item La modification du fuseau horaire est fait en envoyant
-    un entier.
+    un message entier.
 
   \item Le message \lstcode{timezone-get} permet de récupérer
     le fuseau horaire courant.
 
-  \item Le message \lstcode{update-code} permet la mise à jour du
-    code du serveur à l'exécution.
+  \item Le message \lstcode{update-code} permet la mise à jour
+    dynamiquement du code du serveur.
 
   \item Tous les autres messages sont rejetés par le serveur.
 \end{itemize}
@@ -204,7 +206,7 @@ exécute la boucle de la figure \ref{fig:termite-clock@v1}.
            (clock-update next timezone)
            (tick)))))))
 \end{mplisting}
-  \caption{C'est le code de la boucle principal de l'horloge programmable.}
+  \caption{C'est le code de la boucle principale de l'horloge programmable.}
   \label{fig:termite-clock@v1}
 \end{figure}
 
@@ -242,7 +244,7 @@ exécute la boucle de la figure \ref{fig:termite-clock@v1}.
         (pp (!? (remote-service 'clock-app remote) (or timezone 0))))))
 \end{mplisting}
 \end{center}
-  \caption{Un programme qui change le fuseau horaire utilise par
+  \caption{Un programme qui change le fuseau horaire utilisé par
     l'horloge.}
   \vspace*{4ex}
 \end{figure}
@@ -261,11 +263,20 @@ exécute la boucle de la figure \ref{fig:termite-clock@v1}.
     (list 'update-code clock-thread-loop))
 \end{mplisting}
 \end{center}
-  \caption{Un exemple de mise à jour du code du serveur en
+  \caption{Un exemple de mise à jour du code du serveur
     par le message \lstcode{update-code}.}
   \vspace*{4ex}
 \end{figure}
 
 \section{Conclusion}
-Ce chapitre présenté le mécanisme de diffusion des modules utilisés
-dans la migration de code.
+Ce chapitre présente le mécanisme de diffusion des modules utilisés
+dans la migration de code. L'exemple de l'horloge montre une application
+de mise à jour dynamique du code qui est possible grâce au mécanisme
+de diffusion du code. Notre implémentation de ce système permet l'installation
+de la nouvelle version d'un module qui répare le bug dans l'application
+\texttt{termite-clock}.
+
+Ce mécanisme est utile pour mettre à jour un serveur évolutif
+sans l'interrompre. Notre approche permet la diffusion de modules
+entre les nœuds d'un système distribué.
+
