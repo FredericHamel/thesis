@@ -2,12 +2,26 @@
 \chapter{Gestion des modules}
 \label{ch:module_management}
 
+% TODO: too much detail in intro
+%       il ne faut pas faire un sommaire du carteau du chapitre, mais motiver
+%       l'existance de ce chapitre
+%       et mentionner ce dont tu va parler et pourquoi (le lien avec ce travail)
 
+Ce chapitre décrit l'organisation des modules sur le système de fichier pour
+permettre plusieurs versions d'un module. Notre approche est d'utiliser
+associer à chaque version d'un module un répertoire différent. Cela permet de
+stocker les différentes versions d'un module dans le système de fichier.  Nous
+avons comparé les différentes façons d'organiser les modules dans plusieurs langages
+comme Python, JavaScript, Go, OCaml. Il est important que l'installation d'un module
+n'altère pas la stabilité des autres modules.  Le modèle de gestion des modules choisi
+garantit que les dépendences d'un module sont fixes.
+
+\section{Sommaire}
 % Installation, Désinstallation, Mise à jour, Compilation/Exécution
 La gestion des modules inclut généralement l'installation, la mise à jour et
 la désinstallation. L'organisation des modules est un élément important
-dans la gestion des modules. Les gestionnaires de modules sont présent dans
-beaucoup de langage tel que Python, Ruby, JavaScript, Common Lisp, Go, etc.
+dans la gestion des modules. Les gestionnaires de modules sont présents dans
+beaucoup de langages tel que Python, Ruby, JavaScript, Common Lisp, Go, etc.
 Un gestionnaire de module est inclus dans le système Gambit Scheme pour
 organiser les modules.
 
@@ -55,7 +69,8 @@ modules.
 
 \begin{itemize}
   \item \lstcode{\~\~userlib}: c'est le répertoire qui contient les modules
-    de l'utilisateur courant.
+    de l'utilisateur, par défaut \texttt{.gambit\_userlib} dans le répertoire
+    maison de l'utilisateur.
 
   \item \lstcode{\~\~lib}: c'est le répertoire d'installation de Gambit
     qui contient les modules système. Les modules dans ce répertoire sont
@@ -232,9 +247,9 @@ $ gsi -update [-to <path>] module
 
 \section{Tests unitaires}
 Les tests unitaires exécutés sont dans un fichier conjoint au module.
-Gambit offre un module de test unitaire nommé \lstcode{gambit/test}. Il
-contient plusieurs procédures pour tester le bon fonctionnement d'un module.
-Les tests unitaires pour un module nommé \lstcode{A} sons dans le sous-module
+Gambit offre un module de test unitaire nommé \lstcode{_test}. Il
+contient plusieurs procédures et macros pour tester le bon fonctionnement d'un module.
+Les tests unitaires pour un module nommé \lstcode{A} sont dans le sous-module
 \lstcode{A/test}.
 
 \begin{center}
@@ -285,9 +300,9 @@ L'arborescence du répertoire du module après la compilation du module
 \section{Comparaison avec d'autre système}
 
 L'organisation des modules sur le système de fichier dans Gambit
-diffère de celui de OCaml, Python et NodeJS. Ils ne permettent pas
+diffère de celui de OCaml, Python et NodeJS. Ceux-ci ne permettent pas
 l'installation de plus d'une version d'un module directement. Le système
-utilisé dans Go ressemble beaucoup au système implémenté dans Gambit.
+utilisé dans Go est le plus similaire à celui dans Gambit.
 
 Un système de module permet la coexistence de plusieurs versions du même module
 sur le système de fichier s'ils sont considérés comme des modules différents.
@@ -298,9 +313,9 @@ cette coexistence.
 La caractéristique que le système de bibliothèque doit avoir pour permettre
 plusieurs versions d'une bibliothèque est une organisation qui permet de
 distinguer les différentes versions de la bibliothèque par un chemin unique.
-La plupart des systèmes de module ne distinguer pas les versions d'un même
-module et ne permette l'installation que d'une seule version. Les systèmes de
-module permettent la gestion de différent préfixe dans lequel les modules sont
+La plupart des systèmes de module ne distinguent pas les versions d'un même
+module et ne permettent l'installation que d'une seule version. Les systèmes de
+module permettent la gestion de différents préfixes dans lequel les modules sont
 installés. Chaque préfixe peut contenir une version différente d'un même
 module. Pour avoir une nouvelle version d'un module, il faut créer un nouveau
 préfixe.
@@ -349,8 +364,7 @@ versions des bibliothèques.  Chaque environnement permet l'installation d'une
 version spécifique de chaque bibliothèque et est étiqueté avec un nom choisi
 par l'utilisateur. Un changement d'environnement est effectué par une requête
 de l'utilisateur \verb|opam switch <envname>|. Il utilise le projet
-\textit{mancoosi}, un projet Européen de recherche dans le 7e cadre de
-recherche (FP7) de la Commission européenne, pour gérer les contraintes de
+\textit{mancoosi} pour gérer les contraintes de
 version, les dépendances optionnelles et la gestion des conflits.
 L'environnement par défaut est lié aux dépôts standard d'OCaml.
 
@@ -415,7 +429,7 @@ fonctionne avec ses versions des bibliothèques.
 %
 Les modules en Java sont nommés \textit{package}.  Le nom des modules utilise
 généralement l'inverse d'une URL comme espace de nom. Par exemple, les noms des
-modules liés aux services Google vont débuté par \texttt{com.google}. Cette
+modules liés aux services Google vont débuter par \texttt{com.google}. Cette
 convention a pour but d'unifier les noms de module. La version des modules
 n'est pas liée au nom du module dans le cas de Java. Il n'est pas possible de
 charger deux modules qui utilisent le même espace de nom, comme deux versions
@@ -423,8 +437,8 @@ d'un même module.
 
 \subsection{Organisation de Go}
 %
-L'organisation des bibliothèques dans Go est plus dans un contexte
-environnement dont la racine est spécifier par la variable d'environnement
+L'organisation des bibliothèques dans Go~\cite{GoLang} est plus dans un contexte
+environnement dont la racine est spécifiée par la variable d'environnement
 \texttt{GOPATH} avec un répertoire pour les exécutables compilés
 (\texttt{bin}), un répertoire contenant le code source des différents projets
 (\texttt{src}) et un répertoire pour les objets des modules installés
@@ -437,10 +451,16 @@ syntaxes utilisées pour l'URL des modules Go avec \textit{gopkg.in}. Il est pos
 de spécifier une version spécifique du module lors de l'importation.
 
 \noindent
+\begin{figure}[ht]
+  \centering
 \begin{mplisting}{1}
 gopkg.in/pkg.v3      -> github.com/go-pkg/pkg (branch/tag v3, v3.N, or v3.N.M)
 gopkg.in/user/pkg.v3 -> github.com/user/pkg   (branch/tag v3, v3.N, or v3.N.M)
 \end{mplisting}
+  \caption{Exemple d'importation de la version v3 du module pkg en utilisant
+    le service \textit{gopkg.in}.}
+  \label{fig:gopkg_import}
+\end{figure}
 
 \begin{figure}[h]
   \lstset{language={Go},frame=single}
@@ -471,8 +491,10 @@ func main() {
 % go help importpath
 
 %La structure du répertoire dans un projet g
-\todo{Refer to go help golang}
-\begin{verbatim}
+\begin{figure}[ht]
+  \centering
+  \lstset{frame=single}
+\begin{mplisting}{1}
 $GOPATH/
   - bin
     - ... binaries
@@ -488,14 +510,23 @@ $GOPATH/
     - linux_amd64
       - pkglist
         - objets
-\end{verbatim}
+\end{mplisting}
+  \caption{Arborescence des fichier dans le gopath.}
+  \label{fig:organisation_go}
+\end{figure}
 
 \section{Conclusion}
-
+%
 Ce chapitre a traité de la gestion des modules.  Les opérations du système de
 modules présentés dans ce chapitre sont l'installation, la désinstallation et
 la mise à jour.  Notre approche de gestion des modules offre correctement la
 possibilité d'avoir plus d'une version d'un module. Cela empêche les bris de
-dépendances lors de l'installation de nouveaux modules.
+dépendances lors de l'installation de nouveaux modules.  L'installation des
+modules peut-être déclenchés procéduralement ce qui est nécessaire pour diffuser
+les modules.
+
+Il est possible de forcer la compilation d'un module par la présence d'un fichier
+\textit{module-name.\_must-build\_}. Cette fonctionnalité permet le chargement d'un
+module qui doit être compilé pour fonctionner.
 
 
