@@ -1,21 +1,29 @@
 \chapter{Évaluation}
 
-Ce chapitre évalue les performances du système de modules.
-Notre approche d'évaluation recycle trois benchmarks
-de taille différente. Nous les avons adaptés pour qu'ils
-testent la diffusion des modules. Les éléments évalués
-sont le temps d'exécution complet, le temps de compilation
-Scheme vers C, le temps de compilation du code C, le temps
-d'installation des modules, le temps de transfert
-et le temps d'exécution du benchmark.
+Ce chapitre évalue les performances du système de modules.  Notre approche
+d'évaluation recycle trois programmes de test (benchmarks). Nous avons
+fait des expérimentations pour comparer les performances de la diffusion de
+module, que nous avons conçu, dans un contexte compilé avec la diffusion
+de code interprété déjà présent dans Termite Scheme.
 
-L'hypothèse est que les temps d'exécution, de compilation,
-d'installation et de transfert dépendent de la taille du module de
-test.
+Le but est de prouver que la diffusion de code compilé est plus rapide que
+la diffusion de code interprété. L'avantage de transmettre le code compilé
+comparé aux codes interprétés.
 
-Nous avons comme hypothèse que le temps d'exécution global des tests est plus
-rapide comp'é qu'interprété. L'interprétation d'un programme a un coût en
-temps.
+% de taille
+% différente. Nous les avons adaptés pour qu'ils testent la diffusion des
+% modules. Les éléments évalués sont le temps d'exécution complet, le temps de
+% compilation Scheme vers C, le temps de compilation du code C, le temps
+% d'installation des modules, le temps de transfert et le temps d'exécution du
+% benchmark.
+
+% L'hypothèse est que les temps d'exécution, de compilation,
+% d'installation et de transfert dépendent de la taille du module de
+% test.
+
+% Nous avons comme hypothèse que le temps d'exécution global des tests est plus
+% rapide lorsque compilé qu'interprété. L'interprétation d'un programme a un coût en
+% temps.
 
 \section{Description des expériences}
 
@@ -27,9 +35,9 @@ modules pour tester les capacités de diffusion de code sont basés sur certains
 \textit{benchmarks} standard de Scheme présent dans Gambit.
 
 \begin{itemize}
-  \item Compiler (\~400K)
-  \item Scheme (\~40K)
-  \item Puzzle (\~4K)
+  \item Compiler (400K)
+  \item Scheme (40K)
+  \item Puzzle (4K)
 \end{itemize}
 
 Les tests de performance sont effectués sur deux nœuds \textbf{A}
@@ -37,8 +45,8 @@ et \textbf{B}. Le test de rpc consiste à diffuser une tâche
 sur le nœud générique \textbf{B}. Le nœud générique ne connait aucun
 code qui est diffusé dessus.
 
-La diffusion de code est effectué 100 fois pour chaque benchmark. Le temps
-d'exécution du benchmark est paramétré de tel sort que le temps de la version
+La diffusion de code est effectuée 100 fois pour chaque benchmark. Le temps
+d'exécution du benchmark est paramétré de telle sorte que le temps de la version
 interprétée du benchmark soit proportionnel à sa taille. Le temps respectif de
 la version interprétée des benchmarks Puzzle, Scheme et Compiler sont
 respectivement dans les ordres de 0.1 seconde, 1 seconde, 10 secondes. La
@@ -51,7 +59,7 @@ Les machines sur lesquelles les tests ont été effectués sont:
 \begin{itemize}
   \item arctic, une machine \texttt{x86\_64} roulant Linux;
   \item gambit, une machine \texttt{x86\_64} roulant macOS;
-  \item tictoc, un RaspBerry Pi \texttt{ARM} roulant Linux.
+  \item tictoc, un Raspberry Pi \texttt{ARM} roulant Linux.
 \end{itemize}
 
 Les spécifications détaillées de ces machines sont présentes à
@@ -63,12 +71,29 @@ La machine \textbf{arctic} est la machine la plus stable de toutes
 celles utilisées, car elle a un système de refroidissement au liquide.
 
 \section{Résultats}
+
+Les temps dans les tests sont mesurés en millisecondes (ms).
 Les éléments qui affecte les résultats sont le réseau, la vitesse de
 la machine destination. Le réseau a affecté 1/10 des transmissions
 effectuées dans l'ensemble des tests dans l'ordre des millisecondes.
 Cela est observé par une variance élevée dans le temps de transfert.
 Pour la même taille de transmission, le temps de transfert est plus
 grand pour plusieurs exécutions.
+
+\begin{figure}[ht]
+  \centering
+\begin{tabular}{|l|r|r|r|}
+\hline & 4K & 40K & 400K\\\hline
+RPC & $~~~~~150.9(\sigma = ~~1.4)$ & $~~~~~978.2(\sigma = ~~1.5)$ & $~~~12397.7(\sigma = ~~5.2)$\\\hline
+%Serialization & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
+%Deserialization & $~~~~~~~5.2(\sigma = ~~0.0)$ & $~~~~~~10.6(\sigma = ~~0.0)$ & $~~~~~~46.7(\sigma = ~~1.0)$\\\hline
+%Transmission & $~~~~~~~0.4(\sigma = ~~0.0)$ & $~~~~~~~0.7(\sigma = ~~0.0)$ & $~~~~~~~7.7(\sigma = ~~0.1)$\\\hline
+Transfert & $~~~~~~~5.8(\sigma = ~~0.0)$ & $~~~~~~11.6(\sigma = ~~0.0)$ & $~~~~~~54.6(\sigma = ~~1.0)$\\\hline
+Execution & $~~~~~139.0(\sigma = ~~1.3)$ & $~~~~~957.3(\sigma = ~~1.3)$ & $~~~12274.7(\sigma = ~~5.0)$\\\hline
+\end{tabular}
+  \caption{Cette expérience permet de comparer la performance RPC de Termite avant les modules dans un contexte interprété.}
+  \label{fig:gambit-arctic-interp}
+\end{figure}
 
 \begin{figure}[ht]
 \centering
@@ -93,6 +118,25 @@ Exécution & $~~~~~~~9.3(\sigma = ~~4.8)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~
   \centering
 \begin{tabular}{|l|r|r|r|}
 \hline & 4K & 40K & 400K\\\hline
+RPC & $~~~~1851.8(\sigma = ~93.6)$ & $~~~~4885.8(\sigma = 167.9)$ & $~~~48656.7(\sigma = 112.8)$\\\hline
+Scheme à C & $~~~~~123.3(\sigma = ~~5.0)$ & $~~~~~590.1(\sigma = ~~5.2)$ & $~~~~9336.8(\sigma = ~16.3)$\\\hline
+Compilation C & $~~~~~686.3(\sigma = ~~0.1)$ & $~~~~3068.8(\sigma = ~98.5)$ & $~~~36444.8(\sigma = ~54.6)$\\\hline
+% Serialization & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~~~~0.3(\sigma = ~~0.1)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
+% Deserialization & $~~~~~~61.7(\sigma = ~65.0)$ & $~~~~~166.0(\sigma = ~66.0)$ & $~~~~~116.7(\sigma = ~79.2)$\\\hline
+Install & $~~~~~869.8(\sigma = ~56.6)$ & $~~~~~948.1(\sigma = ~98.7)$ & $~~~~1213.5(\sigma = ~29.4)$\\\hline
+% Transmission & $~~~~~~27.1(\sigma = ~~4.2)$ & $~~~~~~27.7(\sigma = ~~1.3)$ & $~~~~~~33.9(\sigma = ~~1.3)$\\\hline
+Transfert & $~~~~~~89.1(\sigma = ~64.8)$ & $~~~~~194.0(\sigma = ~66.1)$ & $~~~~~150.7(\sigma = ~79.2)$\\\hline
+Execution & $~~~~~~10.2(\sigma = ~~5.5)$ & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~1467.6(\sigma = ~~9.8)$\\\hline
+\end{tabular}
+  \caption{Cette expérience est le même que \ref{fig:gambit-arctic-uninstall}, sauf que le transfert de module est fait entre
+  une machine ARM (tictoc) et x86 (arctic).}
+  \label{fig:tictoc-arctic-uninstall}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+\begin{tabular}{|l|r|r|r|}
+\hline & 4K & 40K & 400K\\\hline
 RPC & $~~~~~~23.6(\sigma = ~~0.9)$ & $~~~~~~10.5(\sigma = ~~0.3)$ & $~~~~1492.8(\sigma = ~~1.9)$\\\hline
 %Serialization & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.3(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$\\\hline
 %Deserialization & $~~~~~~~4.1(\sigma = ~~0.0)$ & $~~~~~~~4.9(\sigma = ~~0.0)$ & $~~~~~~13.5(\sigma = ~~0.5)$\\\hline
@@ -105,24 +149,6 @@ Exécution & $~~~~~~14.0(\sigma = ~~0.7)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~
   \label{fig:gambit-arctic}
 \end{figure}
 
-\begin{figure}[ht]
-  \centering
-\begin{tabular}{|l|r|r|r|}
-\hline & 4K & 40K & 400K\\\hline
-RPC & $~~~~1851.8(\sigma = ~93.6)$ & $~~~~4885.8(\sigma = 167.9)$ & $~~~48656.7(\sigma = 112.8)$\\\hline
-Scheme à C & $~~~~~123.3(\sigma = ~~5.0)$ & $~~~~~590.1(\sigma = ~~5.2)$ & $~~~~9336.8(\sigma = ~16.3)$\\\hline
-Compilation C & $~~~~~686.3(\sigma = ~~0.1)$ & $~~~~3068.8(\sigma = ~98.5)$ & $~~~36444.8(\sigma = ~54.6)$\\\hline
-% Serialization & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~~~~0.3(\sigma = ~~0.1)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
-% Deserialization & $~~~~~~61.7(\sigma = ~65.0)$ & $~~~~~166.0(\sigma = ~66.0)$ & $~~~~~116.7(\sigma = ~79.2)$\\\hline
-Install & $~~~~~869.8(\sigma = ~56.6)$ & $~~~~~948.1(\sigma = ~98.7)$ & $~~~~1213.5(\sigma = ~29.4)$\\\hline
-% Transmission & $~~~~~~27.1(\sigma = ~~4.2)$ & $~~~~~~27.7(\sigma = ~~1.3)$ & $~~~~~~33.9(\sigma = ~~1.3)$\\\hline
-Transfert & $~~~~~~89.1(\sigma = ~64.8)$ & $~~~~~194.0(\sigma = ~66.1)$ & $~~~~~150.7(\sigma = ~79.2)$\\\hline
-Execution & $~~~~~~10.2(\sigma = ~~5.5)$ & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~1467.6(\sigma = ~~9.8)$\\\hline
-\end{tabular}
-  \caption{Cette expérience est le même que \ref{fig:gambit-arctic-uninstall}, sauf que le transfert de module est fait entre
-  un machine ARM (tictoc) et x86 (arctic).}
-  \label{fig:tictoc-arctic-uninstall}
-\end{figure}
 
 \begin{figure}[ht]
   \centering
@@ -154,22 +180,7 @@ Install & $~~~~~895.6(\sigma = 133.8)$ & $~~~~~999.1(\sigma = ~71.2)$ & $~~~~161
 Transfert & $~~~~~335.0(\sigma = ~71.6)$ & $~~~~~449.2(\sigma = ~61.9)$ & $~~~~~468.0(\sigma = ~80.7)$\\\hline
 Execution & $~~~~~~10.4(\sigma = ~~5.6)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~1467.7(\sigma = ~10.5)$\\\hline
 \end{tabular}
-  \caption{Ce test est dans identique à \ref{fig:tictoc-arctic} avec un réseau de $10Mbit/s$.}
-\end{figure}
-
-\begin{figure}[ht]
-  \centering
-\begin{tabular}{|l|r|r|r|}
-\hline & 4K & 40K & 400K\\\hline
-RPC & $~~~~~150.9(\sigma = ~~1.4)$ & $~~~~~978.2(\sigma = ~~1.5)$ & $~~~12397.7(\sigma = ~~5.2)$\\\hline
-%Serialization & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
-%Deserialization & $~~~~~~~5.2(\sigma = ~~0.0)$ & $~~~~~~10.6(\sigma = ~~0.0)$ & $~~~~~~46.7(\sigma = ~~1.0)$\\\hline
-%Transmission & $~~~~~~~0.4(\sigma = ~~0.0)$ & $~~~~~~~0.7(\sigma = ~~0.0)$ & $~~~~~~~7.7(\sigma = ~~0.1)$\\\hline
-Transfert & $~~~~~~~5.8(\sigma = ~~0.0)$ & $~~~~~~11.6(\sigma = ~~0.0)$ & $~~~~~~54.6(\sigma = ~~1.0)$\\\hline
-Execution & $~~~~~139.0(\sigma = ~~1.3)$ & $~~~~~957.3(\sigma = ~~1.3)$ & $~~~12274.7(\sigma = ~~5.0)$\\\hline
-\end{tabular}
-  \label{fig:gambit-arctic-interp}
-  \caption{Cette expérience permet de comparer la performance RPC de Termite avant les modules dans un contexte interprété.}
+  \caption{Ce test est identique à \ref{fig:tictoc-arctic}, mais avec un réseau de $10Mbit/s$.}
 \end{figure}
 
 
@@ -187,7 +198,7 @@ Le temps d'exécution ne semble pas suivre la même tendance. Dans les
 cas compilés, l'expérience 40K est plus rapide que 4K dans l'exécution.
 Cela s'explique par le fait que la boucle qui paramètre le nombre de
 fois que la procédure est répétée est interprétée. Le nombre d'appels
-à la procédure du benchmark de 40K requis pour que le temps d'exécution
+à la procédure du test de performance de 40K requis pour que le temps d'exécution
 interprété soit dans l'ordre d'une seconde est 1 qui est moins que
 le test 4K. Il y a moins de code interprété exécuté dans le test 40K.
 Le test 4K prend moins de temps que le test 400K.
@@ -197,17 +208,55 @@ transfert et d'exécution sont dépendant de la taille du module.
 
 \subsection{Comparaison entre les temps interprétés et compilés}
 
-Le temps des benchmarks compilés semble plus lent que les benchmarks
-interprétés. La cause est le transfert moyen est plus influencé par
-le facteur réseau. Certaine valeur extrème affecte la moyenne de façon
-significative. Sans ces valeurs extrèmes la version compilé est plus
-rapide que la version interprété.
+% tests est le téléchargement et la compilation du modules. Les temps interprété
+% est présenté dans la figure~\ref{fig:gambit-arctic-interp}. Les temps compilé,
+% nécessitant l'installation et la compilation du module, sont présentés dans les
+% figures~[\ref{fig:gambit-arctic-uninstall},~\ref{fig:tictoc-arctic-uninstall}].
 
-Dans le cas où le module est déjà installé sur le système le temps de
-chargement du modules déjà est plus rapide que le temps de transmission du code
-interprété. Les temps observé dans le contexte compilé sont présentés dans les
-figures \ref{fig:gambit-arctic} et \ref{fig:tictoc-arctic}. Les temps interprétés
-sont présentés dans la figure~\ref{fig:gambit-arctic-interp}.
+Le temps d'exécution total (RPC) des programmes de tests exploitant la
+diffusion de code compilé, nécessitant l'installation et la compilation du
+module, est plus lent que la version interprétée. Le facteur qui prend le plus
+de temps dans le contexte compilé est l'installation et la compilation des
+modules diffusés. L'exécution seule est plus rapide que dans le cas interprété
+par un facteur d'environ 10.
+
+Dans le cas où les modules ont déjà été installés et compilés le temps global
+d'exécution (RPC) des programmes de tests est plus rapide dans compilé.
+Dans ce cas, les modules sont chargés dynamiquement dans le programme de tests
+lors de la diffusion de code.  Les
+figures~[\ref{fig:gambit-arctic},~\ref{fig:tictoc-arctic}] montrent la différence
+de temps dans le cas ou les modules ont été compilés. Cela s'explique par le fait
+qu'il y a moins de données transmises et que l'exécution de code compilé est plus
+rapide que l'interprétation.
+
+Le temps de transmission des données dans les programmes de test compilés était
+plus lent que dans le cas interprété pour certaines des transmissions, malgré
+le fait qu'il y a moins de données à transmettre. Cela affecte environ 10\% des
+transmissions et est lié à des facteurs du réseau.
+
+\section {Conclusion}
+
+Le temps de diffusion des modules est proportionnel à leurs tailles.  Plus un
+module est gros plus son temps de diffusion est grand.  La diffusion de modules
+compilés est avantagée lorsque le temps d'exécution de l'appel RPC interprété
+est plus grand que les temps de compilation et d'installation. Le temps
+d'exécution compilé lorsque les modules sont déjà installés, mais non chargés
+est plus rapide que la transmission des modules interprétés.  Notre approche de
+diffusion offre une exécution qui est amortie après la première diffusion de module,
+c'est-à dire après que les modules ont été installés et compilés.
+
+
+% Le temps des benchmarks compilés semble plus lent que les benchmarks
+% interprétés. La cause est le transfert moyen est plus influencé par
+% le facteur réseau. Certaine valeur extrème affecte la moyenne de façon
+% significative. Sans ces valeurs extrèmes la version compilé est plus
+% rapide que la version interprété.
+
+% Dans le cas où le module est déjà installé sur le système le temps de
+% chargement du modules déjà est plus rapide que le temps de transmission du code
+% interprété. Les temps observé dans le contexte compilé sont présentés dans les
+% figures \ref{fig:gambit-arctic} et \ref{fig:tictoc-arctic}. Les temps interprétés
+% sont présentés dans la figure~\ref{fig:gambit-arctic-interp}.
 
 
 % % \begin{tabular}{l|c|c|c|c|c}
@@ -424,7 +473,7 @@ sont présentés dans la figure~\ref{fig:gambit-arctic-interp}.
 % Execution & $~~~~~~10.2(\sigma = ~~5.1)$ & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~1471.0(\sigma = ~12.4)$\\\hline
 % \end{tabular}
 %   \caption{Cette expérience est le même que \ref{fig:gambit-arctic-uninstall}, sauf que le transfert de module est fait entre
-%   un machine ARM (tictoc) et x86 (arctic).}
+%   une machine ARM (tictoc) et x86 (arctic).}
 %   \label{fig:tictoc-arctic}
 % \end{figure}
 
