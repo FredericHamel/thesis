@@ -35,18 +35,19 @@ Le système Gambit a été amélioré par l'ajout des modules primitifs et aussi
 des modules R7RS. De nouveaux mécanismes de chargement de modules ont été
 ajoutés pour garantir l'ordre et le chargement unique de chaque module.
 
-L'installation et la compilation des modules sont effectuées automatiquement
-à la demande.  Les coûts du chargement de module sont amorties après
-la première installation et compilation d'un module. L'utilisation interprétée
-de Termite n'utilise pas la compilation et l'installation automatique.  La
-vitesse d'exécution après l'amortissement surpasse la version interprétée.  Le
-facteur d'accélération observé après l'exécution qui installe les modules compilé de 75 pour
-le test de 4K, 459 pour le test de 40K et 33 pour le test de 400K.  Le facteur
-d'accélération est lié au fait que le code compilé est plus rapide que celui
-interprété.  Puisqu'il y a moins de transmission dans le temps compilé, parce
-que les données sont plus compactes que lorsqu'interprété, le temps de
-transmission est généralement plus petit. La taille de la sérialisation d'une
-procédure compilée est environ 400 fois plus petite que sa version interprétée.
+L'installation et la compilation des modules sont effectuées automatiquement à
+la demande.  Les coûts du chargement de module sont amorties après la première
+installation et compilation d'un module. L'utilisation interprétée de Termite
+n'utilise pas la compilation et l'installation automatique.  La vitesse
+d'exécution après l'amortissement surpasse la version interprétée.  Le facteur
+d'accélération observé après la première exécution qui installe les modules
+compilés est approximativement de 75x pour le test de 4K, 459x pour le test de
+40K et 33x pour le test de 400K.  Le facteur d'accélération est principalement
+lié au fait que le code compilé est plus rapide que celui interprété.
+Puisqu'il y a moins de transmission dans le temps compilé, parce que les
+données sont plus compactes que lorsqu'interprété, le temps de transmission est
+généralement plus petit. La taille de la sérialisation d'une procédure compilée
+est environ 400 fois plus petite que sa version interprétée.
 
 
 % - Expérimentation dans Termite

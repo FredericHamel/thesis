@@ -79,7 +79,7 @@ celles utilisées, car elle a un système de refroidissement au liquide.
 
 Les temps dans les tests sont mesurés en millisecondes (ms).  Les éléments qui
 affectent les résultats sont le réseau et la vitesse de la machine de
-destination. Ètant donnée que le réseau a affecté 10\% des transmissions
+destination. Étant donné que le réseau a perturbé 10\% des transmissions
 effectuées dans l'ensemble des tests dans l'ordre des millisecondes, nous avons
 enlevé 5\% des valeurs minimales et 5\% des valeurs maximales pour minimiser
 l'effet aléatoire du réseau.  Cela est observé par une variance élevée dans le
@@ -106,12 +106,12 @@ Exécution & $~~~~~139.0(\sigma = ~~1.3)$ & $~~~~~957.3(\sigma = ~~1.3)$ & $~~~1
   \centering
 \begin{tabular}{|l|r|r|r|}
 \hline & 4K & 40K & 400K\\\hline
-RPC & $~~~~~178.6(\sigma = ~~1.4)$ & $~~~~1033.0(\sigma = ~~1.8)$ & $~~~12871.0(\sigma = ~18.5)$\\\hline
+Temps total & $~~~~~178.6(\sigma = ~~1.4)$ & $~~~~1033.0(\sigma = ~~1.8)$ & $~~~12871.0(\sigma = ~18.5)$\\\hline
 %Serialization & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
 %Deserialization & $~~~~~~~5.2(\sigma = ~~0.0)$ & $~~~~~~10.9(\sigma = ~~0.0)$ & $~~~~~~33.9(\sigma = ~12.5)$\\\hline
 %Transmission & $~~~~~~~1.1(\sigma = ~~0.2)$ & $~~~~~~~1.9(\sigma = ~~0.3)$ & $~~~~~~16.3(\sigma = ~~4.8)$\\\hline
 Transfert & $~~~~~~~6.6(\sigma = ~~0.2)$ & $~~~~~~13.1(\sigma = ~~0.3)$ & $~~~~~~50.4(\sigma = ~13.6)$\\\hline
-Execution & $~~~~~154.3(\sigma = ~~1.1)$ & $~~~~~987.1(\sigma = ~~1.5)$ & $~~~12559.9(\sigma = ~~4.6)$\\\hline
+Exécution & $~~~~~154.3(\sigma = ~~1.1)$ & $~~~~~987.1(\sigma = ~~1.5)$ & $~~~12559.9(\sigma = ~~4.6)$\\\hline
 \end{tabular}
   \caption{Comparaison de la performance RPC de Termite avant les modules dans un contexte interprété sur
     la machine Tictoc. (temps en millisecondes)}
@@ -212,10 +212,10 @@ Le temps d'installation du module sur le nœud de destination
 est dépendant de sa taille. Plus un module est
 gros, plus il prend de temps à s'installer.
 
-Les temps de compilation de Scheme à C et C sont stable pour  toutes
-les expériences, puisque les compilations ont tous été effectuées
-sur le même système \textbf{arctic} pour la stabilité d'exécution.
-Les temps de compilation croissent avec la taille du programme.
+Les temps de compilation de Scheme à C et C à langage machine sont stable pour
+toutes les expériences, puisque les compilations ont tous été effectuées sur le
+même système \textbf{arctic} pour la stabilité d'exécution.  Les temps de
+compilation croissent avec la taille du programme.
 
 Le temps d'exécution ne suit pas la même tendance. Dans les cas
 compilés, l'expérience 40K est plus rapide que 4K dans l'exécution.  Cela
