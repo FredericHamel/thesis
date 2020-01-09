@@ -92,6 +92,19 @@ de message entre chacun des nœuds.
 
 \end{itemize}
 
+L'ensemble des données transmis sont sérialisées par la procédure \lstcode{object->u8vector}.
+La sérialisation d'une procédure contient le nom de celle-ci et un entier qui l'identifie.
+La figure~\ref{fig:proc_serialization} montre un exemple de la sérialisation d'une procédure
+compilée. Cette représentation est conçue pour être compacte et éviter la redondance dans les
+données. En plus, elle est indépendante de l'architecture de la machine.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.25]{figures/proc-serialization}
+  \caption{La représentation du résultat de la sérialisation en \texttt{u8vector} de la procédure
+    \texttt{sqrt}.}
+  \label{fig:proc_serialization}
+\end{figure}
+
 \section{\textit{Hook} des procédures inconnues}
 %
 Le système Termite permet la migration de code compilé avec les procédures
