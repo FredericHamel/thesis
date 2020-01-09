@@ -353,7 +353,7 @@ Le chargement d'un module dans Gambit Scheme par \lstcode{load} se fait en plusi
 phases: l'analyse lexicale, l'analyse syntaxique, l'expansion de macro et
 l'évaluation. L'analyse lexicale brise l'expression en lexèmes. La séquence de
 lexèmes est associée à un contexte par l'analyse syntaxique dans laquelle il y a aussi
-une expansion des macros. Le \lstcode{include} d'un fichier n'effectue qu'une
+une expansion des macros. L'inclusion d'un fichier avec \lstcode{include} n'effectue qu'une
 analyse lexicale qui est effectuée par la procédure \lstcode{read-all}. L'évaluation
 est effectuée après l'analyse syntaxique et l'expansion des macros. D'autres systèmes
 Scheme permettent le chargement des macros par \lstcode{load}.
@@ -425,7 +425,7 @@ d'expressions. Une définition peut être locale ou exportée. Les expressions
 initialisent le module lors de l'exécution.  Le R6RS ajoute aussi la forme
 \lstcode{import} pour l'importation d'un module et enlève la procédure
 \lstcode{load}.  Contrairement au \lstcode{load}, la forme \lstcode{import}
-garanti le chargement unique d'un module.  La syntaxe du \lstcode{import}
+garantit le chargement unique d'un module.  La syntaxe du \lstcode{import}
 permet de manipuler les noms des symboles importés et exportés.\\
 \begin{figure}[ht]
   \lstset{language={scheme},
