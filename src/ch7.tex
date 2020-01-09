@@ -42,11 +42,11 @@ modules pour tester les capacités de diffusion de code sont basés sur certains
 \end{itemize}
 
 Nous référons à ces \textit{benchmarks} par leur taille du code source
-(4K, 40K et 400K).
+en octets (4K, 40K et 400K).
 
 Les tests de performance sont effectués sur deux nœuds \textbf{A}
-et \textbf{B}. Le test de rpc consiste à diffuser une tâche
-sur le nœud générique \textbf{B}. Le nœud générique ne connait aucun
+et \textbf{B}. Le test de RPC consiste à diffuser une tâche
+sur le nœud générique \textbf{B} qui ne connait aucun
 code qui est diffusé dessus.
 
 La diffusion de code est effectuée 100 fois pour chaque benchmark. Le temps
@@ -238,14 +238,16 @@ contexte compilé est l'installation et la compilation des modules diffusés.
 Suite à une première exécution qui a installé les module compilés, l'exécution
 est plus rapide que dans le cas interprété par un facteur d'environ 10.
 
-Dans le cas où les modules ont déjà été installés et compilés le temps global
-d'exécution des programmes de tests est plus rapide dans compilé.
-Dans ce cas, les modules sont chargés dynamiquement dans le programme de tests
-lors de la diffusion de code.  Les
-figures~[\ref{fig:gambit-arctic},~\ref{fig:tictoc-arctic}] montrent la différence
-de temps dans le cas ou les modules ont été compilés. Cela s'explique par le fait
-qu'il y a moins de données transmises et que l'exécution de code compilé est plus
-rapide que l'interprétation.
+Dans le cas où les modules ont déjà été installés et compilés, le temps global
+d'exécution des programmes de tests est plus rapide dans le cas compilé.  Dans ce cas,
+les modules sont chargés dynamiquement dans le programme de tests lors de la
+diffusion de code.  Les
+figures~[\ref{fig:gambit-arctic},~\ref{fig:tictoc-arctic}] montrent les temps
+dans le cas où les modules ont été compilés et les
+figures~[\ref{fig:gambit-arctic-interp},~\ref{fig:tictoc-arctic-interp}] montrent
+les temps des modules interprétés. Cela s'explique par le fait qu'il y a moins
+de données transmises et que l'exécution de code compilé est plus rapide que
+l'interprétation.
 
 Le temps de transmission des données dans les programmes de test compilés était
 plus lent que dans le cas interprété pour certaines des transmissions, malgré
