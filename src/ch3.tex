@@ -2,16 +2,17 @@
 \chapter{Implémentation des modules}
 \label{ch:modules_implementation}
 
-Ce chapitre traite de notre implémentation des modules qui se veut portable
-entre les différentes implémentations de Scheme.  Notre approche des modules se
-base sur la syntaxe de R7RS.  Notre implémentation des modules utilise des
-formes déjà existantes et aussi de nouvelles formes qui ont été ajoutées au
-besoin.  Ces nouvelles formes nous ont permis d'intégrer la syntaxe des modules
-R7RS avec les modules primitifs de Gambit. Il y a deux façons d'écrire des modules.
-Les modules primitifs sont utilisés pour implémenter des fonctionnalités système
-dans Gambit, par exemple, un module qui implémente une nouvelle syntaxe.
-La syntaxe des modules R7RS est utilisée lorsqu'un module se veut compatible avec
-d'autres implémentations du langage de programmation Scheme supportant R7RS.
+Ce chapitre traite de notre implémentation des modules dans Gambit qui se veut
+éventuellement portable entre les différentes implémentations de Scheme.  Notre
+approche des modules se base sur la syntaxe de R7RS.  Notre implémentation des
+modules utilise des formes déjà existantes et aussi de nouvelles formes qui ont
+été ajoutées au besoin.  Ces nouvelles formes nous ont permis d'intégrer la
+syntaxe des modules R7RS avec les modules primitifs de Gambit. Il y a deux
+façons d'écrire des modules.  Les modules primitifs sont utilisés pour
+implémenter des fonctionnalités système dans Gambit, par exemple, un module qui
+implémente une nouvelle syntaxe.  La syntaxe des modules R7RS est utilisée
+lorsqu'un module se veut compatible avec d'autres implémentations du langage de
+programmation Scheme supportant R7RS.
 
 
 Les formats des modules R7RS, construits avec \lstcode{define-library}, contiennent
@@ -23,7 +24,7 @@ L'importation multiple d'un module doit correspondre à un seul chargement.
 Pour exprimer les relations entre les modules certaines formes spéciales
 ont été ajoutées dans Gambit.  Si les concepteurs de bibliothèques respectent
 la syntaxe R7RS, alors il est possible de l'importer dans Gambit. C'est indépendant
-du système dans lequel les bibliothèques ont été écrites.
+du système Scheme pour lequel les bibliothèques ont été écrites.
 
 
 
@@ -243,7 +244,7 @@ compilés.
 Un module primitif est généralement constitué d'un fichier d'entête avec la
 déclaration de l'espace de nom et les définitions de macros et un fichier
 contenant les procédures. Dans Gambit les fichiers d'entête sont marqués par un
-\lstcode{#} juste avant l'extension, tel que \texttt{stk\#.scm}.
+\lstcode{#} juste avant l'extension, tel que \texttt{angle2/angle2\#.scm}.
 
 \begin{itemize}
   \item \texttt{\textit{<name>}\#.scm} est la structure du nom fichier d'entête.
@@ -274,8 +275,8 @@ exemple, le module primitif \lstcode{angle2} doit inclure les fichiers
 (define (rad->deg x) (/ x factor))
 \end{mplisting}
   \caption{Écriture d'un module qui implémente une pile. Ce module est
-           séparé en 2 fichiers. Le fichier \texttt{stk\#.scm} contient les
-           exportations et \texttt{stk.scm} contient l'implémentation des
+           séparé en 2 fichiers. Le fichier \texttt{angle2/angle2\#.scm} contient les
+           exportations et \texttt{angle2/angle2.scm} contient l'implémentation des
            fonctions.}
   \label{fig:module->angle}
 \end{figure}
@@ -327,9 +328,9 @@ s'applique aux identifiants suivants:
 \begin{center}
   \lstset{language={scheme},keepspaces=true}
   \begin{mplisting}{0.3}
-factor    --> stk#factor
-deg->rad  --> stk#deg->rad
-rad->deg  --> stk#rad->deg
+factor    --> angle2#factor
+deg->rad  --> angle2#deg->rad
+rad->deg  --> angle2#rad->deg
 \end{mplisting}
 \end{center}
 
@@ -347,10 +348,10 @@ d'entête s'il existe et un \lstcode{##demand-module} du module.  L'importation
   \lstset{language={Scheme},frame=single}
   \begin{mplisting}{0.9}
 (##include "/un/chemin/angle2/angle2#.scm")
-(##demand-module stk)
+(##demand-module angle2)
 \end{mplisting}
   \caption{Expansion de \lstcode{(\#\#import angle2)}}
-  \label{fig:prim-import->stk}
+  \label{fig:prim-import->angle2}
 \end{figure}
 
 
@@ -531,7 +532,7 @@ courant. Plusieurs déclarations supplémentaires ont été ajoutées dans la fo
 \end{itemize}
 
 
-La figure~\ref{fig:relative-import} est un exemple d'importation relatif.
+La figure~\ref{fig:relative-import} est un exemple d'importation relative.
 L'importation relative part du \lstcode{module-ref} du module courant.  Un
 \lstcode{import} de \lstcode{(.. C)} à partir du module \lstcode{(A B)}
 correspond à l'importation de \lstcode{(A C)}. Cela permet au sous-module de
