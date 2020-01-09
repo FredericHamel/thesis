@@ -173,7 +173,7 @@ exécute la boucle de la figure \ref{fig:termite-clock@v1}.
 (define node (make-node "0.0.0.0" 3000))
 (define (start)
   (node-init node)
-  (display "\033[H\033[J")
+  (display "\033[H\033[J") ;; clean screen
   (clock-start 'clock-app)
   (wait-for (resolve-service 'clock-app)))
 
