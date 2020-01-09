@@ -285,16 +285,14 @@ $ gsc %*\textit{<module-ref>}*
 L'arborescence du répertoire du module après la compilation du module
 \texttt{\_digest} pour le \textit{backend} C est:
 %
-\begin{center}
-\begin{mplisting}{0.8}
-|-- _digest@gambit409003@C
-|   |-- _digest.c
-|   \-- _digest.o1
-|-- _digest#.scm
-|-- _digest.scm
-\-- test.scm
-\end{mplisting}
-\end{center}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.6]{figures/module-tree.pdf}
+\end{figure}
+
+Il est possible de forcer la compilation d'un module par la présence d'un fichier
+\texttt{\textit{module-name}.\_must-build\_}. Cette fonctionnalité permet le chargement d'un
+module qui doit être compilé pour fonctionner.
 
 
 \section{Comparaison avec d'autres systèmes}
@@ -525,9 +523,5 @@ possibilité d'avoir plus d'une version d'un module. Cela empêche les bris de
 dépendances lors de l'installation de nouveaux modules.  L'installation des
 modules peut-être déclenchés procéduralement ce qui est nécessaire pour diffuser
 les modules.
-
-Il est possible de forcer la compilation d'un module par la présence d'un fichier
-\textit{module-name.\_must-build\_}. Cette fonctionnalité permet le chargement d'un
-module qui doit être compilé pour fonctionner.
 
 
