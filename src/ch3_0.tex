@@ -59,14 +59,14 @@ bibliothèques statiques.
 
 \section{Édition de liens dynamique}
 
-Une application qui utilise une bibliothèque partagée ne contient pas le code
-de la bibliothèque, mais plutôt le nom des bibliothèques utilisées. La
+une application qui utilise une bibliothèque partagée ne contient pas le code
+de la bibliothèque, mais plutôt le nom des bibliothèques utilisées. la
 récupèration le code à partir du nom est la résolution qui est effectuée par le
-\textit{dynamic loader}.  Lorsqu'un programme lié dynamiquement à plusieurs
+\textit{dynamic loader}.  lorsqu'un programme lié dynamiquement à plusieurs
 bibliothèques partagées exécute un appel à une procédure externe, la routine de
 résolution est démarrée pour résoudre le code de cette procédure.
 
-%% Bibiothèque dynamique native.
+%% bibiothèque dynamique native.
 Par exemple, sous Linux l'utilitaire <<yes>>, qui est écrit en C,
 est lié aux bibliothèques système suivantes:
 \begin{verbatim}
@@ -76,7 +76,7 @@ est lié aux bibliothèques système suivantes:
 \end{verbatim}
 
 La bibliothèque \textit{libc.so.6} contient un grand nombre des fonctions
-standards du système sous Linux telles que \lstcode{fopen}, \lstcode{fclose},
+standards du système telles que \lstcode{fopen}, \lstcode{fclose},
 \dots.  Le chargement de certaines bibliothèques utilisé par le \textit{dynamic
 loader} est effectué au début de l'application, avant l'exécution de la fonction
 principale souvent nommée \textbf{main}.  Plusieurs bibliothèques peuvent
@@ -90,14 +90,13 @@ résolution d'une fonctionnalité d'une bibliothèque de façon manuelle. Ce gen
 d'interaction est possible sur les trois principales plateformes utilisées sur
 le marché (Windows, macOS et Linux).
 
-%% TODO: continue here FIXME
 Sur Linux, l'API qui permet d'interagir avec les bibliothèques partagées provient de \textit{libdl.so}.
 Elle contient les fonctions \textit{dlopen}, \textit{dlsym}, \textit{dlerror} et \textit{dlclose} pour gérer
 des bibliothèques de code supplémentaire chargé manuellement à l'exécution.  Pour charger la fonction
 \textit{foo}, qui ne prend pas d'argument et ne retourne rien de la bibliothèque \textit{libFoo.so} en C,
 il faut exécuter les deux appels de la figure~\ref{fig:dlsym_dlopen}:
-  \begin{figure}[ht]
-    \centering
+\begin{figure}[ht]
+  \centering
 \begin{lstlisting}[language=C,frame=single]
   ...
   void *handle = dlopen("./libFoo.so", RTLD_LAZY);
@@ -187,7 +186,7 @@ la bibliothèque passée à \verb|dlsym|.
     \begin{figure}[ht]
         \includegraphics{figures/libdeps-ex1.pdf}
 
-        \caption{Un exemple de dépendance de bibliothèques au sein d'un
+        \caption{Un exemple de dépendance de bibliothèques au sein d'une
           application simple fictive.  La bibliothèque \textit{libA.so} est
           chargée dans l'application \texttt{main} via les appels aux procédures
           \textit{dlopen} et \textit{dlsym}. Les fonctionnalités utilisées dans
@@ -197,20 +196,22 @@ la bibliothèque passée à \verb|dlsym|.
     \end{figure}
 \end{center}
 
-Dans la situation présentée dans la figure~\ref{fig:deps-ex1}, quelles sont les étapes incluses
-dans l'exécution de ce programme qui invoque la fonctionnalité \texttt{start} de la
-bibliothèque \textit{libA.so}? La fonctionnalité externe \texttt{start} est résolu de façon directe par
-un appel à \verb|dlsym(libA, "start")|, qui commence la recherche de la procédure \texttt{start} dans
-la bibliothèque spécifiée dans \texttt{dlsym}. Le programme l'invoque une fois la procédure trouvée.
-L'appel à une procédure non résolue (e.g.\ la procédure \texttt{foo} invoqué dans \texttt{start})
-déclenche une procédure automatique de résolution des fonctionnalités. Cette procédure de résolution
-commence sa recherche à partir de l'exécutable, puis itère la liste des dépendances directe. Si la
-fonctionnalité n'est pas encore trouvée, la recherche continuera à partir de la bibliothèque passée à
+Dans la situation présentée dans la figure~\ref{fig:deps-ex1}, quelles sont les
+étapes incluses dans l'exécution de ce programme qui invoque la fonctionnalité
+\texttt{start} de la bibliothèque \textit{libA.so}? La fonctionnalité externe
+\texttt{start} est résolue de façon directe par un appel à
+\verb|dlsym(libA,"start")| qui commence la recherche de la procédure
+\texttt{start} dans la bibliothèque spécifiée en paramètre \texttt{dlsym}. Le
+programme l'invoque une fois la procédure trouvée.  L'appel à une procédure non
+résolue (e.g.\ la procédure \texttt{foo} invoquée dans \texttt{start})
+déclenche une procédure automatique de résolution des fonctionnalités. Cette
+procédure de résolution commence sa recherche à partir de l'exécutable, puis
+itère la liste des dépendances directe. Si la fonctionnalité n'est pas encore
+trouvée, la recherche continuera à partir de la bibliothèque passée à
 \texttt{dlsym}.
 
 % Stub
 
-% TODO: exemple de résolution direct
 Il est facile d'exploiter l'ordre de recherche du \textit{dynamic linker} pour
 causer un masquage de fonctionnalité dans une application. Ce masquage est
 utilisé dans certains contextes pour déboguer un programme, mais il peut aussi
@@ -270,7 +271,7 @@ désinstallation de bibliothèque et la résolution des dépendances.
 
 Un cas intéressant de coexistence entre bibliothèques est celui qui inclut
 plusieurs versions d'une bibliothèque. Les problèmes peuvent être liés à
-d'organisation sur le système de fichier et au masquage de fonctionnalité
+l'organisation sur le système de fichier et au masquage de fonctionnalité
 durant l'exécution d'un processus.  Il y a aussi plusieurs utilités de
 conserver plusieurs versions d'une bibliothèque, cela permet de supporter des
 applications qui dépendent de bibliothèques antérieures.
@@ -278,7 +279,7 @@ applications qui dépendent de bibliothèques antérieures.
 Une autre application est de convertir un vieux format de fichier vers un
 format plus récent. Dans le cas où il n'est pas possible d'avoir en même temps
 plusieurs versions d'une bibliothèque, il faut alors écrire un parseur pour
-lire le vieux format ensuite utiliser les fonctions de la version cible de la
+lire le vieux format, ensuite utiliser les fonctions de la version cible de la
 bibliothèque pour générer le nouveau format du fichier.  Cette solution est
 clairement laborieuse et susceptible à des erreurs de codage.
 
@@ -310,10 +311,6 @@ clairement laborieuse et susceptible à des erreurs de codage.
 % Ce qui est plus difficile avec le modèle de processus, cela nécessite l'utilisation
 % mécanisme comme la mémoire partagé.
 
-%\todo{picture: Thread as Light process}
-
-% TODO: exemple de chemin.
-
 %et s'il c'est un cas qui peut
 %contenir un coexistence néfaste.  Cela n'est possible que s'il est possible de
 %distinguer les deux version de la bibliothèque et aussi répartir les appels à
@@ -322,12 +319,12 @@ clairement laborieuse et susceptible à des erreurs de codage.
 \section{Conditions de coexistence}
 %
 Des conditions suffisantes pour que deux bibliothèques puissent coexister
-ensemble au sein d'un processus incluant deux versions de la même bibliothèque
+au sein d'un processus incluant deux versions de la même bibliothèque
 sont l'absence d'état global ou local, et l'unicité des noms des
 fonctionnalités.  L'absence d'état garantit que chaque fonction de la
 bibliothèque retourne toujours un résultat prévisible dans un contexte
 identique. Un cas extrême est la pureté fonctionnelle, qui est d'autre part
-avantageuse dans un contexte \textit{multi-threadé}, car il n'est pas possible
+avantageuse dans un contexte \textit{multithread}, car il n'est pas possible
 d'avoir une condition de course sur une donnée partagée. La pureté
 fonctionnelle garantit qu'il n'y a pas d'affectation et donc pas d'état.  Le
 fait que chaque fonctionnalité soit associée à un nom unique qui empêche une
@@ -345,11 +342,10 @@ bibliothèque de masquer une fonctionnalité d'une autre bibliothèque.
 Ces conditions sont suffisantes pour que deux bibliothèques coexistent sans
 problème, mais elles ne sont pas nécessaires. Il existe des bibliothèques qui
 ne respectent pas ces conditions, mais coexistent avec d'autres versions de la
-bibliothèque.
-Pour tester la coexistence entre plusieurs bibliothèques, des expériences ont
-été effectuées dans plusieurs systèmes de modules existants. Le but de
-l'expérience est d'observer le bon fonctionnement des bibliothèques au sein
-du processus.
+bibliothèque.  Pour tester la coexistence entre plusieurs bibliothèques, des
+expériences ont été effectuées dans plusieurs systèmes de modules existants. Le
+but de l'expérience est d'observer le bon fonctionnement des bibliothèques au
+sein du processus.
 
 Les expériences qui suivent permettent d'observer et d'identifier les cas de
 cohabitation de bibliothèques au sein d'une application qui cause des
@@ -400,7 +396,7 @@ libSDL.so => /usr/lib/libSDL.so
 libSDL2.so => /usr/lib/libSDL2.so
 \end{lstlisting}
 \caption{Création d'un exécutable lié aux deux bibliothèques
-SDL et SDL2 dans cette ordre.}
+SDL et SDL2 dans cet ordre.}
 \label{fig:sdl_mask_sdl2}
 \end{figure}
 \end{center}
@@ -408,7 +404,7 @@ SDL et SDL2 dans cette ordre.}
 La figure \ref{fig:sdl_mask_sdl2} donne la procédure de création d'un
 exécutable lié avec deux versions de SDL.  Les tests ont été effectués sur deux
 versions de SDL, 1.2 et 2. Ces versions peuvent utiliser des ressources communes comme
-les évènements du clavier, la mémoire et le GPU en utilisant OpenGL pour faire
+les événements du clavier, la mémoire et le GPU en utilisant OpenGL pour faire
 de l'affichage 2D ou 3D.  Plusieurs situations sont testées, chacune sans thread
 et avec des threads:
 %
@@ -424,8 +420,8 @@ Puisque SDL1.2 et SDL2 ont des collisions de symboles (e.g.\ \verb+SDL_Init+,
 observations à effectuer est la bonne répartition des appels de fonctions des
 deux bibliothèques dans le contexte d'une même application. Le problème à
 identifier est un appel invalide à une procédure de SDL2 qui était destiné à
-SDL1.2. Le facteur qui influence laquelle des deux bibliothèques va masquer
-l'autre est l'ordre dans laquelle elles sont liées au programme à la création,
+SDL1.2. Le facteur, qui influence laquelle des deux bibliothèques va masquer
+l'autre, est l'ordre dans laquelle elles sont liées au programme à la création,
 qui est montrée à la figure~\ref{fig:sdl_mask_sdl2}.
 
 Le masquage est un problème qui peut mener à une défaillance du
@@ -436,7 +432,7 @@ Le premier champ qui décale l'alignement de ces deux structures est le
 \textit{pitch}, qui dans SDL1.2 est déclaré en Uint16 alors qu'en SDL2 il est
 un int qui sont des types de taille différente. Donc, l'accès au prochain champ
 \texttt{pixels} est différent entre SDL1.2 et SDL2, ce qui peut causer un accès
-non désiré en mémoire si une structure de SDL1.2 est accédée comme une structure
+invalide en mémoire. si une structure de SDL1.2 est accédée comme une structure
 de SDL2.
 
 % XXX: ANTIDOTE_MARKER
@@ -475,18 +471,18 @@ typedef struct SDL_Surface {
 %Puisque les programmeurs cherchent une certaine stabilité dans leurs bibliothèques, ils ont
 %tendance à éviter les dépendances avec des bibliothèques qui ont des collisions de fonctionnalités.
 
-La cohabitation entre deux bibliothèques conflictuelles au sein d'une application n'est pas possible
-en lien l'application aux bibliothèques durant sa construction~\ref{fig:sdl_mask_sdl2}.
-Il est peu probable d'avoir une cohabitation entre deux bibliothèques avec des noms de fonctionnalités
+La coexitence entre deux bibliothèques conflictuelles au sein d'une application
+n'est pas possible en lien l'application aux bibliothèques durant sa
+construction~\ref{fig:sdl_mask_sdl2}.  Il est peu probable d'avoir une
+coexistance entre deux bibliothèques avec des noms de fonctionnalités
 similaires au sein.
-% XXX: continue here
 
-La façon d'avoir plusieurs bibliothèques conflictuelles au sein d'un programme 
-
-Le cas qui pourrait permettre plusieurs bibliothèques avec des collisions de symboles
-au sein d'une même est avec l'API du \textit{dynamic linker}. Un test simple permet
-de démontrer la capacité de répartir les appels d'une fonction identifiés par le même nom
-dans différentes bibliothèques.
+La façon d'avoir plusieurs bibliothèques conflictuelles au sein d'un programme
+est d'utiliser l'API du \texttt{dynamic linker}.  Le cas qui pourrait permettre
+plusieurs bibliothèques avec des collisions de symboles au sein d'une même est
+avec l'API du \textit{dynamic linker}. Un test simple permet de démontrer la
+capacité de répartir les appels d'une fonction identifiés par le même nom dans
+différentes bibliothèques.
 
 La structure générale des tests est organisée comme suit. Deux bibliothèques implémentant
 une interaction valide avec l'une des versions de la bibliothèque (e.g. SDL1.2, SDL2).
@@ -552,7 +548,7 @@ int main(int argc, char **argv) {
 }
 \end{lstlisting}
     \caption{Programme qui utilise la bibliothèque SDL2 sans la gestion des évènements.
-    Cette application génère fenêtre verte qui se ferme aussi après 1 seconde de délais.}
+    Cette application génère une fenêtre verte qui se ferme aussi après 1 seconde de délais.}
   \end{figure}
 \end{center}
 
@@ -698,7 +694,7 @@ la forme spéciale \lstinline{c-define-type}.
 
 Le test consiste à crypter un message en utilisant une clé publique, décrypter
 le cryptogramme avec la clé privée et comparer le message original avec le
-message décrypter pour les deux versions de OpenSSL chargé dans le même
+message décrypté pour les deux versions de OpenSSL chargé dans le même
 processus. Pour vérifier la bonne invocation des fonctions de OpenSSL1.0 et
 OpenSSL1.1 respectifs, le débogueur \textbf{gdb} a été utilisé. Les
 bibliothèques d'OpenSSL consistent en deux fichiers \url{libssl.so} et
@@ -753,7 +749,7 @@ avec la spécification de \textit{libcrypto.so}}
 \includegraphics{figures/libssl_masking.pdf}
 
 \caption{Schéma des dépendances entre les bibliothèques au sein d'un
-  processus.  Les dépendances qui ont été liées dynamiquement lors la création
+  processus.  Les dépendances qui ont été liées dynamiquement durant la création
   de l'application sont représentées par une flèche avec trait plein sans
   annotation. Ceux qui représentent les chargements de bibliothèque dynamique via
   \texttt{dlopen} ont l'annotation \textit{dl}. La flèche en pointillé indique
@@ -795,7 +791,6 @@ avec la spécification de \textit{libcrypto.so}}
 
 
 \subsection{Bibliothèque JavaScript (NodeJS)}
-%\TODO{Fill}
 % Démarche général
 % express / sqlite3
 % - Hypothèse * 2
@@ -862,14 +857,14 @@ et invoque la fonction \textit{start}.
 Le résultat attendu dans cette expérience est que ces deux versions de la bibliothèque
 express coexistent sans problème, sauf dans le cas où le port TCP utilisé par les deux
 versions est le même. Si le port TCP est le même, c'est la bibliothèque dont la fonction
-\textit{start} a été invoqué en premier qui va monopoliser le port TCP. Dans ce cas
+\textit{start} a été invoquée en premier qui va monopoliser le port TCP. Dans ce cas
 la ressource qui inhibe la coexistence de ces modules au sein d'un même processus
 est liée au \textit{socket}.
 
 \subsection{Variables globales communes}
 
 Les bibliothèques au sein d'une application sont chargées de façon unique.
-Puisque qu'il n'existe qu'une seule instance de chaque bibliothèque en dans un
+Puisqu'il n'existe qu'une seule instance de chaque bibliothèque dans un
 processus, les variables globales d'une bibliothèque sont partagées. Ces variables
 composent l'état de la bibliothèque.
 
@@ -950,7 +945,7 @@ de programmation.
 
 Le système de module que nous avons développé pour Scheme permet en principe la
 coexistence de différentes versions d'un module. Cependant, si la FFI est utilisée
-pour interfacer `a des bibliothèques dynamiques du système d'exploitation qui ne
+pour interfacer à des bibliothèques dynamiques du système d'exploitation qui
 ne peuvent pas coexister cela va indirectement empêcher la coexistence des modules en
 qui en dépendent. C'est un problème incontournable qu'il faut garder à l'esprit
 lors de la conception des modules Scheme.
