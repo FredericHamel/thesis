@@ -8,20 +8,20 @@
 %       et mentionner ce dont tu va parler et pourquoi (le lien avec ce travail)
 
 Ce chapitre décrit l'organisation des modules sur le système de fichier pour
-permettre plusieurs versions d'un module. Notre approche est d'utiliser
-associer à chaque version d'un module un répertoire différent. Cela permet de
-stocker les différentes versions d'un module dans le système de fichier.  Nous
-avons comparé les différentes façons d'organiser les modules dans plusieurs langages
-comme Python, JavaScript, Go, OCaml. Il est important que l'installation d'un module
-n'altère pas la stabilité des autres modules.  Le modèle de gestion des modules choisi
-garantit que les dépendences d'un module sont fixes.
+permettre plusieurs versions d'un module. Notre approche est d'associer à
+chaque version d'un module un répertoire différent. Cela permet de stocker les
+différentes versions d'un module dans le système de fichier.  Nous avons
+comparé les différentes façons d'organiser les modules dans plusieurs langages
+comme Python, JavaScript, Go, OCaml. Il est important que l'installation d'un
+module n'altère pas la stabilité des autres modules.  Le modèle de gestion des
+modules choisi garantit que les dépendances d'un module sont fixes.
 
 \section{Sommaire}
 % Installation, Désinstallation, Mise à jour, Compilation/Exécution
 La gestion des modules inclut généralement l'installation, la mise à jour et
 la désinstallation. L'organisation des modules est un élément important
 dans la gestion des modules. Les gestionnaires de modules sont présents dans
-beaucoup de langages tel que Python, Ruby, JavaScript, Common Lisp, Go, etc.
+beaucoup de langages tels que Python, Ruby, JavaScript, Common Lisp, Go, etc.
 Un gestionnaire de module est inclus dans le système Gambit Scheme pour
 organiser les modules.
 
@@ -106,9 +106,9 @@ grammaire formelle\ref{lst:module-ref->grammar} décrit la syntaxe du
 
 Le \lstcode{module-ref} \lstcode{github.com/gambit/hello} réfère
 au module \lstcode{hello} sur le serveur de révision \lstcode{github.com}
-dans l'espace \lstcode{gambit}. Le champ \lstcode{host} de est dans ce
+dans l'espace \lstcode{gambit}. Le champ \lstcode{host} est dans ce
 cas \lstcode{github.com/gambit} qui correspond au nom de domaine avec
-le nom de l'espace sur le le serveur.
+le nom de l'espace sur le serveur.
 
 % \begin{itemize}
 %   \item \lstcode{install} effectue l'installation de modules.
@@ -157,7 +157,7 @@ est installé dans un répertoire temporaire qui est ensuite renommé au
 répertoire de destination. Cela permet d'installer le module de façon atomique.
 
 Tout d'abord, la
-branche \lstcode{master} dépôt du module est cloné. Ensuite une archive de la
+branche \lstcode{master} du dépôt du module est clonée. Ensuite, une archive de la
 version est faite et extraite dans le préfixe des modules. Le préfixe est par
 défaut \lstcode{\~\~userlib}.  Il est possible de spécifier un préfixe
 d'installation dans lequel installer les modules. Plusieurs versions d'un même
@@ -188,7 +188,7 @@ $ gsi -install [-to <path>] module [...]
 \end{mplisting}
 \end{center}
 Le préfixe \lstcode{<path>} est la racine utilisée pour installer les modules
-et est spécifier par l'option \lstcode{-to}.  La racine par défaut est
+et est spécifié par l'option \lstcode{-to}.  La racine par défaut est
 \lstcode{\~\~userlib}. Voici un exemple d'installation d'une version spécifique du module
 \lstcode{semver} qui implémente la logique du \textit{semantic versioning}.
 
@@ -202,8 +202,8 @@ $ gsi -install -to /tmp/exemple github.com/frederichamel/semver@1.0.1
 
 La désinstallation d'un module consiste à supprimer les fichiers
 de ce module. Le module \lstcode{_pkg} offre la procédure
-\lstcode{uninsall} qui accepte deux arguments: le nom du module
-et de façon optionnelle le répertoire dans lequel les modules
+\lstcode{uninsall} qui accepte deux arguments: le nom du module,
+et de façon optionnelle, le répertoire dans lequel les modules
 sont situés. Les valeurs retournées par cette procédure sont
 similaires à la procédure.
 \begin{center}
@@ -224,8 +224,8 @@ Le répertoire \lstcode{<path>} est l'emplacement des modules
 est le même que pour l'installation. Le répertoire par défaut
 est le répertoire \lstcode{\~\~userlib}.
 
-La désinstallation du module \lstcode{semver} installé dans
-répertoire \lstcode{/tmp/exemple} est fait par la commande suivante:
+La désinstallation du module \lstcode{semver} qui est installé dans
+le répertoire \lstcode{/tmp/exemple} est fait par la commande suivante:
 \begin{center}
   \begin{mplisting}{1}
 $ gsi -uninstall -to /tmp/exemple github.com/frederichamel/semver@1.0.1
@@ -302,7 +302,8 @@ L'arborescence du répertoire du module après la compilation du module
 L'organisation des modules sur le système de fichier dans Gambit
 diffère de celui de OCaml, Python et NodeJS. Ceux-ci ne permettent pas
 l'installation de plus d'une version d'un module directement. Le système
-utilisé dans Go est le plus similaire à celui dans Gambit.
+de module qui est utilisé dans le langage de programmation Go est le plus
+similaire à celui dans Gambit.
 
 Un système de module permet la coexistence de plusieurs versions du même module
 sur le système de fichier s'ils sont considérés comme des modules différents.
@@ -315,7 +316,7 @@ plusieurs versions d'une bibliothèque est une organisation qui permet de
 distinguer les différentes versions de la bibliothèque par un chemin unique.
 La plupart des systèmes de module ne distinguent pas les versions d'un même
 module et ne permettent l'installation que d'une seule version. Les systèmes de
-module permettent la gestion de différents préfixes dans lequel les modules sont
+module permettent la gestion de différents préfixes dans lesquels les modules sont
 installés. Chaque préfixe peut contenir une version différente d'un même
 module. Pour avoir une nouvelle version d'un module, il faut créer un nouveau
 préfixe.
@@ -345,7 +346,7 @@ préfixe.
   d'installer plusieurs versions d'un module.  Le système Go permet plusieurs
   versions d'un module pour des versions incompatibles selon le sémantique de
   version. La version \texttt{1.0.0} coexiste avec la version \texttt{2.0.0}.
-  La version récente \texttt{1.2.0} remplace la vielle version \texttt{1.0.1}.}
+  La version récente \texttt{1.2.0} remplace la vieille version \texttt{1.0.1}.}
 
 \end{figure}
 
