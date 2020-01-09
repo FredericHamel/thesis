@@ -11,7 +11,7 @@ modules ce système est similaire à celui du langage de programmation Go.
 
 Nous avons commencé par exposer les limitations du système Termite Scheme par
 des expérimentations dans plusieurs situations. Dans le contexte purement
-interprété, la migration fonctionnait parfaitement même dans le cas ou le nœud
+interprété, la migration fonctionnait parfaitement même dans le cas ou le nœud de
 destination ne connait pas le code de l'agent mobile.  C'est dans le contexte
 où les applications de chaque nœud sont compilées que la migration de tâche
 est un défi, car elle requiert la présence du code de l'agent mobile sur l'ensemble
@@ -40,8 +40,8 @@ lorsque demandé.  Les performances du chargement de module sont amorties après
 la première installation et compilation d'un module. L'utilisation interprétée
 de Termite n'utilise pas la compilation et l'installation automatique.  La
 vitesse d'exécution après l'amortissement surpasse la version interprétée.  Le
-facteur d'accélération de que l'amortissement offre un facteur 100 pour le test
-de 4K, 1000 pour le test de 40K et 10 pour le test de 400K.  Le facteur
+facteur d'accélération que l'amortissement offre d'environ un facteur 100 pour
+le test de 4K, 1000 pour le test de 40K et 10 pour le test de 400K.  Le facteur
 d'accélération est lié au fait que le code compilé est plus rapide que celui
 interprété.  Puisqu'il y a moins de transmission dans le temps compilé, parce
 que les données sont plus compactes que lorsqu'interprété, le temps de
