@@ -3,11 +3,11 @@
 \label{ch:loading-model}
 
 Ce chapitre traite des mécanismes de chargement implémenté pour le système de
-module.  Dans notre implémentation, les sont référé par un nom symbolique
+module.  Dans notre implémentation, les modules sont référés par un nom symbolique
 plutôt que son emplacement. Elle garantit l'ordre dans lequel ils sont chargés
 et aussi le chargement unique de chaque module. Pour permettre la diffusion des
 modules, nous avons ajouté un mécanisme d'installation automatique et de
-chargement des modules à la volé.
+chargement des modules à la volée.
 
 Un système est composé d'un ensemble de modules qui interagissent
 entre eux. L'interaction entre les modules est dans un contexte statique ou
@@ -25,7 +25,7 @@ pas encore installés soit effectué durant l'exécution.
 %La collection des modules s'effectue au sein d'un
 
 Le chargement d'une bibliothèque Scheme (ou module) dans Gambit est séparé en
-plusieurs niveaux. Il y a la phase recherche du module et de ses dépendances
+plusieurs niveaux. Il y a la phase de recherche du module et de ses dépendances
 qui valide la présence de tous les modules nécessaire.  Ensuite le module et
 ses dépendances sont chargés dans un ordre qui respecte les relations de
 dépendance.  Un module est soit sur le disque ou déjà en mémoire.
@@ -44,7 +44,7 @@ Le chargement d'une bibliothèque peut-être effectuée à l'exécution par
 l'utilisation de \texttt{eval} (par \texttt{load}) pour les fichiers source et
 \texttt{load-object-file} pour les bibliothèques compilées. Cette recherche
 peut aussi avoir lieu durant l'édition des liens en utilisant les méta-infos
-contenues dans les \textbf{.c} qui sont chacun compilés par le compilateur C
+contenues dans les fichiers \textbf{.c} qui sont chacun compilés par le compilateur C
 en \textbf{.o} et lié par l'éditeur de lien.
 
 \section{Modèle statique}
@@ -52,8 +52,8 @@ en \textbf{.o} et lié par l'éditeur de lien.
 Le modèle de bibliothèque statique consiste à intégrer la bibliothèque
 dans l'application finale. La bibliothèque n'a pas besoin d'être chargée
 durant l'exécution. L'avantage du modèle statique est le déploiement.
-Puisque toutes les dépendances sont dans l'application finale¸ il suffit
-de distribuer celle-ci. Le compilateur Gambit support un modèle statique
+Puisque toutes les dépendances sont dans l'application finale, il suffit
+de distribuer celle-ci. Le compilateur Gambit supporte un modèle statique
 pour des programmes simples. Compiler une application liée statiquement est
 possible de façon manuelle. Pour lier statiquement deux fichiers Scheme
 simples, il suffit d'invoquer le \texttt{gsc} comme suit:
@@ -244,13 +244,13 @@ dynamiques.\\
 \vspace{-20pt}
 La construction d'une bibliothèque dynamique à partir du fichier \texttt{fib.scm}
 de la figure \ref{fig:basic_fib_module} s'effectue par le compilateur de Gambit
-qui nomme \texttt{gsc}. Cela produit un fichier avec l'extension \texttt{.oN}
+qui se nomme \texttt{gsc}. Cela produit un fichier avec l'extension \texttt{.oN}
 où le \texttt{N} correspond à la version générée de la bibliothèque qui commence à 1.
 
 
 \section{Module hébergé}
 
-Un module qui est hébergé est un module qui dont son contenu
+Un module qui est hébergé est un module dont son contenu
 se retrouve sur un domaine comme \url{github.com}. La syntaxe
 des noms de domaine est inspirée du RFC-2396~\cite{RFC:URI-2396}.
 La différence avec la spécification du \textit{hostname} dans le RFC-2396
@@ -269,8 +269,8 @@ alphanum      = alpha | digit
 alpha         = [a-zA-Z]
 digit         = [0-9]
 \end{mplisting}
-  \caption{Grammaire BNF représentant un hostname selon un sous
-    ensemble du RFC-2396.}
+  \caption{Grammaire BNF représentant un hostname selon un sous-ensemble du
+  RFC-2396.}
   \label{lst:hostname->grammar}
 \end{figure}
 
@@ -283,15 +283,15 @@ utilisé pour valider les \textit{<module-ref>}. La validation consiste
 à trouver un élément dans la \textit{whitelist} qui correspond à un
 préfixe du \textit{<module-ref>}.
 
-Un élément est considéré un préfixe si chaque composant sont inclus dans le
-\textit{<module-ref>} dans le même ordre. L'élément \texttt{github.com/gambit}
-est un préfixe de \texttt{github.com/gambit/hello}, car les parties
-\textit{github.com} et \textit{gambit} font partie du \textit{<module-ref>}. Le
-module \textit{github.com/gambitXYZ/hello} ne contient pas le préfixe
-\textit{gihtub.com/gambit}, car \textit{gambit} est différent de
-\textit{gambitXYZ}.
+Un élément est considéré un préfixe, si chacune des composantes de l'élément
+sont inclus dans le \textit{<module-ref>} dans le même ordre. L'élément
+\texttt{github.com/gambit} est un préfixe de \texttt{github.com/gambit/hello},
+car les parties \textit{github.com} et \textit{gambit} font partie du
+\textit{<module-ref>}. Le module \textit{github.com/gambitXYZ/hello} ne
+contient pas le préfixe \textit{gihtub.com/gambit}, car \textit{gambit} est
+différent de \textit{gambitXYZ}.
 
-Par défaut \texttt{github.com/gambit} est inclus dans cette liste. 
+Par défaut \texttt{github.com/gambit} est inclus dans cette liste.
 Cela implique que tous les modules sous \texttt{github.com/gambit}
 peuvent être installés automatiquement. La \textit{whitelist} peut
 être modifiée par une option de l'interprète:
