@@ -50,13 +50,14 @@ sur le nœud générique \textbf{B} qui ne connait aucun
 code qui est diffusé dessus.
 
 La diffusion de code est effectuée 100 fois pour chaque benchmark. Le temps
-d'exécution du benchmark est paramétré de telle sorte que le temps de la version
-interprétée du benchmark soit proportionnel à sa taille. Le temps respectif de
-la version interprétée des benchmarks Puzzle, Scheme et Compiler sont
-respectivement dans les ordres de 0.1 seconde, 1 seconde et 10 secondes. La
-figure~\ref{fig:gambit-arctic-interp} montre cette tendance dans les temps
-d'exécutions. Notre but est de montrer un lien entre la taille du
-programme et le temps d'exécution.
+d'exécution du benchmark est paramétré de telle sorte que le temps de la
+version interprétée du benchmark soit proportionnel à sa taille. Le temps
+respectif de la version interprétée des benchmarks: Puzzle, Scheme et Compiler
+sont respectivement dans les ordres de 0.1 seconde, 1 seconde et 10 secondes.
+La première ligne des
+figures~[\ref{fig:gambit-arctic-interp},~\ref{fig:tictoc-arctic-interp}] montre
+cette tendance dans les temps d'exécutions. Notre but est de montrer un lien
+entre la taille du programme et le temps d'exécution.
 
 \section{Spécification des machines}
 Les machines sur lesquelles les tests ont été effectués sont:
@@ -80,10 +81,10 @@ Les temps dans les tests sont mesurés en millisecondes (ms).  Les éléments qu
 affectent les résultats sont le réseau et la vitesse de la machine de
 destination. Ètant donnée que le réseau a affecté 10\% des transmissions
 effectuées dans l'ensemble des tests dans l'ordre des millisecondes, nous avons
-enlevé 5\% des valeurs minimales et 5\% des valeurs maximales.  Cela est
-observé par une variance élevée dans le temps de transfert.  Pour la même
-taille de transmission, le temps de transfert est plus grand pour plusieurs
-exécutions.
+enlevé 5\% des valeurs minimales et 5\% des valeurs maximales pour minimiser
+l'effet aléatoire du réseau.  Cela est observé par une variance élevée dans le
+temps de transfert.  Pour la même taille de transmission, le temps de transfert
+est plus grand pour plusieurs exécutions.
 
 \begin{figure}[ht]
   \centering
@@ -214,9 +215,9 @@ gros, plus il prend de temps à s'installer.
 Les temps de compilation de Scheme à C et C sont stable pour  toutes
 les expériences, puisque les compilations ont tous été effectuées
 sur le même système \textbf{arctic} pour la stabilité d'exécution.
-Les temps de compilation croient avec la taille du programme.
+Les temps de compilation croissent avec la taille du programme.
 
-Le temps d'exécution ne semble pas suivre la même tendance. Dans les cas
+Le temps d'exécution ne suit pas la même tendance. Dans les cas
 compilés, l'expérience 40K est plus rapide que 4K dans l'exécution.  Cela
 s'explique par le fait que certains programmes sont mieux optimisés que
 d'autres par le compilateur.
