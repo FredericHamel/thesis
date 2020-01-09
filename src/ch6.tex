@@ -130,18 +130,18 @@ qui implémente la procédure inconnue.
 \section{Exemple de migration de code}
 
 L'exemple d'application est une horloge programmable implémentée
-en Scheme avec Termite. C'est montre un exemple de migration
+en Scheme avec Termite. C'est un exemple de migration
 de tâche qui contient du code non présent sur le nœud destination.
 Cette horloge offre un API simple:
 \begin{itemize}
   \item La modification du fuseau horaire est faite en envoyant
-    un message entier.
+    un message (nombre entier).
 
   \item Le message \lstcode{timezone-get} permet de récupérer
     le fuseau horaire courant.
 
   \item Le message \lstcode{update-code} permet la mise à jour
-    dynamiquement du code du serveur.
+    dynamique du code du serveur.
 
   \item Tous les autres messages sont rejetés par le serveur.
 \end{itemize}
@@ -181,7 +181,7 @@ exécute la boucle de la figure \ref{fig:termite-clock@v1}.
 \end{mplisting}
 \end{center}
   \caption{Le code du serveur qui configure la \textit{hook}
-    qui résout les références à procédures inconnues.
+    qui résout les références à des procédures inconnues.
     C'est effectué avec la procédure \lstcode{\#\#unknown-procedure-handler-set!}.
     }
   \vspace*{4ex}
@@ -211,15 +211,11 @@ exécute la boucle de la figure \ref{fig:termite-clock@v1}.
            (! from (list tag timezone))
            (wait))
 
-          (msg
-           (pp msg)
-           (wait))
-
           (after to
            (clock-update next timezone)
            (tick)))))))
 \end{mplisting}
-  \caption{C'est le code de la boucle principale de l'horloge programmable.}
+  \caption{Le code de la boucle principale de l'horloge programmable.}
   \label{fig:termite-clock@v1}
 \end{figure}
 
@@ -286,8 +282,8 @@ Ce chapitre présente le mécanisme de diffusion des modules utilisés
 dans la migration de code. L'exemple de l'horloge montre une application
 de mise à jour dynamique du code qui est possible grâce au mécanisme
 de diffusion du code. Notre implémentation de ce système permet l'installation
-de la nouvelle version d'un module qui répare le bug dans l'application
-\texttt{termite-clock}.
+de la nouvelle version d'un module qui répare un bug dans l'application
+\texttt{termite-clock} dans arrêter l'application.
 
 Ce mécanisme est utile pour mettre à jour un serveur évolutif
 sans l'interrompre. Notre approche permet la diffusion de modules

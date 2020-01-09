@@ -7,21 +7,22 @@ modules entre les nœuds. Les appels RPC et la migration de code mobile entre
 des nœuds de nature différente sont possibles. Chaque module diffusé a un nom
 unique basé sur l'URL du dépôt de code qui permet de le récupérer. La diffusion
 se fait par le nom des identifiants qui contient l'URL du module. La façon de nommer les
-modules ce système est similaire à celui du langage de programmation Go.
+modules dans ce système est similaire à celui du langage de programmation Go.
 
 Nous avons commencé par exposer les limitations du système Termite Scheme par
 des expérimentations dans plusieurs situations. Dans le contexte purement
-interprété, la migration fonctionnait parfaitement même dans le cas ou le nœud de
-destination ne connait pas le code de l'agent mobile.  C'est dans le contexte
-où les applications de chaque nœud sont compilées que la migration de tâche
-est un défi, car elle requiert la présence du code de l'agent mobile sur l'ensemble
-des nœuds.
+interprété, la migration fonctionnait correctement même dans le cas ou le nœud
+de destination ne connait pas le code de l'agent mobile.  C'est dans le
+contexte où les applications de chaque nœud sont compilées que la migration de
+tâche est un défi, car elle requiert la présence du code compilé de l'agent
+mobile sur l'ensemble des nœuds qui peuvent avoir des architectures et système
+d'exploitation différents.
 
 Nous avons exploré plusieurs méthodes de chargement automatique des modules.
 Le langage Scheme permet le chargement de module à la demande.
 
-Ce qui nous a menés à un constat que le nom des identifiants transmit devait
-être unique au sein du système distribué. Les modules, basés sur R5RS,
+Ce qui nous a menés à un constat que le nom des identifiants de module transmit
+devait être unique au sein du système distribué. Les modules, basés sur R5RS,
 n'offraient pas la possibilité d'avoir des identifiants uniques.
 
 Nous avons ajouté une forme spéciale à Gambit pour permettre la création de
@@ -30,22 +31,21 @@ distribués à commencer par des expérimentations avec Termite. Le résultat
 présent est prometteur, il permet le déploiement de serveurs sur plusieurs
 machines d'architecture et de systèmes d'exploitation différents.
 
-Le système Gambit-C a été amélioré par l'ajout des modules primitifs et aussi
+Le système Gambit a été amélioré par l'ajout des modules primitifs et aussi
 des modules R7RS. De nouveaux mécanismes de chargement de modules ont été
 ajoutés pour garantir l'ordre et le chargement unique de chaque module.
 
-
 L'installation et la compilation des modules sont effectuées automatiquement
-lorsque demandé.  Les performances du chargement de module sont amorties après
+à la demande.  Les coûts du chargement de module sont amorties après
 la première installation et compilation d'un module. L'utilisation interprétée
 de Termite n'utilise pas la compilation et l'installation automatique.  La
 vitesse d'exécution après l'amortissement surpasse la version interprétée.  Le
-facteur d'accélération que l'amortissement offre d'environ un facteur 100 pour
-le test de 4K, 1000 pour le test de 40K et 10 pour le test de 400K.  Le facteur
+facteur d'accélération observé après l'exécution qui installe les modules compilé de 75 pour
+le test de 4K, 459 pour le test de 40K et 33 pour le test de 400K.  Le facteur
 d'accélération est lié au fait que le code compilé est plus rapide que celui
 interprété.  Puisqu'il y a moins de transmission dans le temps compilé, parce
 que les données sont plus compactes que lorsqu'interprété, le temps de
-transmission est plus en général petit. La taille de la sérialisation d'une
+transmission est généralement plus petit. La taille de la sérialisation d'une
 procédure compilée est environ 400 fois plus petite que sa version interprétée.
 
 

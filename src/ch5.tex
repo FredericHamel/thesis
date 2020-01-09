@@ -13,7 +13,7 @@ chaque version d'un module un répertoire différent. Cela permet de stocker les
 différentes versions d'un module dans le système de fichier.  Nous avons
 comparé les différentes façons d'organiser les modules dans plusieurs langages
 comme Python, JavaScript, Go, OCaml. Il est important que l'installation d'un
-module n'altère pas la stabilité des autres modules.  Le modèle de gestion des
+module n'altère pas le bon fonctionnement des autres modules.  Le modèle de gestion des
 modules choisi garantit que les dépendances d'un module sont fixes.
 
 \section{Sommaire}
@@ -84,13 +84,13 @@ Un module local ou hébergé est identifié de façon unique par un
 \lstcode{module-ref}.  Un \lstcode{module-ref} est séparé en trois parties: le
 \lstcode{hostname}, le \lstcode{path} et l'étiquette qui donne la version.  La
 différence entre une référence à un module local et hébergé est la première
-partie. Dans le cas hébergé, le champ \lstcode{hostname} contient
-l'information du nom de domaine qui, dans le cas local, est vide.
-Le \lstcode{<tag>} spécifie la version du module avec une référence à
-un commit du système de révision Git. Un \lstcode{<tag>} vide réfère
-à la version de développement du module.  La syntaxe du
-nom de domaine est donnée par la grammaire[\ref{lst:hostname->grammar}].  La
-grammaire formelle\ref{lst:module-ref->grammar} décrit la syntaxe du
+partie. Dans le cas hébergé, le champ \lstcode{hostname} contient l'information
+du nom de domaine qui, dans le cas local, est vide.  Le \lstcode{<tag>}
+spécifie la version du module avec une référence à un commit du système de
+révision Git. Un \lstcode{<tag>} vide réfère à la version de développement du
+module (à éviter pour le déploiement final).  La syntaxe du nom de domaine est
+donnée par la grammaire[\ref{lst:hostname->grammar}].  La grammaire
+formelle~\ref{lst:module-ref->grammar} décrit la syntaxe du
 \lstcode{<module-ref>} dans le cas hébergé et local.\\
 
 \begin{figure}[ht]
@@ -149,12 +149,14 @@ répertoire unique dans le répertoire des modules.
 
 Les modules sont hébergés sur des serveurs de version tels que github, gitlab,
 bitbucket, etc. Chaque version d'un module est installée dans un répertoire
-distinct. Il est donc possible d'avoir plus d'une version d'un module installé.
+distinct. Il est donc possible d'avoir plus d'une version d'un module installé
+sur le système de fichier.
 L'installation des modules s'effectue par l'intermédiaire du module
 \lstcode{_git} qui offre une interface à l'utilitaire \lstcode{git}. Le
 processus d'installation est séparé en plusieurs étapes.  Le contenu du module
 est installé dans un répertoire temporaire qui est ensuite renommé au
-répertoire de destination. Cela permet d'installer le module de façon atomique.
+répertoire de destination. Cela permet de faire apparaitre le module installé
+de façon atomique.
 
 Tout d'abord, la
 branche \lstcode{master} du dépôt du module est clonée. Ensuite, une archive de la
@@ -172,29 +174,29 @@ et l'extraire dans l'espace des modules.
 La procédure \lstcode{install} de \lstcode{_pkg} accepte deux paramètres:
 le nom du module et de façon optionnelle le préfixe d'installation. Elle
 retourne la valeur de vérité vraie (\lstcode{#t}) si l'installation réussit,
-sinon elle retourne fausse (\lstcode{#f}).
+sinon elle retourne la valeur de vérité fausse (\lstcode{#f}).
 \begin{center}
   \begin{mplisting}{0.4}
-(install mod #!optional to)
+(install mod #!optional dir)
 \end{mplisting}
 \end{center}
 
 L'installation peut être effectuée en passant l'option \lstcode{-install}
-à l'interprète gambit. Cette option requiert le nom du module et
+à l'interprète Gambit. Cette option requiert le nom du module et
 de façon optionnelle le préfixe d'installation.
 \begin{center}
   \begin{mplisting}{0.8}
-$ gsi -install [-to <path>] module [...]
+$ gsi -install [-dir <path>] module [...]
 \end{mplisting}
 \end{center}
 Le préfixe \lstcode{<path>} est la racine utilisée pour installer les modules
-et est spécifié par l'option \lstcode{-to}.  La racine par défaut est
+et est spécifié par l'option \lstcode{-dir}.  La racine par défaut est
 \lstcode{\~\~userlib}. Voici un exemple d'installation d'une version spécifique du module
 \lstcode{semver} qui implémente la logique du \textit{semantic versioning}.
 
 \begin{center}
   \begin{mplisting}{1}
-$ gsi -install -to /tmp/exemple github.com/frederichamel/semver@1.0.1
+$ gsi -install -dir /tmp/exemple github.com/frederichamel/semver
 \end{mplisting}
 \end{center}
 
@@ -202,13 +204,13 @@ $ gsi -install -to /tmp/exemple github.com/frederichamel/semver@1.0.1
 
 La désinstallation d'un module consiste à supprimer les fichiers
 de ce module. Le module \lstcode{_pkg} offre la procédure
-\lstcode{uninsall} qui accepte deux arguments: le nom du module,
+\lstcode{uninstall} qui accepte deux arguments: le nom du module,
 et de façon optionnelle, le répertoire dans lequel les modules
 sont situés. Les valeurs retournées par cette procédure sont
-similaires à la procédure.
+similaires à la procédure \lstcode{install}.
 \begin{center}
   \begin{mplisting}{0.4}
-(uninstall mod #!optional to)
+(uninstall mod #!optional dir)
 \end{mplisting}
 \end{center}
 La désinstallation peut être faite en passant l'option \lstcode{-uninstall}
@@ -216,7 +218,7 @@ La désinstallation peut être faite en passant l'option \lstcode{-uninstall}
 répertoire  des modules à désinstaller.
 \begin{center}
   \begin{mplisting}{0.8}
-$ gsi -uninstall [-to <path>] module
+$ gsi -uninstall [-dir <path>] module
 \end{mplisting}
 \end{center}
 Le répertoire \lstcode{<path>} est l'emplacement des modules
@@ -228,7 +230,7 @@ La désinstallation du module \lstcode{semver} qui est installé dans
 le répertoire \lstcode{/tmp/exemple} est fait par la commande suivante:
 \begin{center}
   \begin{mplisting}{1}
-$ gsi -uninstall -to /tmp/exemple github.com/frederichamel/semver@1.0.1
+$ gsi -uninstall -dir /tmp/exemple github.com/frederichamel/semver
 \end{mplisting}
 \end{center}
 
@@ -241,7 +243,7 @@ de la branche master et d'installer la nouvelle version.
 
 \begin{center}
   \begin{mplisting}{0.8}
-$ gsi -update [-to <path>] module
+$ gsi -update [-dir <path>] module
 \end{mplisting}
 \end{center}
 
@@ -249,7 +251,7 @@ $ gsi -update [-to <path>] module
 Les tests unitaires exécutés sont dans un fichier conjoint au module.
 Gambit offre un module de test unitaire nommé \lstcode{_test}. Il
 contient plusieurs procédures et macros pour tester le bon fonctionnement d'un module.
-Les tests unitaires pour un module nommé \lstcode{A} sont dans le sous-module
+Les tests unitaires pour un module nommé \lstcode{A} sont par convention dans le sous-module
 \lstcode{A/test}.
 
 \begin{center}
@@ -281,23 +283,21 @@ $ gsc %*\textit{<module-ref>}*
 
 %% Module avec du C.
 L'arborescence du répertoire du module après la compilation du module
-\texttt{\_digest} pour le \textit{backend} C ressemble à:
+\texttt{\_digest} pour le \textit{backend} C est:
 %
 \begin{center}
 \begin{mplisting}{0.8}
 |-- _digest@gambit409003@C
 |   |-- _digest.c
-|   `-- _digest.o1
+|   \-- _digest.o1
 |-- _digest#.scm
 |-- _digest.scm
-`-- test.scm
-
-1 directory, 5 files
+\-- test.scm
 \end{mplisting}
 \end{center}
 
 
-\section{Comparaison avec d'autre système}
+\section{Comparaison avec d'autres systèmes}
 
 L'organisation des modules sur le système de fichier dans Gambit
 diffère de celui de OCaml, Python et NodeJS. Ceux-ci ne permettent pas
@@ -371,7 +371,7 @@ L'environnement par défaut est lié aux dépôts standard d'OCaml.
 
 \subsection{Organisation de Python}
 %
-L'organisation des bibliothèques Python ne permet de stocker que la dernière
+L'organisation des bibliothèques Python ne permet de stocker qu'un (typiquement la dernière)
 version d'une bibliothèque. Les emplacements des bibliothèques sont modifiés
 par la variable d'environnement \verb|PYTHONPATH| qui correspond dans Python à
 la variable \verb|path| de la bibliothèque interne \verb|sys|. Le système de
@@ -397,7 +397,7 @@ pas de référer à deux versions de la même bibliothèque.
     pour organiser les bibliothèques sur un système de type Linux.}
 \end{figure}
 
-Python a le concept équivalent à OCaml de \textit{virtualenv} qui permet
+Python a le concept équivalent à OCaml de \texttt{virtualenv} qui permet
 d'avoir plusieurs versions installées sur la même machine. Cela permet
 d'installer des bibliothèques dans un environnement isolé des autres.
 L'avantage est qu'il est possible d'avoir une compatibilité avec des logiciels
