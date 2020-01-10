@@ -3,9 +3,49 @@
 
 %% La classe <dms> est construite au-dessus de <amsbook>, donc
 %% <amsmath>, <amsfonts> et <amsthm> sont automatiquement chargés.
-\documentclass[12pt,initial,twoside,maitrise]{dms}
+%% Pour un mémoire
+\documentclass[12pt,maitrise]{dms}
+%% Pour un thèse
+%\documentclass[12pt,twoside,phd]{dms}
+
 \usepackage[utf8]{inputenc} %Obligatoires
 \usepackage[T1]{fontenc}    %
+
+%% <lmodern> incorpore les fontes en T1, pour
+%% faciliter le dépôt final. Ceci n'est pas la
+%% seule option :
+%%  1. Si cm-super est installé, vous pouvez enlever <lmodern>
+%%     (à ce moment, la police est un peu plus fidèle
+%%      au Computer Modern orginal);
+%%  2. Si vous avez une police préférée, par exemple,
+%%     <times> ou <euler> ou <mathpazo> (et bien d'autres),
+%%     alors vous pouvez remplacer <lmodern> ci-bas.
+%% Par contre, si vous faîtes face à un problème d'encapsulation
+%% lors dépôt final, il se peut que la solution soit d'utiliser <lmodern>.
+%% (Parfois le problème est au niveau de l'installation, donc
+%%  essayez de compiler sur un autre ordinateur sur lequel vous êtes
+%%  certain·e que l'installation est bonne.)
+\usepackage{lmodern}
+
+
+%% Il n'est pas nécessaire d'utiliser <babel>, car
+%% les commandes intégrées par la classe <dms>
+%% \francais et \anglais font le travail. Néanmoins,
+%% certains autres packages nécessitent <babel> (comme
+%% <natbib>), donc simplement enlever les % devant <babel>
+%% dans ce cas. Attention! Certains packages sont sensibles
+%% à l'ordre dans lequel ils sont chargés.
+\francais % or
+%%\anglais
+%%
+%%\usepackage[english,frenchb]{babel}
+
+ % ENGLISH OPTION
+ % If you call \anglais here before the \begin{document},
+ % all the chater's header will be in english, even if you
+ % call \francais. To change this, use
+ % \entetedynamique
+
 
 \usepackage{listings}
 \lstdefinelanguage{scheme}
@@ -60,19 +100,6 @@
 
 \usepackage{xcolor}
 
-\francais %Pour un document en français ou
-%\anglais{}
-
-%% Il n'est pas nécessaire d'utiliser <babel>, car
-%% les commandes intégrées par la classe <dms>
-%% \francais et \anglais font le travail. Néanmoins,
-%% certains autres packages nécessitent <babel> (comme
-%% <natbib>), donc simplement enlever les % devant <babel>
-%% dans ce cas. Attention! Certains packages sont sensibles
-%% à l'ordre dans lequel ils sont chargés.
-%%
-\usepackage[english,french]{babel}
-
 %% La commande \sloppy peut avoir des effets étranges sur les
 %% lignes de certains paragraphes.  Dans ce cas, essayez \fussy
 %% qui suppresse les effets de \sloppy.
@@ -81,9 +108,9 @@
 %% étranges. Le seul changement apporté à la version originale
 %% est la valeur de \tolerance.
 \def\sloppy{%
-  \tolerance500%  %9999 dans LaTeX ordinaire, mauvaise idée.
-  \emergencystretch3em
-  \hfuzz.5pt
+  \tolerance 500%  %9999 dans LaTeX ordinaire, mauvaise idée.
+  \emergencystretch 3em
+  \hfuzz .5pt
   \vfuzz\hfuzz}
 \sloppy   %appel de \sloppy pour le document
 %%\fussy  %ou \fussy
@@ -154,6 +181,8 @@
 \newtheorem{prop}[cor]{Proposition}
 \newtheorem{rem}[cor]{\remarkname}
 \newtheorem{theo}[cor]{\theoremname}
+\theoremstyle{definition}
+\newtheorem{algo}[cor]{\algoname}
 %% NOTE : Il peut être commode de redéfinir \the<type> pour
 %% obtenir la numérotation désirée. Par exemple, pour
 %% que les corollaires soit numérotés #section.#sous-section.#sous-sous-section.#paragraphe.#corollaire,
@@ -165,11 +194,7 @@
 %%% etc. soient numérotés successivement, utilisez plutôt un bloc de
 %%% commandes de la forme :
 %%%
-\newcommand\TODO[1]{\colorbox{green}{#1\rule{\linewidth}{0.5cm}}}
-\newcommand\FIX[1]{\colorbox{red}{#1\rule{\linewidth}{0.5cm}{0}}}
 
-\newcommand{\todo}[1]{\noindent\colorbox{green}{#1\hspace{\textwidth}}}
-\newcommand{\fix}[1]{\noindent\colorbox{red}{#1\hspace{\textwidth}}}
 %% \newtheorem{cor}{\corollaryname}[section]
 %% \newtheorem{deff}[cor]{\definitionnamr}
 %% \newtheorem{ex}[cor]{\examplename}
@@ -196,11 +221,21 @@
 
 %%\makeindex
 
-%%
-%% Voici la commande pour l'interligne. Il est aussi permis de
-%% rédiger en double interligne (\renewcommand{\baselinestretch}{2}).
-%%
-\renewcommand{\baselinestretch}{1.5}
+
+%% Il est obligatoire d'écrire à double interligne
+%% ou à interligne et demi. On peut soit utiliser
+%% le package <setspace> ou \baselinestretch.
+%% Le package est un peu plus propre, mais le choix
+%% reste à la discrétion de l'usager.
+\usepackage[onehalfspacing]{setspace}
+ % ou
+%%\renewcommand{\baselinestretch}{1.5}
+
+%\newcommand\TODO[1]{\colorbox{green}{#1\rule{\linewidth}{0.5cm}}}
+%\newcommand\FIX[1]{\colorbox{red}{#1\rule{\linewidth}{0.5cm}{0}}}
+
+%\newcommand{\todo}[1]{\noindent\colorbox{green}{#1\hspace{\textwidth}}}
+%\newcommand{\fix}[1]{\noindent\colorbox{red}{#1\hspace{\textwidth}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -209,7 +244,6 @@
 %%%%%%%%%%                                     %%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 \begin{document}
 
 %%
@@ -246,24 +280,9 @@
 
 \department{Département d'informatique et recherche opérationnelle}
 
-\president{Nom du président du jury}
+\date{\today} %Date du DÉPÔT INITIAL (ou du 2e dépôt s'il y a corrections majeures)
 
-\directeur{Marc Feeley}
-
-%%\codirecteur{Nom du co-directeur}         %optionel
-
-\membrejury{Nom du membre de jury}
-
-%%\examinateur{Nom de l'examinateur externe}   %obligatoire pour la these
-
-\membresjury{Eugène Syriani, Stefan Monnier}  %optionel
-
-%%  \plusmembresjury{psi, zeta, omega}    %optionel
-
-%%\repdoyen{Nom du représentant du doyen} %obligatoire pour la these
-
-\dateacceptation{La date d'acceptation}
-
+\sujet{Informatique}
 %%
 %% Voici les disciplines possibles (voir avec votre directeur):
 %% \sujet{statistique},
@@ -272,26 +291,43 @@
 %% \orientation{mathématiques de l'ingénieur} et
 %% \orientation{mathématiques appliquées}
 
-\sujet{Informatique}
+\president{Michail Famelis}
+
+\directeur{Marc Feeley}
+
+%%\codirecteur{Nom du 1er codirecteur}         % s'il y a lieu
+%%\codirecteurs{Nom du 2e codirecteur}         % s'il y a lieu
+
+\membrejury{Stafan Monnier}
+
+%%\examinateur{Nom de l'examinateur externe}   %obligatoire pour la these
+
+% \membresjury{Stefan Monnier}  %optionel
+
+%%  \plusmembresjury{psi, zeta, omega}    %optionel
+
+%%\repdoyen{Nom du représentant du doyen} %obligatoire pour la these
+
+%\dateacceptation{La date d'acceptation}
+
+
 %%\orientation{orientation}%Ce champ est optionnel
 
 %%
 %% Fin des variables à définir. La commande \maketitle créera votre
 %% page titre.
 
-\pagenumbering{roman}
+%\pagenumbering{roman}
 \maketitle
 
  % Pour générer la deuxième page titre, il faut appeler à nouveau \maketitle
-%%\maketitle
-
+\maketitle
 %%------------------------------------------------- %
 %%              pages iii                           %
 %%------------------------------------------------- %
 
-\francais{}
-
-\chapter*{Sommaire}
+%\francais
+\chapter*{Résumé}
 Ce mémoire décrit et évalue un système de module
 qui améliore la migration de code dans le langage de programmation
 distribuée Scheme. Ce système de module a la possibilité
@@ -356,7 +392,7 @@ Module System, Distributed System, Mobile Agent.
  % pour que TeX sache que la table des matières etc. soit
  % sur la page qui suit.
 %% TABLE DES MATIÈRES
-\cleardoublepage%
+\cleardoublepage
 \pdfbookmark[chapter]{\contentsname}{toc}  % Crée un bouton sur
                                            % la bar de navigation
 \tableofcontents
@@ -368,6 +404,42 @@ Module System, Distributed System, Mobile Agent.
 \cleardoublepage%
 \phantomsection%
 \listoffigures
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LISTE DES SIGLES ET ABRÉVIATION %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Il est obligatoire, selon les directives de la FESP,
+%% pour une thèse ou un mémoire d'avoir une liste des sigles et
+%% des abréviations.  Si vous considérez que de telles listes ne seraient pas
+%% pertinentes (si, par exemple, vous n'utilisez aucun sigle ou abré.), son
+%% inclusion ou omission est laissé à votre discrétion.  En cas de doute,
+%% parlez-en à votre directeur de recherche, le coadministrateur ou au/à la
+%% bibliothécaire.
+%%
+%% Le gabarit inclut un exemple d'une liste « fait à la main ».  Il existe des outils
+%% plus sophistiqués si vous devez inclure une multitude de sigles et abréviations.
+%% Par exemple, le package <glossaries> peut faire des index élaborés.  Comme
+%% son utilisation est technique, il n'y a pas d'exemple directement dans ce gabarit.
+%% On invite les gens qui aurait à l'utiliser à lire la documentation officielle,
+%% soit en allant sur https://www.ctan.org/, soit en tapant dans un terminal :
+%%
+%% texdoc glossaries
+%%
+
+\chapter*{Liste des sigles et des abréviations}
+ % Option de colonnes: definir \colun ou \coldeux
+%%% Exemple
+%%% \def\colun{\bf} % Première colonne en gras
+%%% Pour numéroté les entrées, on peut faire
+%%% \newcount\abbrlist
+%%% \abbrlist=0
+%%% \def\plusun{\global\advance\abbrlist by 1\relax}
+%%% \def\colun{\plusun\the\abbrlist. }
+%%\def\coldeux{\relax}
+\begin{twocolumnlist}{.2\textwidth}{.7\textwidth}
+  FFI & Interface de fonction étrangère (\textit{Foreign Function Interface}) \\
+\end{twocolumnlist}
+%% L'environnement <threecolumnlist> existe aussi pour trois colonnes.
 
 %%------------------------------------------------- %
 %%              pages vi                            %
@@ -400,7 +472,7 @@ continuer.
  %
 
 \NoChapterPageNumber%
-\pagenumbering{arabic}
+\cleardoublepage
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                                  %
@@ -414,7 +486,6 @@ continuer.
 %%                pages 1                           %
 %%------------------------------------------------- %
 
-%\chapter[]{Coexistence entre bibliothèques}% TODO: maybe rename.
 \include{ch1}
 \include{ch2}
 \include{ch3_0}
@@ -537,46 +608,6 @@ continuer.
 \bibliographystyle{plain-fr}
 \bibliography{references.bib}
 
-%\begin{thebibliography}{DDDD}
-%
-%\bibitem[A]{ams:guide}
-%  {\scshape American Mathematical Society},
-%  \emph{\AmS\LaTeX{} Version 1.1 User's Guide},
-%  Amer. Math. Soc., Providence, R.~I., 1991.
-%
-%\bibitem[GMS]{latex2e:1}
-%{\scshape M. Goossens, F. Mittelbach, and A. Samarin},
-%\emph{The \LaTeX{} companion},
-%Addison-Wesley, USA, 1994.
-%
-%\bibitem[H]{hahn:everyone}
-%{\scshape J. Hahn},
-%\emph{\LaTeX{} for Everyone: A reference guide and tutorial for
-%    typesetting documents using a computer},
-%     Personal \TeX, Inc., Mill Valley, CA., 1991.
-%
-%\bibitem[L]{lamport:latex}
-%{\scshape Leslie Lamport},
-%\emph{\LaTeX{} -- A Document Preparation System},
-%     Addison-Wesley, Reading, Mass., 1986.
-%
-%\bibitem[M]{mckay:sty}
-%{\scshape W. McKay},
-%\emph{udemmem-l.sty}, fichier \LaTeX,  rédigé pour le compte de
-%l'Université de Montréal, 1993.
-%
-%\bibitem[S]{spivak:joy}
-%{\scshape M. D. Spivak},
-%\emph{The Joy of \TeX{}}, second edition,
-%     Amer. Math. Soc., Providence, R.~I., 1990.
-%
-%\bibitem[T]{latex2e:2}
-%{\scshape \TeX{} User Group},
-%\emph{\LaTeX2e for classand package writers},
-%1995, disponible sur le web.
-%
-%\end{thebibliography}
-
 %%------------------------------------------------- %
 %%                  Annexe A                        %
 %%------------------------------------------------- %
@@ -623,3 +654,7 @@ continuer.
 %\end{table}
 
 \end{document}
+
+\endinput
+%%
+%% End of file `thesis.tex'.

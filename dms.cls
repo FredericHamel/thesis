@@ -36,7 +36,7 @@
 %%%  ====================================================================
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{dms}[2018/05/16 v2.1.0]
+\ProvidesClass{dms}[2019/07/18 2.2]
 \newif\iftagsleft@
 \newif\ifphd@
 \newif\ifmaitrise@
@@ -105,12 +105,37 @@
 \edef\remarknamefr{Remarque}
 \edef\remarknameen{Remark}
 
+\edef\tablenamefr{Tableau}
+\edef\tablenameen{Table}
+
 \edef\dmscontentsnamefr{Table des mati\noexpand\`eres} %\'e car on ne sait pas si inputenc sera chargé
 \edef\dmscontentsnameen{Contents}
 
+\edef\revuemsgfr{Cet article a \noexpand\'et\noexpand\'e soumis dans }
+\edef\revuemsgen{This article was submitted in }
+
+\edef\contribmsgfr{Les principales contributions de
+  \noexpand\authors\ \noexpand\`a cet article sont pr\noexpand\'esent\noexpand\'ees.}
+\edef\contribmsgen{The main contributions of
+  \noexpand\authors\ for this articles are presented.}
+
+\edef\dms@articlenamefr{article}
+\edef\dms@articlenameen{Article}
+
+\edef\dms@parnamefr{par}
+\edef\dms@parnameen{by}
+
 \AtBeginDocument{
-  \edef\refnamefr{R\'ef\'erences}
+  \edef\refnamefr{R\'ef\'erences bibliographiques}
   \edef\refnameen{References}
+
+  \edef\revuemsgfr{Cet article a \'et\'e soumis dans }
+  \edef\revuemsgen{This article was submitted in }
+
+  \edef\contribmsgfr{Les principales contributions de
+    \noexpand\authors\ \`a cet article sont pr\'esent\'ees.}
+  \edef\contribmsgen{The main contributions of
+    \noexpand\authors\ for this articles are presented.}
 
   \edef\keywordsfr{Mots cl\'es}
   \edef\keywordsen{Keywords}
@@ -123,6 +148,9 @@
 
   \edef\theoremnamefr{Th\'eor\`eme}
   \edef\theoremnameen{Theorem}
+
+  \edef\algonamefr{Algorithme}
+  \edef\algonameen{Algorithm}
 
   \edef\definitionnamefr{D\'efinition}
   \edef\definitionnameen{Definition}
@@ -148,24 +176,47 @@
    Seizi\`eme\or Dix-septi\`eme\or Dix-huiti\`eme\or Dix-neuvi\`eme\or
    Vingti\`eme\fi}
 
+\def\articletocentryen{\ifcase\value{part}\or First\or Second\or
+    Third\or Fourth\or Fifth\or Sixth\or Seventh\or Eighth\or Ninth\or
+    Tenth\or Eleventh\or Twelfth\or Thirteenth\or Fourteenth\fi}
+
 \newcount\escapecount
 \def\dopolyglot{\do\partname \do\dmschaptername \do\appendixname \do\bibname \do\refname%
   \do\dms@et \do\keywords \do\dmscontentsname \do\dmslistfigurename \do\dmslisttablename%
-  \do\theoremname \do\definitionname \do\lemmaname \do\abstractname%
-  \do\problemname \do\corollaryname \do\examplename \do\remarkname \do\proofname}
+  \do\theoremname \do\algoname \do\definitionname \do\lemmaname \do\abstractname%
+  \do\problemname \do\corollaryname \do\examplename \do\remarkname \do\proofname%
+  \do\revuemsg \do\dms@articlename \do\dms@parname \do\tablename}
+ % \do\revuemsg \do\contribmsg \do\dms@articlename \do\dms@parname \do\tablename}
 
+
+ % On vérifie que le francais est installé
+
+\ifx\undefined\l@french %On vérifie LaTeX
+  \ifx\undefined\lang@french % On vérifie XeLaTeX
+    \errmsg{Le francais n'est pas installé!}\errhelp{Assurez-vous que les packages pour le francais soient installés.}
+    \def\dms@apostrophelccode=0
+    \def\l@language{0} % On utilise l'anglais vu que le français n'est pas installé...
+  \else
+    \let\l@french=\lang@french
+    \def\dms@apostrophelccode{39} % On prépare le "lower case code" de l'apostrophe
+  \fi
+\else
+  \def\dms@apostrophelccode{39}
+\fi
 
 \def\@francais{%
     \escapecount=\escapechar
     \escapechar=-1
     \def\do##1{\edef##1{\csname\string##1fr\endcsname}}
     \dopolyglot
+    \def\bibname{R\'ef\'erences bibliographiques}
     \escapechar=\escapecount
     \language\l@french
-    \lccode`'=39
+    \lccode`'=\dms@apostrophelccode
     \lefthyphenmin=2
     \righthyphenmin=3
     \let\parttocentry\parttocentryfr%
+    \let\articletocentry=\articletocentryfr
 }
 \def\francais{
     \@francais
@@ -174,23 +225,36 @@
 \let\@fr\francais
 
 
+ % On vérifie que l'anglais est bien installé
+\ifx\undefined\l@english %On vérifie LaTeX
+  \ifx\undefined\lang@english % On vérifie XeLaTeX
+    \errmsg{L'anglais n'est pas installé!}\errhelp{Assurez-vous que les packages pour l'anglais soient installés.}
+    \def\l@language{0} % On utilise l'anglais américain de base
+  \else
+    \let\l@english=\lang@english
+  \fi
+\fi
+
 \def\@anglais{%
     \escapecount=\escapechar
     \escapechar=-1
     \def\do##1{\edef##1{\csname\string##1en\endcsname}}
     \dopolyglot
+    \def\bibname{References}
     \escapechar=\escapecount
     \language\l@english
     \lccode`'=0
     \lefthyphenmin=2
     \righthyphenmin=3
     \let\parttocentry\parttocentryen%
+    \let\articletocentry=\articletocentryen
 }
 \def\anglais{
     \@anglais
     \addtocontents{toc}{\protect\@anglais}
 }
 \let\@en\anglais
+\ifx\undefined\english \def\english{\anglais}\fi % Si \anglais, alors \english aussi
 
 
 \newif\ifentetedynamique
@@ -235,7 +299,7 @@
 \def\envlangue#1{%
     \newenvironment{#1}
         {\begingroup\uselanguage{#1}}
-{\endgroup}%
+    {\endgroup}%
 }
 \envlangue{fr}
 \envlangue{en}
@@ -291,13 +355,6 @@
     \def\@oddfoot{\hss\normalfont\normalsize\rm\thepage\hss}
     \let\@evenfoot\@oddfoot
 }
-\def\ps@appendixheadings{\let\@mkboth\@gobbletwo
-   \def\@oddhead{\hfil\rm\thechapter-\@roman\thepage}
-   \def\@evenhead{\hfil\rm\thechapter-\@roman\thepage}
-   \def\@oddfoot{\null\normalfont\normalsize\rm \hfil}%{\thepage}\hfil}
-   \def\@evenfoot{\null\normalfont\normalsize\rm
-     \hfil\null}%{\thepage}\hfil\null}
-}
 \def\ps@myheadings{\let\@mkboth\@gobbletwo
   \let\@oddfoot\@empty\let\@evenfoot\@empty
    \def\@oddhead{\null\\normalfont\normalsize\rm \hfil{\thepage}}
@@ -306,18 +363,6 @@
 }
 \def\sh@rtauthor{}
 \def\sh@rttitle{}
-\AtEndDocument{
-    \ifinitial@%
-        \clearpage
-        \thispagestyle{empty}
-        \null\vfill
-        \if@twoside
-            \clearpage
-            \thispagestyle{empty}
-            \null\vfill
-        \fi
-    \fi%
-}
 
 \def\brouillon{
 \def\ps@headings{\let\@mkboth\@gobbletwo
@@ -376,7 +421,13 @@
    }
 \edef\@baselineskip@original{\the\baselineskip}
 \def\restorebaselineskip{\baselineskip=\@baselineskip@original}
-\renewcommand{\title}[1]{\gdef\@title{#1}}
+
+\renewcommand{\title}[2][]{\gdef\@title{#2}}
+\let\titre=\title
+\def\soustitre#1{\gdef\@soustitre{#1}}
+\let\@soustitre\@empty
+\let\subtitle=\soustitre
+
 
 \def\copyrightname#1{\def\@copyrightname{{\sc#1}}}
 \def\@copyrightname{{\tt\string\author}} %Rappel à l'utilisateur de définir \author
@@ -415,8 +466,8 @@
 \def\copyrightline{%
     \centerline{\footnotesize ${}^{\text{\copyright}}$
         \ifx\@copyrightname\empty{..........},
-\else {\@copyrightname},
-\fi%
+    \else {\@copyrightname},
+    \fi%
         \ \@copyrightyear%
     }%fin du centerline
 }
@@ -442,6 +493,9 @@
 
 \def\codirecteur#1{\def\@codirecteur{{\normalfont\sl#1}}}
 \def\@codirecteur{}
+
+\def\codirecteurs#1{\def\@codirecteurs{{\normalfont\sl#1}}}
+\def\@codirecteurs{}
 
 \def\membrejury#1{\def\@membrejury{{\normalfont\sl#1}}}
 \def\@membrejury{}
@@ -474,42 +528,13 @@
 \def\maketitle{\par
   \@topnum\z@
   \ifx\@empty\sh@rtauthor \let\sh@rtauthor\sh@rttitle\fi
-  \ifinitial@  %Pages de garde pour le dépôt initial
-      \pagenumbering{alph} %Pour ne pas que deux pages soient numérotées 1
-      \thispagestyle{empty}
-      \null\vfill\newpage
-      \if@twoside %Pour laisser une 2e page si imprimé recto-verso
-          \thispagestyle{empty}
-          \null\vfill\newpage
-      \fi
-      \pagenumbering{roman}\setcounter{page}{1}
-  \fi
   \begingroup
   \@maketitle
   \endgroup
   \thispagestyle{empty}%
   \c@footnote\z@
-  \def\do##1{\let##1\relax}%
+  \def\do##1{\let##1\undefined}%
   \do\maketitle \do\@maketitle
-
-  \do\address \do\@xaddress
-  \do\email \do\@xemail \do\curraddr \do\@xcurraddr
-  \do\department \do\@department
-%%%  \do\faculty \do\@faculty
-  \do\degree \do\@degree
-  \do\sujet \do\@sujet
-  \do\orientation \do\@orientation
-%%%  \do\date \do\@date
-  \do\copyrightyear \do\@copyrightyear
-%%%  \do\president \do\@president
-%%%  \do\directeur \do\@directeur
-%%%  \do\codirecteur \do\@codirecteur
-%%%  \do\membrejury \do\@membrejury
-%%%  \do\membresjury \do\@membresjury
-%%%  \do\plusmembresjury \do\@plusmembresjury
-%%%  \do\examinateur \do\@examinateur
-%%%  \do\repdoyen \do\@repdoyen
-%%%  \do\dateacceptation \do\@dateacceptation
 
 \let\maketitle\@maketitletwo
 } %Fin de la def de \maketitle
@@ -532,7 +557,7 @@
         \vfill
         \centerline{\rm par}\vskip20pt%
         \ifx\@empty\authors
-            {\hfil\tt\string\author} %on rappelle de définir \author
+            \dms@erreur\author %on rappelle de définir \author
         \else %ici, \authors est non vide
             \vtop{\centering
                 {\bf\Large\authors}\@@par
@@ -550,27 +575,27 @@
             \fi
             \@@par}
         }%Fin du \vtop
-\vfill
+    \vfill
         \baselineskip9\p@
         \vtop{\centering\bgroup\rm\small%
-            \ifmaitrise@  M\'emoire pr\'esent\'e \`a la \@facultyto\\ \fi
-            \ifrapport@ Rapport de stage pr\'esent\'e \`a la \@facultyto\\ \fi
-            \iftravail@ Travail dirigé pr\'esent\'e \`a la \@facultyto\\ \fi
-            \ifphd@     Th\`ese pr\'esent\'ee \`a la \@facultyto\\ \fi
+            \ifmaitrise@  M\'emoire pr\'esent\'e      \fi
+            \ifrapport@ Rapport de stage pr\'esent\'e \fi
+            \iftravail@ Travail dirigé pr\'esent\'e   \fi
+            \ifphd@     Th\`ese pr\'esent\'ee         \fi
             en vue de l'obtention du grade de\\
             \@degree\\
             en\strut\
             \ifx\@empty\@sujet
-         {....\tt\string\sujet\rm.....}
+            \dms@erreur\sujet
             \else
-         \@sujet
+            \@sujet
             \fi
             \ifx\@empty\@orientation\else \\[\baselineskip] Orientation \@orientation\fi
             \egroup%
         }
         \vfill
         \centerline{\rm\ifx\@empty\@date {\MoYrfr}
-             \else\@date\fi}
+                \else\@date\fi}
         \@@par
         \vfill
         \copyrightline
@@ -593,8 +618,21 @@
         \ifphd@ {\centerline{Cette th\`ese intitul\'ee}}\fi
         \vskip12\p@\@plus6\p@
         \vtop{
-            \centering\bf\Large
+            \raggedcenter\bf\large
+            \ifx\@empty\@title
+                \dms@erreur\title
+            \fi
             \expandafter\upshape\expandafter{\@title}\@@par
+            %
+            \ifx\@soustitre\@empty\else
+                \rm\large
+                \vskip1pc
+                %
+                \setbox0=\hbox{\@soustitre}
+                \ifdim\wd0>410pt\advance\leftskip by 30pt \let\rightskip=\leftskip\fi
+                \expandafter\upshape\expandafter{\unhbox0}\@@par
+                \dimen0=\textwidth\advance\dimen0 by -60pt\relax
+            \fi
             \global\dimen@i\prevdepth%
            }
         \vskip18\p@\@plus12\p@\relax
@@ -604,7 +642,7 @@
         \ifphd@\centerline{pr\'esent\'ee par}\fi
         \vskip18\p@\@plus6\p@
         \ifx\@empty\authors
-            \centerline{....\tt\string\auhor\rm....}
+            \dms@erreur\author
         \else
             \vtop{
                 \centering
@@ -618,7 +656,7 @@
         \ifrapport@\centerline{a \'et\'e \'evalu\'e par un jury compos\'e des personnes suivantes :} \fi%
         \iftravail@\centerline{a \'et\'e \'evalu\'e par un jury compos\'e des personnes suivantes :} \fi%
         \ifphd@\centerline{a \'et\'e \'evalu\'ee par un jury compos\'e des personnes suivantes :}\fi %
-        \par\vskip12\p@\relax
+        \par\vskip24\p@ plus 12pt minus 12pt\relax
         \baselineskip9\p@
         \vtop to 11cm{\centering%
             \def\lignemembre##1\titre##2{\vtop{\centering
@@ -628,7 +666,8 @@
                 \escapechar=\escapecount
                 \setbox0=\hbox{\csname\dms@temp\endcsname}
                 \unhcopy0\strut\par\vskip-3pt
-                \noindent\vrule height 0.4pt depth 0pt width\ifdim\wd0>11pc \the\wd0\else 11pc\fi
+                \noindent\vrule height 0.4pt depth 0pt width%
+                \ifdim\wd0>11pc \the\wd0\else 11pc\fi
                 \par\vskip1pt
                 {\footnotesize(##2)}}}%
         % Une ligne est obligatoire si elle doit apparaître
@@ -646,7 +685,13 @@
 
                 %Optionnel
             \ifx\@codirecteur\empty\else
-                \lignemembre\@codirecteur\titre{co-directeur}
+                \lignemembre\@codirecteur\titre{codirecteur}
+                \vfil
+            \fi
+
+                %Optionnel
+            \ifx\@codirecteurs\empty\else
+                \lignemembre\@codirecteurs\titre{codirecteur}
                 \vfil
             \fi
 
@@ -663,7 +708,7 @@
 
                 %Même chose ici
             \ifx\@plusmembresjury\empty\else
-                \lignemembre\@plusmembrejury\titre{membre du jury}
+                \lignemembre\@plusmembresjury\titre{membre du jury}
                 \vfil
             \fi
 
@@ -681,17 +726,29 @@
                 \vfil
             \fi
 
-            \ifmaitrise@\centerline{M\'emoire accept\'e le~:}\fi
-            \ifrapport@\centerline{Rapport de stage accept\'e le~:}\fi
-            \iftravail@\centerline{Travail dirig\'e accept\'e le~:}\fi
-            \ifphd@\centerline{Th\`ese accept\'ee le~:}\fi
-            \vskip6\p@
+ %%            \ifmaitrise@\centerline{M\'emoire accept\'e le~:}\fi
+ %%            \ifrapport@\centerline{Rapport de stage accept\'e le~:}\fi
+ %%            \iftravail@\centerline{Travail dirig\'e accept\'e le~:}\fi
+ %%            \ifphd@\centerline{Th\`ese accept\'ee le~:}\fi
+ %%            \vskip6\p@
+ %%            %
+ %%            \vtop{\centering
+ %%                   \ifx\@dateacceptation\empty\vskip14\p@\else
+ %%                       \@dateacceptation\vskip3\p@\fi}
+ %%            \centerline{\vbox{\hrule width 10pc}}%
             %
-            \vtop{\centering
-                   \ifx\@dateacceptation\empty\vskip14\p@\else
-                       \@dateacceptation\vskip3\p@\fi}
-            \centerline{\vbox{\hrule width 10pc}}%
-            %
+            \ifx\@membresjury\empty
+                \par
+                \vskip0pt plus .33fil
+            \fi
+            \ifx\@plusmembresjury\empty
+                \par
+                \vskip0pt plus .33fil
+            \fi
+            \ifx\@codirecteur\empty
+                \par
+                \vskip0pt plus .33fil
+            \fi
         }%fin du \vtop to 10cm
     \endgroup
 } % Fin de \@maketitle
@@ -773,7 +830,7 @@
 \def\Rel@x{\relax}
 \renewenvironment{quote}[1][\relax]
   {\bgroup
-    \def\ArgI{#1}                %gardé en mémoire pour plus tard
+    \def\ArgI{#1}                   %gardé en mémoire pour plus tard
     \newdimen\temp \temp=\baselineskip
     \renewcommand{\baselinestretch}{1}   %simple interligne
     \normalsize
@@ -786,7 +843,7 @@
       \egroup}
 \newenvironment{quote*}[1][\relax]
   {\bgroup
-    \def\ArgI{#1}                %gardé en mémoire pour plus tard
+    \def\ArgI{#1}                   %gardé en mémoire pour plus tard
     \newdimen\temp \temp=\baselineskip
     \renewcommand{\baselinestretch}{1}   %simple interligne
     \normalsize
@@ -797,6 +854,95 @@
     \ifx\ArgI\Rel@x\else       %s'il est faux que #1=\relax
       \noindent\null\hfill$\sim$ \ArgI\par\fi
       \egroup}
+\xdef\linestretch{2\baselineskip} % Paramètre pour la profondeur des boîtes
+\def\@twocolumnlist#1#2{
+  \begingroup
+  \ifx\colun\undefined\let\colun\relax\fi
+  \ifx\coldeux\undefined\let\coldeux\relax\fi
+  \parindent0pt
+  \everycr{}
+  \def\\{\futurelet\next\action}
+  \def\action{\ifx\next[\expandafter\actionop\else\expandafter\actionsansop\fi}
+  \def\actionop[##1]{\cr\noalign{\vskip##1}}
+  \def\actionsansop{\cr}
+  \ifvmode\noindent\fi % Le tableau est en mode horizontale
+  \halign to \textwidth\bgroup %Tableau de la pleine largeur du texte
+    \hbox to #1{\hsize=#1\vtop{\colun ##}\hfil} % Première colonne
+    &\hbox to #2{\hsize=#2\vtop{\coldeux ##\hfil\vskip\linestretch\relax}\hfil}\cr %Deuxième colonne
+} % fin de la définition de \@twocolumnlist
+\def\@endtwocolumnlist{\egroup\endgroup} %On ferme le groupe du \halign et l'autre groupe
+\newenvironment{twocolumnlist}[2]
+  {\@twocolumnlist{#1}{#2}}
+  {\@endtwocolumnlist}
+\def\@threecolumnlist#1#2#3{
+  \begingroup
+  \ifx\colun\undefined\let\colun\relax\fi
+  \ifx\coldeux\undefined\let\coldeux\relax\fi
+  \ifx\coltrois\undefined\let\coltrois\relax\fi
+  \parindent0pt
+  \everycr{}
+  \def\\{\futurelet\next\action}
+  \def\action{\ifx\next[\expandafter\actionop\else\expandafter\actionsansop\fi}
+  \def\actionop[##1]{\cr\noalign{\vskip##1}}
+  \def\actionsansop{\cr}
+  \ifvmode\noindent\fi % Le tableau est en mode horizontale
+  \halign to \textwidth\bgroup %Tableau de la pleine largeur du texte
+    \hbox to #1{\hsize=#1\vtop{\colun ##}\hfil} % Première colonne
+    &\hbox to #2{\hsize=#2\vtop{\coldeux ##}\hfil} % Deuxième colonne
+    &\hbox to #3{\hsize=#3\vtop{\coltrois ##\hfil\vskip\linestretch\relax}\hfil}\cr %Troisième colonne
+} % fin de la définition de \@twocolumnlist
+\def\@endthreecolumnlist{\egroup\endgroup} %On ferme le groupe du \halign et l'autre groupe
+
+\newenvironment{threecolumnlist}[3]
+  {\@threecolumnlist{#1}{#2}{#3}}
+  {\@endthreecolumnlist}
+
+  % Macros prisent de plain.tex pour définir
+  % les alignements (tableaux) utilisant
+  % la méthode \+ expliqué dans le TeXbook
+  % (chapitre 22).
+\newif\ifus@ \newif\if@cr
+\newbox\tabs \newbox\tabsyet \newbox\tabsdone
+
+\def\cleartabs{\global\setbox\tabsyet\null \setbox\tabs\null}
+\def\settabs{\setbox\tabs\null \futurelet\next\sett@b}
+\let\+=\relax % in case this file is being read in twice
+\def\sett@b{\ifx\next\+\def\nxt{\afterassignment\s@tt@b\let\nxt}%
+  \else\let\nxt\s@tcols\fi \let\next\relax \nxt}
+\def\s@tt@b{\let\nxt\relax \us@false\m@ketabbox}
+\def\tabalign{\us@true\m@ketabbox} % non-\outer version of \+
+\def\+{\tabalign} % \outer\def\+{\tabalign} dans plain.tex (on enlène \outer)
+\def\s@tcols#1\columns{\count@#1\dimen@\hsize
+  \loop\ifnum\count@>\z@ \@nother \repeat}
+\def\@nother{\dimen@ii\dimen@ \divide\dimen@ii\count@
+  \setbox\tabs\hbox{\hbox to\dimen@ii{}\unhbox\tabs}%
+  \advance\dimen@-\dimen@ii \advance\count@\m@ne}
+
+\def\m@ketabbox{\begingroup
+  \global\setbox\tabsyet\copy\tabs
+  \global\setbox\tabsdone\null
+  \def\cr{\@crtrue\crcr\egroup\egroup
+    \ifus@\unvbox\z@\lastbox\fi\endgroup
+    \setbox\tabs\hbox{\unhbox\tabsyet\unhbox\tabsdone}}%
+  \setbox\z@\vbox\bgroup\@crfalse
+    \ialign\bgroup&\t@bbox##\t@bb@x\crcr}
+
+\def\t@bbox{\setbox\z@\hbox\bgroup}
+\def\t@bb@x{\if@cr\egroup % now \box\z@ holds the column
+  \else\hss\egroup \global\setbox\tabsyet\hbox{\unhbox\tabsyet
+      \global\setbox\@ne\lastbox}% now \box\@ne holds its size
+    \ifvoid\@ne\global\setbox\@ne\hbox to\wd\z@{}%
+    \else\setbox\z@\hbox to\wd\@ne{\unhbox\z@}\fi
+    \global\setbox\tabsdone\hbox{\box\@ne\unhbox\tabsdone}\fi
+  \box\z@}
+  % Fin des macros prisent dans plain.tex
+  % pour définir \+
+  %
+  %%
+%% Utiliser pour mettre des lignes horizontales avant et après le
+%% pseudo-code
+\long\def\Hline{\par\nobreak\vskip-.5\baselineskip\nobreak\vbox{\hrule width\textwidth height1pt}\nobreak\vskip6pt\nobreak}%
+
 \let\c@part=\undefined
 \let\c@chapter=\undefined
 \let\c@section=\undefined
@@ -872,6 +1018,7 @@
             \def\auteur########1{\expandafter\def\expandafter\@auteurs\expandafter{%
             \expandafter\begingroup\expandafter\let\expandafter\@et\expandafter,\@auteurs\endgroup%
             \@et\ ########1\dms@adressenote}}}
+        \let\author=\auteur
     }
     \cleardoublepage
     \ifarticleenchapitre
@@ -922,14 +1069,14 @@
             \let\@secnumber\thechapter
             \@tocwriteb\tocchapter{chapter}{#2} %Écrit chapitre dans la toc
         \else
-            \addcontentsline{toc}{chapter}{\articletocentryfr\ article. #2} %Écrit article dans la toc
+            \addcontentsline{toc}{chapter}{\articletocentry\ \dms@articlename. #2} %Écrit article dans la toc
         \fi
     \else
         \ifarticleenchapitre
             \let\@secnumber\thechapter
             \@tocwriteb\tocchapter{chapter}{#1} %Écrit chapitre dans la toc
         \else
-            \addcontentsline{toc}{chapter}{\articletocentryfr\ article. #1}
+            \addcontentsline{toc}{chapter}{\articletocentry\ \dms@articlename. #1}
         \fi
     \fi
     \dms@makearticlehead{#2}
@@ -937,13 +1084,14 @@
 
 \def\dms@sarticle#1{
     \titre{#1}
-    \addcontentsline{toc}{chapter}{\articletocentryfr\ article. #1}
+    \addcontentsline{toc}{chapter}{\articletocentry\ \dms@articlename. #1}
    % \@tocwriteb\tocpart{part}{#1}
     \dms@makearticlehead{#1}
 }
 
 
 \let\@revue\empty
+\let\@revueop\empty
 \let\@contributions\empty
 \let\@adress\empty
 \def\revue{\futurelet\next\revue@switch}
@@ -951,6 +1099,7 @@
   \expandafter\revue@sansop\fi}
 \def\revue@op[#1]#2{\gdef\@revueop{#1}\gdef\@revue{#2}}
 \def\revue@sansop#1{\global\let\@revueop\empty\gdef\@revue{#1}}
+\let\journal=\revue
 \def\contributions{\futurelet\next\contrib@switch}
 \def\contrib@switch{\ifx\next[
     \expandafter\contrib@op
@@ -959,8 +1108,7 @@
   \fi}
 \long\def\contrib@op[#1]#2{\long\gdef\contrib@preambule{{#1}}\long\gdef\@contributions{{#2}}}
 \long\def\contrib@sansop#1{
-    \long\gdef\contrib@preambule{Les principales contributions de
-        \authors\ \`a cet article sont pr\'esent\'ees.}
+    \long\gdef\contrib@preambule{\contribmsg}
     \long\gdef\@contributions{{#1}}
 }
 \let\contribution=\contributions %(Ce n'est pas la quantité, mais la qualité qui compte)
@@ -974,7 +1122,7 @@
         \ifarticleenchapitre
             \vbox{\LARGE\noindent\chaptername\ \the\c@chapter\strut} %en tête en chapitre
         \else
-            \vbox{\LARGE\noindent\articletocentryfr\ article.\strut} %i-eme article
+          \do\dms@parname   \vbox{\LARGE\noindent\articletocentry\ \dms@articlename.\strut} %i-eme article
         \fi
         \par\vfil
         \fontsize{30pt}{25pt}\selectfont
@@ -983,9 +1131,11 @@
         \fontsize{17.28pt}{19pt}\mdseries\rmfamily\upshape\selectfont
         \vbox{\centering\authors\par} %auteur de la thèse
         \par\vfil
-        \vbox{\centering\ifx\@empty\@revue\tt\string\revue\else
-            \ifx\@revueop\empty Cette article a \'et\'e publi\'e dans
-            \else\@revueop\fi\@revue\fi\par}
+        \ifx\@empty\@revue\dms@erreur\revue\else
+            \vbox{\centering
+                \ifx\@revueop\empty \revuemsg \revuemsg
+                \else\@revueop\fi\@revue\par}
+        \fi
         \par
         \cleardoublepage
     \egroup
@@ -993,8 +1143,14 @@
 
 \newif\ifarticleenchapitre
 \articleenchapitrefalse
-\def\articleenchapitre{\articleenchapitretrue}
+\def\articleenchapitre{\placerfigettab\articleenchapitretrue}
+\def\placerfigettab{%
+    \@addtoreset{figure}{chapter}%
+    \@addtoreset{table}{chapter}%
+}
 \let\makearticleschapters\articleenchapitre
+\let\articlesenchapitres\articleenchapitre
+\let\makearticlechapter\articleenchapitre
 
 \ifpagetitreart@\else
 \def\dms@defmakesmalltitle{
@@ -1008,7 +1164,7 @@
             \ifarticleenchapitre
                 \vbox{\LARGE\noindent\chaptername\ \the\c@chapter\strut} %en tête en chapitre
             \else
-                \vbox{\LARGE\noindent\articletocentryfr\ article.\strut} %i-eme article
+                \vbox{\LARGE\noindent\articletocentry\ \dms@articlename.\strut} %i-eme article
             \fi
         \egroup
         \hrule width0pt height32pt depth0pt
@@ -1026,7 +1182,7 @@
                     \aftergroup\centering
                 \fi
             \endgroup
-            par\par\vskip9mm
+            \dms@parname\par\vskip9mm
             \restorebaselineskip
             \gdef\dms@adressenum{1}
             \@auteurs
@@ -1044,11 +1200,11 @@
         \fi
         \vskip2cm
         \noindent
-          \ifx\@revueop\empty Cet article a \'et\'e soumis \`a la revue
+          \ifx\@revueop\empty \revuemsg
             \else\@revueop
           \fi%
              \ifx\@revue\empty%        % Si \@revue est vide,
-                 {\tt\string\revue}%   % «\revue» sera inscrit
+                 \dms@erreur\revue%   % «\revue» sera inscrit
              \else%                    % pour rappeler de le remplir
                  \@revue%
              \fi.
@@ -1057,23 +1213,6 @@
         \csname @contributions\endcsname
         \vskip1.5em plus .5em minus .5em
         %
-        \def\abstractskip{\vskip2em plus 1em minus 1em\relax\penalty-5000} %Racourci
-        \ifvoid1 %abstract en francais
-            \gdef\@attendrefr{}
-            \expandafter\def\csname endresume*\endcsname{%
-                \egroup\unvbox1\par\abstractskip
-                \global\let\@attendrefr\undefined
-                \ifvoid0\else \unvbox0\par\abstractskip\fi}
-        \else
-            \global\let\@attendrefr\undefined
-            \unvbox1\par\abstractskip
-        \fi
-        \ifvoid0 %abstract en anglais
-            \expandafter\def\csname endabstract*\endcsname{%
-                \egroup\ifx\@attendrefr\undefined\unvbox0\par\abstractskip\fi}
-        \else
-            \ifx\@attendrefr\undefined\unvbox0\par\abstractskip\fi
-        \fi
     } %Fin de la def de \makesmalltitle
     \let\maketitle=\makesmalltitle
 } %Fin de la def de \dms@defmakesmalltitle
@@ -1092,6 +1231,7 @@
             \def\auteur########1{\expandafter\def\expandafter\@auteurs\expandafter{%
             \expandafter\begingroup\expandafter\let\expandafter\@et\expandafter,\@auteurs\endgroup%
             \@et\ ########1\dms@adressenote}}}
+        \let\author=\auteur
     }
     \cleardoublepage
     \ifarticleenchapitre
@@ -1143,8 +1283,10 @@
     \let\address\adresse
     %
         % Environnements de résumés
+    \def\abstractskip{\vskip2em plus 1em minus 1em\relax\penalty-5000} %Racourci
     \newenvironment{abstract*}
-        {\global\setbox0=\vbox\bgroup\smaller\smaller\narrower\narrower
+        {\ifvmode\removelastskip\abstractskip\else\par\abstractskip\fi
+        \vbox\bgroup\smaller\smaller\narrower\narrower
             \@anglais
             \noindent{\expandafter\larger\expandafter\sc\abstractname.}\ \ignorespaces}
         {\egroup}
@@ -1152,7 +1294,8 @@
         {\def\@arg{##1}\begin{abstract*}}
         {\par\nobreak\noindent{\bfseries\keywords:} \@arg\end{abstract*}}
     \newenvironment{resume*}
-        {\global\setbox1=\vbox\bgroup\smaller\smaller\narrower\narrower
+        {\ifvmode\removelastskip\abstractskip\else\par\abstractskip\fi
+        \vbox\bgroup\smaller\smaller\narrower\narrower
             \@francais
             \noindent{\expandafter\larger\expandafter\sc\abstractname.}\ \ignorespaces}
         {\egroup}
@@ -1205,7 +1348,7 @@
             \else\@revueop
           \fi%
              \ifx\@revue\empty%        % Si \@revue est vide,
-                 {\tt\string\revue}%   % «\revue» sera inscrit
+                 \dms@erreur\revue   % «\revue» sera inscrit
              \else%                    % pour rappeler de le remplir
                  \@revue%
              \fi.
@@ -1215,22 +1358,6 @@
         \vskip1.5em plus .5em minus .5em
         %
         \def\abstractskip{\vskip2em plus 1em minus 1em\relax\penalty-5000} %Racourci
-        \ifvoid1 %abstract en francais
-            \gdef\@attendrefr{}
-            \expandafter\def\csname endresume*\endcsname{%
-                \egroup\unvbox1\par\abstractskip
-                \global\let\@attendrefr\undefined
-                \ifvoid0\else \unvbox0\par\abstractskip\fi}
-        \else
-            \global\let\@attendrefr\undefined
-            \unvbox1\par\abstractskip
-        \fi
-        \ifvoid0 %abstract en anglais
-            \expandafter\def\csname endabstract*\endcsname{%
-                \egroup\ifx\@attendrefr\undefined\unvbox0\par\abstractskip\fi}
-        \else
-            \ifx\@attendrefr\undefined\unvbox0\par\abstractskip\fi
-        \fi
     }
 }
 \def\section{%
@@ -1292,8 +1419,8 @@
     \def\chapter{%
         \finarticle
         \cleardoublepage
-        \setcounter{page}{1}\thispagestyle{empty}
-        \def\thepage{\thechapter -\roman{page}}
+        \thispagestyle{empty}
+        \def\thepage{\arabic{page}}
         \global\@topnum\z@
         \@afterindentfalse \secdef\@chapter\@schapter%
     }%
@@ -1304,9 +1431,9 @@
         \finarticle
         \cleardoublepage
         \thispagestyle{empty}\pagestyle{headings}%
-\global\@topnum=\z@%
+    \global\@topnum=\z@%
         \@afterindentfalse%
-\secdef\@chapter\@schapter%
+    \secdef\@chapter\@schapter%
     }%
 }
 
@@ -1385,22 +1512,28 @@
 \setcounter{tocdepth}{3}
 
 \AtBeginDocument{
-    \ifx\bbl@add\undefined \else
+    \ifx\ifFBunicode\undefined \else
+        \def\frenchtablename{\tablename}
+        \def\englishtablename{\tablename}
         \def\francais{
             \@francais
             \addtocontents{toc}{\protect\@francais}
             \selectlanguage{french}%
         }
+    \fi
+    \ifx\captionsenglish\undefined \else
+        \def\frenchtablename{\tablename}
+        \def\englishtablename{\tablename}
         \def\anglais{
-            \@francais
+            \@anglais
             \addtocontents{toc}{\protect\@anglais}
             \selectlanguage{english}%
         }
     \fi
     \ifx\dmschaptername\dmschapternameen % \anglais est utilisé
-      \anglais
+      \@anglais
     \else
-      \francais%
+      \@francais%
     \fi
     \edef\chaptername{\ifx\dmschaptername\undefined Chapitre\else\dmschaptername\fi}
     \edef\contentsname{\ifx\dmscontentsname\undefined Table des mati\noexpand\`ere\else\dmscontentsname\fi}
@@ -1469,6 +1602,7 @@
     % La biblio est dans une section
 \def\sectionbibliography#1{
     \begingroup
+        \let\chapter=\section %Pour que ça marche avec natbib aussi
         \def\@bibtitlestyle{\section*{\protect\refname}}
         \edef\jobname{\dms@inputfilename}
         \bibliography{#1}
@@ -1478,6 +1612,7 @@
     % La biblio est dans un chapitre
 \def\chapterbibliography#1{
     \begingroup
+        \let\section=\chapter  %Pour que ça marche avec natbib aussi
         \def\@bibtitlestyle{\chapter*{\protect\refname}}
         \edef\jobname{\dms@inputfilename}
         \bibliography{#1}
@@ -1518,12 +1653,12 @@
         \let\secdef\@gobbletwo \chapter
         \let\@secnumber\@empty % pour \@tocwrite et \chaptermark
         \ifx\contentsname#2 \else%
-    \@tocwrite{chapter}{#2}
-\fi
+        \@tocwrite{chapter}{#2}
+    \fi
         \typeout{#2}%
-\@xp\chaptermark\@xp{#2}%
+    \@xp\chaptermark\@xp{#2}%
         \@xp\@makeschapterhead\@xp{#2}%
-\@afterheading
+    \@afterheading
         \makeatletter
         \@input{\jobname.#1}%
         \if@filesw
@@ -1533,7 +1668,13 @@
         \global\@nobreakfalse \endgroup
         \newpage
 }
-\newcounter{figure}[chapter]
+\ifphd@
+  \newcounter{figure}
+  \def\thefigure{\arabic{figure}}
+  \AtBeginDocument{\ifarticleenchapitre\else\def\thefigure{\arabic{figure}}\fi}
+\else
+  \newcounter{figure}[chapter]
+\fi
 \def\captionheadfont@{\scshape}
 \def\captionfont{\normalfont}
 \def\captionseparator{}
@@ -1544,10 +1685,16 @@
 \def\figurename{Fig.}
 \def\figure{\@float{figure}}
 \def\endfigure{\end@float}
-\newcounter{table}[chapter]
+\ifphd@
+   \newcounter{table}
+   \AtBeginDocument{\ifarticleenchapitre\else\def\thetable{\arabic{table}}\fi}
+   \def\fnum@table{\tablename\ \thetable}
+\else
+   \newcounter{table}[chapter]
+\fi
 \def\ftype@table{2}
 \def\ext@table{lot}
-\def\fnum@table{\tablename\ \thetable}
+\def\thetable{\arabic{table}}
 \def\tablename{Tab.}
 \def\table{\@float{table}}
 \def\endtable{\end@float}
@@ -1592,6 +1739,10 @@
     \thm@preskip\topsep \divide\thm@preskip\tw@
     \thm@postskip\thm@preskip
 }
+\def\dms@erreur#1{\errhelp{Assurez de remplir tous les champs obligatoires d'une page titre,
+  dont \auteur, \titre, \sujet et, dans le cas d'un article, \revue. Si vous désirez en laisser un
+  vide, vous pouvez faire p.ex. \revue{\relax}.}
+     \errmessage{DMS : Vous devez remplir le champ \string#1 avant d'appeler \string\maketitle}}
 
 
 \endinput
