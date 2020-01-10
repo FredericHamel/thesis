@@ -96,11 +96,13 @@ formelle à la figure~\ref{lst:module-ref->grammar} décrit la syntaxe du
 \begin{figure}[ht]
   \lstset{frame=single}
   \begin{mplisting}{0.8}
-<module-ref> := <local> | <hosted>
-<local>      := <id>(/<id>)*<tag>
-<hosted>     := <hostname>/<id>/<id>(/<id>)*(@<tag>)?
+<module-ref>       := <local> | <hosted>
+<local-package>    := <id>
+<hosted-package>   := <hostname>/<id>/<id>
+<local-module>     := <local-package>(/<id>)*<tag>
+<hosted-module>    := <hosted-package>(/<id>)*(@<tag>)?
 \end{mplisting}
-  \caption{Grammaire formelle d'un \textit{module-ref}}
+  \caption{Grammaire formelle d'un \texttt{module-ref}}
   \label{lst:module-ref->grammar}
 \end{figure}
 
@@ -118,12 +120,20 @@ le nom de l'espace sur le serveur.
 %   \item \lstcode{test} exécute les tests unitaires des modules spécifiés.
 % \end{itemize}
 
-\subsection{Installation de module}
-L'installation des modules peut être soit à partir d'un serveur de révision
-ou d'un répertoire local versionné par git. Dans les deux cas d'installation,
-le \lstcode{module-ref}  est utilisé pour déterminer l'emplacement du module
-dans le répertoire des modules. Chaque \lstcode{module-ref} est associé à un
-répertoire unique dans le répertoire des modules.
+\subsection{Installation des packages et des modules}
+%
+Un \textit{package} est un regroupement de modules.  L'installation d'un
+package est faite à partir d'un serveur de révision où un répertoire local qui
+est versionné par un système de versionnement (git, hg, svn).  La syntaxe d'un
+\textit{package} local est donné par la règle \texttt{<local-package>} de la
+figure~\ref{lst:modules-ref->grammar} et la syntaxe d'un \textit{package}
+hébergé est donnée par la règle \texttt{<hosted-module>}.  Chaque package est
+associé à un répertoire unique.
+
+% Dans les deux cas d'installation, le \lstcode{module-ref}  est utilisé pour
+% déterminer l'emplacement du module dans le répertoire des modules. Chaque
+% \lstcode{module-ref} est associé à un répertoire unique dans le répertoire
+% des modules.
 
 % Les modules qui sont hébergés sur un serveur de révision comme github, gitlab, bitbucket,
 % etc ont un \lstcode{module-ref} distinct.
@@ -147,16 +157,27 @@ répertoire unique dans le répertoire des modules.
 % suffixe \lstcode{@1.0.0}.
 
 
-Les modules sont hébergés sur des serveurs de version tels que github, gitlab,
-bitbucket, etc. Chaque version d'un module est installée dans un répertoire
-distinct. Il est donc possible d'avoir plus d'une version d'un module installé
+Les \textit{package} déployés sont généralement hébergés sur des serveurs de
+version tels que github, gitlab, bitbucket, etc. Une version d'un module est
+installé à partir d'un package dansun répertoire distinct.
+Il est donc possible d'avoir plusieurs versions d'un module installées
 sur le système de fichier.
-L'installation des modules s'effectue par l'intermédiaire du module
-\lstcode{_git} qui offre une interface à l'utilitaire \lstcode{git}. Le
-processus d'installation est séparé en plusieurs étapes.  Le contenu du module
-est installé dans un répertoire temporaire qui est ensuite renommé au
-répertoire de destination. Cela permet de faire apparaitre le module installé
-de façon atomique.
+
+L'installation d'un \textit{package} est faite par le module \lstcode{_vcs} qui
+offre un interface uniforme aux outils de gestion de versions tels que
+\texttt{git}, \texttt{hg} et \texttt{svn}.  Le processus d'installation est
+séparé en plusieurs étapes.
+\begin{enumerate}
+  \item Le \textit{package} est téléchargé dans un répertoire temporaire.
+  \item Le répertoire temporaire est renommé au répertoire prévu de façon atomique.
+\end{enumerate}
+Cette procédure d'installation garantit qu'un seul processus d'installation peut
+installer ce package.
+
+L'installation des modules ressemble à celle des \texttt{package} par le fait
+que le contenu du module est installé dans un répertoire temporaire qui est
+ensuite renommé atomiquement au répertoire associé du module.  Cela permet de
+faire apparaitre le module installé de façon atomique.
 
 Tout d'abord, la
 branche \lstcode{master} du dépôt du module est clonée. Ensuite, une archive de la
@@ -186,13 +207,15 @@ L'installation peut être effectuée en passant l'option \lstcode{-install}
 de façon optionnelle le préfixe d'installation.
 \begin{center}
   \begin{mplisting}{0.8}
-$ gsi -install [-dir <path>] module [...]
+$ gsi -install [-dir <path>] [local-dir] package
 \end{mplisting}
 \end{center}
-Le préfixe \lstcode{<path>} est la racine utilisée pour installer les modules
-et est spécifié par l'option \lstcode{-dir}.  La racine par défaut est
-\lstcode{\~\~userlib}. Voici un exemple d'installation d'une version spécifique du module
-\lstcode{semver} qui implémente la logique du \textit{semantic versioning}.
+
+Le répertoire d'installation \lstcode{<path>} est la racine utilisée pour
+installer les modules et est spécifié par l'option \lstcode{-dir}.  La racine
+par défaut est \lstcode{\~\~userlib}. Voici un exemple d'installation d'une
+version spécifique du module \lstcode{semver} qui implémente la logique du
+\textit{semantic versioning}.
 
 \begin{center}
   \begin{mplisting}{1}
