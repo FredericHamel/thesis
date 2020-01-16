@@ -89,8 +89,8 @@ du nom de domaine qui, dans le cas local, est vide.  Le \lstcode{<tag>}
 spécifie la version du module avec une référence à un commit du système de
 révision Git. Un \lstcode{<tag>} vide réfère à la version de développement du
 module (à éviter pour le déploiement final).  La syntaxe du nom de domaine est
-donnée par la grammaire à la figure \ref{lst:hostname->grammar}.  La grammaire
-formelle à la figure~\ref{lst:module-ref->grammar} décrit la syntaxe du
+donnée par la grammaire à la figure \ref{fig:hostname->grammar}.  La grammaire
+formelle à la figure~\ref{fig:module-ref->grammar} décrit la syntaxe du
 \lstcode{<module-ref>} dans le cas hébergé et local.\\
 
 \begin{figure}[ht]
@@ -103,7 +103,7 @@ formelle à la figure~\ref{lst:module-ref->grammar} décrit la syntaxe du
 <hosted-module>    := <hosted-package>(/<id>)*(@<tag>)?
 \end{mplisting}
   \caption{Grammaire formelle d'un \texttt{module-ref}}
-  \label{lst:module-ref->grammar}
+  \label{fig:module-ref->grammar}
 \end{figure}
 
 Le \lstcode{module-ref} \lstcode{github.com/gambit/hello} réfère
@@ -123,12 +123,12 @@ le nom de l'espace sur le serveur.
 \subsection{Installation des packages et des modules}
 %
 Un \textit{package} est un regroupement de modules.  L'installation d'un
-package est faite à partir d'un serveur de révision où un répertoire local qui
-est versionné par un système de versionnement (git, hg, svn).  La syntaxe d'un
-\textit{package} local est donné par la règle \texttt{<local-package>} de la
-figure~\ref{lst:modules-ref->grammar} et la syntaxe d'un \textit{package}
-hébergé est donnée par la règle \texttt{<hosted-module>}.  Chaque package est
-associé à un répertoire unique.
+package est faite à partir d'un serveur de révision ou un répertoire local qui
+est versionné par un système de gestion de versions (git, hg, svn).  La syntaxe
+d'un \textit{package} local est donné par la règle \texttt{<local-package>} de
+la figure~\ref{fig:module-ref->grammar} et la syntaxe d'un \textit{package}
+hébergé est donné par la règle \texttt{<hosted-module>}.  Chaque
+\textit{package} est associé à un répertoire unique.
 
 % Dans les deux cas d'installation, le \lstcode{module-ref}  est utilisé pour
 % déterminer l'emplacement du module dans le répertoire des modules. Chaque
@@ -157,14 +157,14 @@ associé à un répertoire unique.
 % suffixe \lstcode{@1.0.0}.
 
 
-Les \textit{package} déployés sont généralement hébergés sur des serveurs de
+Les \textit{packages} déployés sont généralement hébergés sur des serveurs de
 version tels que github, gitlab, bitbucket, etc. Une version d'un module est
-installé à partir d'un package dansun répertoire distinct.
+installée à partir d'un package dans un répertoire distinct.
 Il est donc possible d'avoir plusieurs versions d'un module installées
 sur le système de fichier.
 
 L'installation d'un \textit{package} est faite par le module \lstcode{_vcs} qui
-offre un interface uniforme aux outils de gestion de versions tels que
+offre une interface uniforme aux outils de gestion de versions tels que
 \texttt{git}, \texttt{hg} et \texttt{svn}.  Le processus d'installation est
 séparé en plusieurs étapes.
 \begin{enumerate}
@@ -179,32 +179,49 @@ que le contenu du module est installé dans un répertoire temporaire qui est
 ensuite renommé atomiquement au répertoire associé du module.  Cela permet de
 faire apparaitre le module installé de façon atomique.
 
-Tout d'abord, la
-branche \lstcode{master} du dépôt du module est clonée. Ensuite, une archive de la
-version est faite et extraite dans le préfixe des modules. Le préfixe est par
-défaut \lstcode{\~\~userlib}.  Il est possible de spécifier un préfixe
-d'installation dans lequel installer les modules. Plusieurs versions d'un même
-module coexistent dans le même préfixe d'installation.
+Tout d'abord, la branche principale du dépôt du \textit{package} est clonée
+dans un répertoire unique dans le préfixe d'installation qui est par défaut
+\lstcode{\~\~userlib}. L'installation d'un module se fait par la copie de ses
+fichiers dans le \textit{package} dans un dossier temporaire qui est renommé
+dans un dossier \texttt{@\textit{<version>}} dans le répertoire du
+\textit{package}. Le répertoire {\tt @} est utilisé comme version de
+développement qui change avec les mises à jour du \textit{package}.  Plusieurs
+versions d'un module peuvent coexister dans un même préfixe d'installation,
+puisque chaque version est associée à un répertoire différent.  La version d'un
+module spécifié par une étiquette au sein du système de gestion de module.
 
-La branche \lstcode{master} est utilisée comme version de développement et
-comme cache pour installer les autres versions. Une version d'un module est soit
-un \textit{commit}, une branche ou une étiquette. L'installation d'une version
-spécifique utilise la cache pour récupérer l'archive de la version demandée
-et l'extraire dans l'espace des modules.
+% Tout d'abord, la
+% branche \lstcode{master} du dépôt du module est clonée. Ensuite, une archive de la
+% version est faite et extraite dans le préfixe des modules. Le préfixe est par
+% défaut \lstcode{\~\~userlib}.  Il est possible de spécifier un préfixe
+% d'installation dans lequel installer les modules. Plusieurs versions d'un même
+% module coexistent dans le même préfixe d'installation.
 
-La procédure \lstcode{install} de \lstcode{_pkg} accepte deux paramètres:
-le nom du module et de façon optionnelle le préfixe d'installation. Elle
-retourne la valeur de vérité vraie (\lstcode{#t}) si l'installation réussit,
-sinon elle retourne la valeur de vérité fausse (\lstcode{#f}).
+% La branche \lstcode{master} est utilisée comme version de développement et
+% comme cache pour installer les autres versions. Une version d'un module est soit
+% un \textit{commit}, une branche ou une étiquette. L'installation d'une version
+% spécifique utilise la cache pour récupérer l'archive de la version demandée
+% et l'extraire dans l'espace des modules.
+
+Il est possible d'installer un module par une procédure dans le langage.  La
+procédure \lstcode{install} du module interne \lstcode{_pkg} permet
+l'installation de module, elle accepte deux paramètres: le nom du module et de
+façon optionnelle le préfixe d'installation.  Elle retourne la valeur de vérité
+vraie (\lstcode{#t}) si l'installation réussit, sinon elle retourne la valeur
+de vérité fausse (\lstcode{#f}).
 \begin{center}
   \begin{mplisting}{0.4}
 (install mod #!optional dir)
 \end{mplisting}
 \end{center}
 
-L'installation peut être effectuée en passant l'option \lstcode{-install}
-à l'interprète Gambit. Cette option requiert le nom du module et
-de façon optionnelle le préfixe d'installation.
+
+L'installation des \textit{package} peut être effectuée en invoquant
+l'interprète Gambit avec l'option \lstcode{-install}. Cette option requiert le
+nom du package. Le répertoire d'installation optionnel est spécifié par
+l'option \lstcode{-dir}.  Il est possible de spécifier un répertoire local où
+le \textit{package} est situé. Un paramètre est reconnu comme un répertoire
+local, s'il termine soit par un \texttt{/} ou par un point.
 \begin{center}
   \begin{mplisting}{0.8}
 $ gsi -install [-dir <path>] [local-dir] package
@@ -215,16 +232,47 @@ Le répertoire d'installation \lstcode{<path>} est la racine utilisée pour
 installer les modules et est spécifié par l'option \lstcode{-dir}.  La racine
 par défaut est \lstcode{\~\~userlib}. Voici un exemple d'installation d'une
 version spécifique du module \lstcode{semver} qui implémente la logique du
-\textit{semantic versioning}.
+\textit{semantic versioning}. Les
+figures~[\ref{fig:install_hosted_package_in_default_prefix},
+\ref{fig:install_hosted_package_in_custom_prefix},\ref{fig:install_local_package_in_custom_prefix}]
+montrent les différentes façons d'installer d'un \textit{package} en invoquant de
+l'interprète Gambit.
 
-\begin{center}
+\begin{figure}[ht]
+  \centering
+  \begin{mplisting}{1}
+$ gsi -install github.com/frederichamel/semver
+\end{mplisting}
+  \caption{Exemple d'installation d'un \textit{package} hébergé dans le préfixe d'installation
+    par défaut.}
+  \label{fig:install_hosted_package_in_default_prefix}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
   \begin{mplisting}{1}
 $ gsi -install -dir /tmp/exemple github.com/frederichamel/semver
 \end{mplisting}
-\end{center}
+  \caption{Exemple d'installation d'un \textit{package} hébergé dans le préfixe d'installation
+    \texttt{/tmp/exemple}}
+  \label{fig:install_hosted_package_in_custom_prefix}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \begin{mplisting}{1}
+$ gsi -install -dir /tmp/exemple /local/dir/ github.com/frederichamel/semver
+\end{mplisting}
+  \caption{Exemple d'installation d'un \textit{package} dans le préfixe d'installation
+    \texttt{/tmp/exemple} à partir du répertoire local \texttt{/local/dir/}.}
+  \label{fig:install_local_package_in_custom_prefix}
+\end{figure}
+
 
 \section{Désinstallation}
 
+Il est possible de désinstaller une version d'un module spécifique
+où le \textit{package} au complet.
 La désinstallation d'un module consiste à supprimer les fichiers
 de ce module. Le module \lstcode{_pkg} offre la procédure
 \lstcode{uninstall} qui accepte deux arguments: le nom du module,
@@ -241,7 +289,7 @@ La désinstallation peut être faite en passant l'option \lstcode{-uninstall}
 répertoire  des modules à désinstaller.
 \begin{center}
   \begin{mplisting}{0.8}
-$ gsi -uninstall [-dir <path>] module
+$ gsi -uninstall [-dir <path>] (<module>|<package>)
 \end{mplisting}
 \end{center}
 Le répertoire \lstcode{<path>} est l'emplacement des modules
@@ -259,14 +307,16 @@ $ gsi -uninstall -dir /tmp/exemple github.com/frederichamel/semver
 
 
 \section{Mise à jour}
-Cette opération actualise la branche \lstcode{master} du module.
-Cela donne accès aux nouvelles publications d'un module. Pour installer
-une nouvelle version d'un module, il suffit de faire la mise à jour
+%
+Cette opération actualise le \textit{package} courant. Cela donne
+accès aux nouvelles publications d'un module. Le répertoire \texttt{@} est
+effacé et remplacé par le dernier état de la branche de développement.  Pour
+installer une nouvelle version d'un module, il suffit de faire la mise à jour
 de la branche master et d'installer la nouvelle version.
 
 \begin{center}
   \begin{mplisting}{0.8}
-$ gsi -update [-dir <path>] module
+$ gsi -update [-dir <path>] <package>
 \end{mplisting}
 \end{center}
 
