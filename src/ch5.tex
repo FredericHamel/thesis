@@ -121,6 +121,7 @@ le nom de l'espace sur le serveur.
 % \end{itemize}
 
 \subsection{Installation des packages et des modules}
+% XXX: clone dans .gambit_repo
 %
 Un \textit{package} est un regroupement de modules.  L'installation d'un
 package est faite à partir d'un serveur de révision ou un répertoire local qui
@@ -174,10 +175,9 @@ séparé en plusieurs étapes.
 Cette procédure d'installation garantit qu'un seul processus d'installation peut
 installer ce package.
 
-L'installation des modules ressemble à celle des \texttt{package} par le fait
-que le contenu du module est installé dans un répertoire temporaire qui est
-ensuite renommé atomiquement au répertoire associé du module.  Cela permet de
-faire apparaitre le module installé de façon atomique.
+Les modules sont installés en même temps que le \textit{package} qui les
+contient. La version des modules correspond à la version du \textit{package}.
+Chacun des modules est contenu dans un sous répertoire du \textit{package}.
 
 Tout d'abord, la branche principale du dépôt du \textit{package} est clonée
 dans un répertoire unique dans le préfixe d'installation qui est par défaut
@@ -188,7 +188,7 @@ dans un dossier \texttt{@\textit{<version>}} dans le répertoire du
 développement qui change avec les mises à jour du \textit{package}.  Plusieurs
 versions d'un module peuvent coexister dans un même préfixe d'installation,
 puisque chaque version est associée à un répertoire différent.  La version d'un
-module spécifié par une étiquette au sein du système de gestion de module.
+module spécifié par une étiquette au sein du système de gestion de version.
 
 % Tout d'abord, la
 % branche \lstcode{master} du dépôt du module est clonée. Ensuite, une archive de la
@@ -206,7 +206,8 @@ module spécifié par une étiquette au sein du système de gestion de module.
 Il est possible d'installer un module par une procédure dans le langage.  La
 procédure \lstcode{install} du module interne \lstcode{_pkg} permet
 l'installation de module, elle accepte deux paramètres: le nom du module et de
-façon optionnelle le préfixe d'installation.  Elle retourne la valeur de vérité
+façon optionnelle le préfixe d'installation. Le module est installé par
+l'installation du \textit{package} englobant. Elle retourne la valeur de vérité
 vraie (\lstcode{#t}) si l'installation réussit, sinon elle retourne la valeur
 de vérité fausse (\lstcode{#f}).
 \begin{center}
@@ -216,12 +217,12 @@ de vérité fausse (\lstcode{#f}).
 \end{center}
 
 
-L'installation des \textit{package} peut être effectuée en invoquant
+L'installation des \textit{package} peut aussi s'effectuer par l'invocation de
 l'interprète Gambit avec l'option \lstcode{-install}. Cette option requiert le
 nom du package. Le répertoire d'installation optionnel est spécifié par
 l'option \lstcode{-dir}.  Il est possible de spécifier un répertoire local où
 le \textit{package} est situé. Un paramètre est reconnu comme un répertoire
-local, s'il termine soit par un \texttt{/} ou par un point.
+local, s'il termine soit par une barre oblique (\texttt{/}) ou par un point.
 \begin{center}
   \begin{mplisting}{0.8}
 $ gsi -install [-dir <path>] [local-dir] package
