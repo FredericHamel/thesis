@@ -1,16 +1,20 @@
 
 \chapter{Bibliothèques Scheme}
+\label{ch:scheme_concepts}
 
-Pour développer notre approche de modularisation dans le contexte de
-systèmes distribués nous avons choisi un langage de programmation nous
-permettant de facilement expérimenter avec le code mobile.  Le langage
-Termite Scheme, une variante de Scheme étendue avec des
-fonctionnalités de programmation distribuée inspirées du langage
-Erlang, nous est apparu comme une option intéressante vue sa
-performance, sa portabilité et son support pour la méta programmation
-facilitée par son homoiconicité.  Notre travail a donc pu se concentrer
-sur la conception d'un système de module spécialisé aux besoins du
-code mobile.
+Pour développer notre approche de modularisation dans le contexte de systèmes
+distribués nous avons choisi un langage de programmation nous permettant de
+facilement expérimenter avec le code mobile. Le langage de programmation Scheme
+a plusieurs implémentations, dont Gambit, Racket\cite{Racket},
+Gerbil\cite{Gerbil} et JazzScheme\cite{JazzScheme}.  Le langage Termite
+Scheme~\cite{DBLP:conf/erlang/Germain06}, une variante de Scheme étendue avec
+des fonctionnalités de programmation distribuée inspirées du langage Erlang,
+nous est apparu comme une option intéressante vue sa performance, sa
+portabilité et son support pour la méta programmation facilitée par son
+homoiconicité. Il est implémenté en tant que module de Gambit. Notre travail a
+donc pu se concentrer sur la conception d'un système de module spécialisé aux
+besoins du code mobile. Le système Termite Scheme est expliqué sommairement
+dans le chapitre \ref{ch:task_migration}.
 
 Ce chapitre introduit la syntaxe de Scheme et les différentes
 approches de modularisation existantes.  Afin de faciliter son
@@ -24,10 +28,11 @@ ces approches.
 
 \section{Scheme et sa syntaxe}
 
-Le langage Scheme\cite{Clinger:2008:SCH:1529966.1529973}, conçu en 1975 par Guy
-L. Steele et Gerald Jay Sussman, est une variante minimaliste de Lisp.
-Depuis sa conception, plusieurs normes ont vu le jour; les plus connues
-étant le R4RS (1991), R5RS (1998), R6RS (2007) et R7RS (2013).
+Le langage Scheme~\cite{Clinger:2008:SCH:1529966.1529973}, conçu en 1975 par
+Guy L. Steele et Gerald Jay Sussman, est une variante minimaliste de Lisp.
+Depuis sa conception, plusieurs normes ont vu le jour; les plus connues étant
+le R4RS (1991), R5RS (1998), R6RS (2007) et R7RS (2013). Notre implémentation
+utilise R7RS.
 
 Scheme est un langage de programmation avec un
 système de type dynamique.  Les types sont associés aux valeurs plutôt qu'aux
@@ -37,7 +42,7 @@ impérative et la méta programmation.
 
 Sur le plan syntaxique, Scheme hérite la
 syntaxe préfixe parenthésée de Lisp.  Un programme Scheme est une séquence de
-\textit{s-expressions}.  Chaque \textit{s-expression} correspond soit à une
+\textit{s-expressions} (expressions symboliques).  Chaque \textit{s-expression} correspond soit à une
 constante, une variable ou une forme \texttt{(\textit{<op>} \textit{<arg>...})}
 qui dénote un appel de procédure, un appel de macro, ou une forme spéciale.
 
@@ -52,16 +57,15 @@ Les formes syntaxiques spéciales de base en Scheme sont \lstcode{define}, \lstc
     de la procédure est l'expression \textit{<body>}.
 
   \item La forme \texttt{(let \textit{<bindings>} \textit{<body>})} permet de
-    créer des associations (\textit{<bindings>}) visibles seulement dans le
+    créer des liaisons (\textit{<bindings>}) visibles seulement dans le
     contexte de l'expression \textit{<body>} dont la valeur de la forme
-    \texttt{let}. Les associations sont sous la forme d'une liste associative
+    \texttt{let}. Les liaisons sont sous la forme d'une liste associative
     nom et valeur.
 
-  %% XXX: Too much???
   \item L'évaluation conditionnelle est obtenue par la forme \texttt{(if
-    \textit{<e1>} \textit{<e2>} \textit{<e3>})}.  L'expression \textit{<e2>}
-    est exécutée si la valeur de l'expression \textit{<e1>} est vraie sinon
-    l'expression \textit{<e3>} est exécutée.
+    \textit{<e1>} \textit{<e2>} \textit{<e3>})}.  L'expression \textit{<e3>}
+    est exécutée si la valeur de l'expression \textit{<e1>} est fausse sinon
+    l'expression \textit{<e2>} est exécutée.
 
   \item La forme \texttt{(set! \textit{<name>} \textit{<val>})} modifie le contenu de la variable
     \textit{<name>} avec la valeur \textit{<val>}.
@@ -167,13 +171,13 @@ simple avec deux définitions de fonctions.
 
 % La définition des associations globales en Scheme est effectuée avec \lstcode{define}.
 
-Les différents types primitifs disponibles dans la norme Scheme
-sont \lstcode{boolean}, \lstcode{pair}, \lstcode{symbol},
-\lstcode{number}, \lstcode{char}, \lstcode{string}, \lstcode{vector},
-\lstcode{port} et \lstcode{procedure}.
-Plusieurs systèmes Scheme offrent des extensions à ces types, tels
-les dictionnaires (``hash tables''), les structures (``records'') et tableaux numériques (par exemple Gambit
-offre le type \lstcode{u8vector} qui est un tableau d'octets).
+Les différents types primitifs disponibles dans la norme Scheme sont
+\lstcode{boolean}, \lstcode{pair}, \lstcode{symbol}, \lstcode{number},
+\lstcode{char}, \lstcode{string}, \lstcode{vector}, \lstcode{port} et
+\lstcode{procedure}.  Plusieurs systèmes Scheme offrent des extensions à ces
+types, tels les dictionnaires ({\it hash tables}), les structures ({\it
+records}) et tableaux numériques (par exemple Gambit offre le type
+\lstcode{u8vector} qui est un tableau d'octets).
 
 \section{Procédures et macros}
 \label{sec:proc_and_macro}
@@ -189,9 +193,33 @@ paramètres et une séquence d'au moins une \textit{s-expression} comme corps.
 Lors de l'appel d'une procédure, chacun des paramètres actuels est évalué puis
 propagé à la procédure. C'est un mode de passage de paramètre par valeur. Les
 boucles sont normalement exprimées sous la forme de récursion.  Cela est
-facilité par l'existence de l'appel terminal garanti.  Il est assez simple
-d'ajouter une syntaxe pour les boucles à l'aide de la méta programmation.
+facilité par l'existence de l'appel terminal~\cite{DBLP:conf/acm/Steele77}
+garanti, qui permet des récursions sans coût. L'appel terminal de procédure est
+simplement la dernière appel effectué dans une procédure. Ces appels n'ont pas
+besoin de retourner, ils permettent d'exprimer les boucles infinies souvent
+utilisées dans le contexte d'un serveur qui boucle sur les évènements.  Par
+exemple, l'appel récursif de \lstcode{repeat} dans la
+figure~\ref{fig:appel_terminal_example} est terminal, car l'appelant n'a pas
+besoin du résultat pour terminer, donc l'appelant peut donner le contrôle à la
+procédure. Sans les appels terminaux, les boucles infinies mèneraient à un
+débordement de la pile d'appels. Il est assez simple d'ajouter une syntaxe pour
+les boucles à l'aide de la méta programmation.
 
+\begin{figure}[ht]
+  \lstset{language={Scheme}}
+  \begin{mplisting}{0.9}
+(define (repeat msg n)
+  (if (< 0 n)
+      (begin
+        (display msg)
+        (repeat msg (- n 1))) ;; appel terminal
+      (newline))) ;; appel terminal
+\end{mplisting}
+  \caption{Exemple de boucle affiche {\tt n} fois le message {\tt msg} qui
+    utilise des appel terminal lors de l'appel de {\tt repeat} et
+    {\tt newline}.}
+  \label{fig:appel_terminal_example}
+\end{figure}
 
 % \begin{figure}[ht]
 %   \begin{center}
@@ -233,22 +261,21 @@ d'ajouter une syntaxe pour les boucles à l'aide de la méta programmation.
 
 % La récursion est la façon dont les boucle sont faites.
 La méta programmation en Scheme est basée sur la capacité d'un programme de
-manipuler d'autre programme comme des données. Cela implique qu'il est possible
-de générer, analyser et modifier le code d'un autre programme.  Les
+manipuler d'autres programmes comme des données. Cela implique qu'il est
+possible de générer, analyser et modifier le code d'un autre programme.  Les
 constructions utilisées pour manipuler le code du programme et ajouter des
 extensions au langage sont les macros.
 
-En C et C++, les macros sont basées sur un modèle de remplacement textuel simple
-et ne permettent pas de récursion se référant à elle-même.  Un appel à la macro
-est remplacé par le corps de celle-ci. Les macros de style Lisp permettent des
-transformations qui se font avec
-l'ensemble des procédures du langage, ce qui leur donne plus de flexibilité.  La
-différence entre les procédures et les macros est le mode de passage de
-paramètres.  Les paramètres sont passés à la macro sans être évalués.
-Certaines implémentations de Scheme offrent la forme \lstcode{define-macro}
-pour définir les macros.  Cette forme est équivalente au \lstcode{defmacro} de
-Lisp. Elle accepte en entrée des \textit{s-expression}s et retourne une
-\textit{s-expression}.
+En C et C++, les macros sont basées sur un modèle de remplacement textuel
+simple et ne permettent pas de récursion.  Un appel à la macro est remplacé par
+le corps de celle-ci. Les macros de style Lisp permettent des transformations
+qui se font avec l'ensemble des procédures du langage, ce qui leur donne plus
+de flexibilité.  La différence entre les procédures et les macros est le mode
+de passage de paramètres.  Les paramètres sont passés à la macro sans être
+évalués.  Certaines implémentations de Scheme offrent la forme
+\lstcode{define-macro} pour définir les macros.  Cette forme est équivalente au
+\lstcode{defmacro} de Lisp. Elle accepte en paramètre des
+\textit{s-expression}s et retourne une \textit{s-expression}.
 
 \begin{figure}[htbp]
   \begin{tabular}{|l|}\hline
@@ -278,7 +305,7 @@ avec \lstcode{define-macro}.  Pour les systèmes Scheme n'offrant pas la forme
 \lstcode{include} avec \lstcode{define-syntax} qui est une forme de définition
 de macro alternative à \lstcode{define-macro}. L'implémentation de cette macro
 est donnée à la figure \ref{fig:macro_include_def_syntax}. Les particularités
-de \lstcode{define-syntax} ne sont expliquées puisqu'elles ne sont pas
+de \lstcode{define-syntax} ne sont pas expliquées puisqu'elles ne sont pas
 pertinentes à ce mémoire.
 
 % --------------------------------------MOVE--------------------------------------
@@ -296,7 +323,7 @@ pertinentes à ce mémoire.
 (define-syntax include
   (lambda (stx)
     (syntax-case stx ()
-      ((_ filename)
+      ((include filename)
        (let ((content
                (call-with-input-file
                   (syntax->datum (syntax filename))
@@ -400,10 +427,10 @@ exemple de module simple n'utilisant que la procédure \lstcode{load}.
 % - Import
 % - Corps de module
 
-Le standard R6RS\cite{Scheme:R6RS} renforce le concept de module avec la
-syntaxe \lstcode{library}.  Un module R6RS est séparé en 4 parties: le nom, une
+Le standard R6RS\cite{Scheme:R6RS} renforce le concept de module avec la forme
+syntaxique \lstcode{library} qui a 4 parties: le nom, une
 sous-forme \lstcode{export}, une sous-forme \lstcode{import} et le corps du
-module. Le nom du module l'identifie de façon unique, il peut contenir une
+module. Le nom du module l'identifie de façon unique et il peut contenir une
 spécification de version. La version est spécifiée par une liste d'entiers
 positifs. Une liste vide \lstcode{()} correspond à ne pas spécifier la
 version. Ensuite, il y a la liste des exportations qui est spécifiée par la sous-forme
@@ -580,39 +607,164 @@ l'ensemble comme suit:
 % des bibliothèques est \verb|.sld| qui signifie \emph{Scheme Library
 % Declaration}.
 
-\begin{center}
-  \begin{figure}[h]
-  \begin{tabular}{|l|l|}
-    \hline
-    \begin{mplisting}{0.5}
-;; Bibliotheque R6RS
-(library (math)
-  (export fact)
-  (import (rnrs base))
-  (define (fact n)
-    (if (< n 2)
-      1
-      (* n (fact (- n 1))))))
-\end{mplisting} &
-    \begin{mplisting}{0.5}
-;; Bibliotheque R7RS
-(define-library (math)
-  (export fact)
-  (import (scheme base))
-  (begin
-    (define (fact n)
-      (if (< n 2)
-        1
-        (* n (fact (- n 1)))))))
-\end{mplisting}\\\hline
-  \end{tabular}
-    \caption{Comparaison entre la syntaxe des modules R6RS et R7RS}
-% \caption{À gauche, il y a un exemple d'une bibliothèque mathématique dans le format R6RS qui implémente
-% la fonction factoriel. À droite, une réécriture de la bibliothèque de gauche en R7RS.}
-  \label{fig:r6rs_r7rs_math_mdoule}
-\end{figure}
-\end{center}
+%[FIXME: Do I need this figure]
+% \begin{center}
+%   \begin{figure}[h]
+%   \begin{tabular}{|l|l|}
+%     \hline
+%     \begin{mplisting}{0.5}
+% ;; Bibliotheque R6RS
+% (library (math)
+%   (export fact)
+%   (import (rnrs base))
+%   (define (fact n)
+%     (if (< n 2)
+%       1
+%       (* n (fact (- n 1))))))
+% \end{mplisting} &
+%     \begin{mplisting}{0.5}
+% ;; Bibliotheque R7RS
+% (define-library (math)
+%   (export fact)
+%   (import (scheme base))
+%   (begin
+%     (define (fact n)
+%       (if (< n 2)
+%         1
+%         (* n (fact (- n 1)))))))
+% \end{mplisting}\\\hline
+%   \end{tabular}
+%     \caption{Comparaison entre la syntaxe des modules R6RS et R7RS}
+% % \caption{À gauche, il y a un exemple d'une bibliothèque mathématique dans le format R6RS qui implémente
+% % la fonction factoriel. À droite, une réécriture de la bibliothèque de gauche en R7RS.}
+%   \label{fig:r6rs_r7rs_math_mdoule}
+% \end{figure}
+% \end{center}
+\section{La syntaxe de Termite}
 
+Ce langage, conçu par Guillaume Germain en 2006, est l'implémentation du style
+de programmation par message d'Erlang dans Gambit Scheme.  Les processus sont
+représentés par les threads de Scheme. La communication entre ces processus est
+effectuée par un système de boîte de message présent dans Gambit. Chaque thread
+possède une file d'attente de messages entrants.
+
+Termite expose plusieurs procédures pour gérer les processus et la transmission
+de message entre chacun des nœuds.
+
+\begin{itemize}
+  \item La procédure \texttt{(spawn \textit{<thunk>} \#!key \textit{<name>})} permet de
+    créer des processus Termite. Le paramètre \textit{<thunk>} est la procédure principale
+    du thread. Le paramètre \textit{<name>} est un paramètre associatif optionnel.V
+
+  \item La procédure \texttt{(! \textit{<node>} \textit{<msg>})} envoie le message
+    \lstcode{msg} au nœud \lstcode{node}.
+
+  \item La procédure \lstcode{(?)} permet de recevoir un message
+    envoyé par un autre processus au nœud courant.
+
+  \item La procédure \texttt{(!? \textit{<node>} \textit{<msg>})} envoie un message au
+    nœud \lstcode{node} et attend la réponse.
+
+  \item La macro \texttt{(recv (\textit{<pattern>} \textit{<expr1>} \dots) \dots)}
+    permet un filtrage par motif des messages reçus du nœud courant.
+
+\end{itemize}
+
+La figure~\ref{fig:buggy_pong_server} est un exemple d'application Termite.
+Cet exemple a un bogue volontaire, le serveur pong répond à un message
+\texttt{\itshape ping} par le message \texttt{\itshape gnop} au lieu de
+\texttt{\itshape pong}.
+
+Dans cet exemple, il y a un scénario de mise à jour de code à la volée,
+c'est-à-dire sans interruption de service. Il y a deux nœuds, un serveur
+qui exécute le code de \texttt{buggy-pong.scm} et un client exécute le
+code \texttt{ping.scm}.
+
+\begin{figure*}[ht]
+  \lstset{language={Scheme},frame=single}
+  \fontsize{8}{7}
+  \begin{tabular}{ll}
+\begin{mplisting}{0.5}
+;; ping.scm (running on node1)
+(declare (block))
+(import (termite))
+
+(define pong-server
+  (remote-service 'pong-server node2))
+
+(define new-server
+  (letrec ((server-loop
+            (lambda () ;; code that will be migrated
+              (recv
+                ((from tag 'clone)
+                 (call/cc
+                   (lambda (k)
+                     (! from (list tag k)))))
+                ((from tag 'ping)
+                 (! from (list tag 'pong)))
+                (('update k)
+                 (k #t)))
+              (server-loop))))
+  (spawn server-loop)))
+
+(node-init node1)
+
+(!? pong-server 'ping) ; => gnop
+(! pong-server (list 'update (!? new-server 'clone)))
+(!? pong-server 'ping) ; => pong
+\end{mplisting}
+&
+\begin{mplisting}{0.5}
+;; buggy-pong.scm (running on node2)
+(declare (block))
+(import (termite))
+
+(define pong-server
+  (spawn
+    (lambda ()
+      (let loop ()
+        (recv
+          ((from tag 'ping)
+           (! from (list tag 'gnop))) ;; BUG!
+          (('update k)
+           (k #t)))
+        (loop)))))
+
+(node-init node2)
+
+;; publish the pong server
+(publish-service 'pong-server pong-server)
+\end{mplisting}
+  \end{tabular}
+  \caption{Un serveur Ping-Pong en Termite Scheme}
+  \label{fig:buggy_pong_server}
+\end{figure*}
+
+\begin{enumerate}
+  \item Le client envoie le message \texttt{ping} au serveur \texttt{buggy-pong}.
+  \item Le serveur répond par le message \texttt{gnop}, c'est un bogue.
+  \item Le client envoie le message \texttt{clone} au service local
+    \texttt{new-server} contenant le code sans le bogue.
+
+  \item\label{step_clone} Le service local clone son état courant en capturant sa
+    continuation par \texttt{call/cc}.
+
+  \item\label{step_migration} Le client envoie la l'état du service local au serveur \texttt{buggy-pong}
+    par le message \texttt{update}.
+
+  \item\label{step_update} Le serveur exécute la continuation, ce qui met à jour son code.
+
+  \item Le client envoie un autre message \texttt{ping} au serveur \texttt{buggy-pong}.
+  \item Le serveur répond par le message \texttt{pong}.
+\end{enumerate}
+
+Dans ce scénario, la mise à jour de code est effectuée dans les étapes
+\ref{step_clone}, \ref{step_migration} et \ref{step_update}. Cela
+permet de réparer le bogue qui est dans le serveur.
+
+Le problème est que cet exemple ne fonctionne que si les deux nœuds sont interprétés,
+car le code source est transmis. Pour permettre la transmission de code dans le cas
+compilé que nous avons conçu un système de module.
 
 \section{Conclusion}
 %
@@ -625,7 +777,8 @@ puisque Gambit se veut compatible avec le R7RS. Cela a permis d'expérimenter
 avec le code mobile. En plus, cela facilite son adoption et sa portabilité
 entre les implémentations de Scheme qui sont de plus en plus compatibles avec
 R7RS.
-
+Les modules existent dans le langage de programmation Scheme. L'implémentation
+Gambit Scheme n'avait pas le support des modules.
 
 % - (import (foo)) ; exportant f1 f2 f3
 % ===>
