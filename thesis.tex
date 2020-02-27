@@ -328,27 +328,28 @@
 
 %\francais
 \chapter*{Résumé}
-Ce mémoire décrit et évalue un système de module
-qui améliore la migration de code dans le langage de programmation
-distribuée Scheme. Ce système de module a la possibilité
-d'être utilisé dans les applications qu'elle soit distribués ou pas.
-Il a pour but de faciliter
-la conception des programmes dans une structure modulaire
-et faciliter la migration de code entre les nœuds
-d'un système distribué. Le système de module est conçu pour
-Gambit, un compilateur et interprète du langage Scheme.
+% TODO: sync french and english
+Ce mémoire décrit et évalue un système de module qui améliore la migration de
+code dans le langage de programmation distribuée Termite Scheme. Ce système de
+module a la possibilité d'être utilisé dans les applications qu'elles soient
+distribuées ou pas.  Il a pour but de faciliter la conception des programmes
+dans une structure modulaire et faciliter la migration de code entre les nœuds
+d'un système distribué. Le système de module est conçu pour le système Gambit
+Scheme, un compilateur et interprète du langage Scheme utilisé pour implanter
+Termite. Le système Termite Scheme est utilisé pour implémenter les système
+distribué.
 
 Notre approche permet d'identifier les modules
 de façon unique dans un contexte distribué. La facilité
 d'utilisation et la portabilité ont été des facteurs importants
 dans la conception du système de module.
 
-Le mémoire décrit la structure des modules, leur implémentation
-dans Gambit et leur application. Les qualités du système de module sont
-démontrées par des exemples.
+Le mémoire décrit la structure des modules, leur implémentation dans Gambit et
+leur application. Les qualités du système de module sont démontrées par des
+exemples et la performance est évaluée expérimentallement.
 
 \vspace*{1.5ex}
-\noindent\textbf{Mots clés}: Langage de programmation fonctionnel,
+\noindent\textbf{Mots clés}: Programmation fonctionnelle,
 Scheme, Erlang, Système de module, Système distribué, Agent mobile.
 
 %%------------------------------------------------- %
@@ -358,19 +359,20 @@ Scheme, Erlang, Système de module, Système distribué, Agent mobile.
 \anglais{}
 \chapter*{Summary}
 
-This thesis presents a module system for Gambit Scheme that supports
-distributed computing. This module system facilitates application modularity
-and ease code migration between the nodes of a distributed system. The Termite
-Scheme language is used to implement the distributed applications.
+This thesis presents a module system for Termite Scheme that supports
+distributed computing.  This module system facilitates application modularity
+and eases code migration between the nodes of a distributed system. The Gambit
+Scheme system is used to implement the distributed Termite and the Module
+system.
 
 Our approach uses a naming model for the modules
 that uniquely identifies in a distributed
 context. Both ease of use and portability were important factors
-in the design of system module.
+in the design of the module system.
 
-The thesis will describe the module structure and how
-it was implemented into Gambit. The features of this system
-are shown through application examples.
+The thesis describes the module system and how it was integrated into Gambit.
+The features of this system are shown through application examples and the
+performance is evaluated experimentally.
 
 \vspace*{1.5ex}
 \noindent\textbf{Keywords}: Functional programming, Scheme, Erlang,
@@ -438,6 +440,7 @@ Module System, Distributed System, Mobile Agent.
 %%\def\coldeux{\relax}
 \begin{twocolumnlist}{.2\textwidth}{.7\textwidth}
   FFI & Interface de fonction étrangère (\textit{Foreign Function Interface}) \\
+  REPL & Boucle de lecture et d'évaluation (\textit{Read Eval Print Loop}) \\
   RPC & Appel de procédure à distance (\textit{Remote Procedure Call}) \\
 \end{twocolumnlist}
 %% L'environnement <threecolumnlist> existe aussi pour trois colonnes.
@@ -489,7 +492,7 @@ continuer.
 
 \include{ch1}
 \include{ch2}
-\include{ch3_0}
+%\include{ch3_0}
 % TODO: shift chapter number.
 \include{ch3}
 \include{ch4}
