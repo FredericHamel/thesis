@@ -2,12 +2,12 @@
 \chapter{Modèle de chargement}
 \label{ch:loading-model}
 
-Ce chapitre traite des mécanismes de chargement implémenté pour le système de
-module.  Dans notre implémentation, les modules sont référés par un nom
-symbolique plutôt que leur emplacement sur le système de fichier. Elle garantit
-l'ordre dans lequel ils sont chargés et aussi le chargement unique de chaque
-module. Pour permettre la diffusion des modules, nous avons ajouté un mécanisme
-d'installation automatique et de chargement des modules à la volée.
+Ce chapitre traite des mécanismes de chargement que nous avons implémenté pour
+le système de module.  Dans notre implémentation, les modules sont référés par
+un nom symbolique plutôt que leur emplacement sur le système de fichier. Elle
+garantit l'ordre dans lequel ils sont chargés et aussi le chargement unique de
+chaque module. Pour permettre la diffusion des modules, nous avons ajouté un
+mécanisme d'installation automatique et de chargement des modules à la volée.
 
 Un système est composé d'un ensemble de modules qui interagissent entre eux.
 L'interaction entre les modules est dans un contexte statique ou dynamique.
@@ -245,10 +245,12 @@ dynamiques.\\
   \label{fig:basic_fib_module}
 \end{figure}
 
-La construction d'une bibliothèque dynamique à partir du fichier \texttt{fib.scm}
-de la figure \ref{fig:basic_fib_module} s'effectue par le compilateur de Gambit
-qui se nomme \texttt{gsc}. Cela produit un fichier avec l'extension \texttt{.oN}
-où le \texttt{N} correspond à la version générée de la bibliothèque qui commence à 1.
+La construction d'une bibliothèque dynamique à partir du fichier
+\texttt{fib.scm} de la figure \ref{fig:basic_fib_module} s'effectue par le
+compilateur de Gambit qui se nomme \texttt{gsc} depuis longtemps. Cela produit
+un fichier avec l'extension \texttt{.oN} où le \texttt{N} correspond à la
+version générée de la bibliothèque qui commence à 1. Gambit support
+déjà un versionnement des modules compilés.
 
 
 \section{Module hébergé}
@@ -279,12 +281,17 @@ digit         = [0-9]
 
 
 \subsection{Installation automatique}
-%
-L'installation automatique d'un module hébergé dépend du contenu de la
-\textit{whitelist}.  La \textit{whitelist} contient une liste de préfixe
-utilisé pour valider les \textit{<module-ref>}. La validation consiste
-à trouver un élément dans la \textit{whitelist} qui correspond à un
-préfixe du \textit{<module-ref>}.
+%[TODO: clarifié la whitelist]
+Gambit permet l'installation automatique des modules. Pour contrôler les
+provenances des modules qui sont installés automatiquement, nous avons
+ajouté une liste des emplacements de confiance à l'environnement d'exécution
+qui indique quels modules peuvent être installés inconditionnellement.
+Nous avons nommé cette liste \textit{whitelist}, elle valide les
+\textit{<module-ref>}.  La validation consiste à trouver un
+élément dans la \textit{whitelist} qui correspond à un préfixe du
+\textit{<module-ref>}.
+
+%[TODO: not done, February 27 is the deadline for this part]
 
 Un élément est considéré un préfixe, si chacune des composantes de l'élément
 est incluse dans le \textit{<module-ref>} dans le même ordre. L'élément
@@ -294,18 +301,29 @@ car les parties \texttt{github.com} et \texttt{gambit} font partie du
 contient pas le préfixe \texttt{gihtub.com/gambit}, car \texttt{gambit} est
 différent de \texttt{gambitXYZ}.
 
-Par défaut \texttt{github.com/gambit} est inclus dans la \textit{whitelist}.
-Cela implique que tous les modules sous \texttt{github.com/gambit}
-peuvent être installés automatiquement. La \textit{whitelist} peut
-être modifiée par une option de l'interprète:
+Par défaut l'emplacement \texttt{github.com/gambit} est inclus dans la
+\textit{whitelist}, puisque cela correspond à la emplacement qui de des
+sources de Gambit.  Cela implique que tous les modules sous
+\texttt{github.com/gambit} peuvent être installés automatiquement. Par exemple,
+le module \texttt{github.com/gambit/hello} peut être installé
+inconditionnellement. La \textit{whitelist} peut être modifiée par
+les variables d'environnement et par les arguments de ligne de commande.
 
-\begin{center}
+\begin{figure}[ht]
+  \centering
   \begin{mplisting}{0.4}
+$ gsi -:whitelist=
+> (##os-module-whitelist)
+()
+
 $ gsi -:whitelist=github.com/foo
 > (##os-module-whitelist)
 ("github.com/gambit" "github.com/foo")
 \end{mplisting}
-\end{center}
+  \caption{Exemple de manipulation de la {\it whitelist} par
+    les arguments de la ligne de commande.}
+  \label{fig:whitelist_manipulation}
+\end{figure}
 
 En plus de la \textit{whitelist} il y a aussi le mode d'installation.
 Le mode d'installation indique si l'installation demande une confirmation
