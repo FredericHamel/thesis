@@ -312,30 +312,35 @@ les variables d'environnement et par les arguments de ligne de commande.
 \begin{figure}[ht]
   \centering
   \begin{mplisting}{0.4}
-$ gsi -:whitelist=
-> (##os-module-whitelist)
-()
+$ gsi -e '(import (github.com/feeley/pyffi))'
+*** ERROR IN (stdin)@1.9 -- Cannot find library (github.com/feeley/pyffi)
 
-$ gsi -:whitelist=github.com/foo
-> (##os-module-whitelist)
-("github.com/gambit" "github.com/foo")
+$ gsi -:whitelist=github.com/feeley -e '(import (github.com/feeley/pyffi))'
+
+$ gsi -:whitelist= -e '(import (github.com/gambit/hello))'
+*** ERROR IN (stdin)@1.9 -- Cannot find library (github.com/gambit/hello)
 \end{mplisting}
-  \caption{Exemple de manipulation de la {\it whitelist} par
-    les arguments de la ligne de commande.}
+  \caption{Exemples de manipulation de la {\it whitelist} par
+    les arguments de la ligne de commande. Le premier exemple
+    montre le rejet de l'installation, car le module n'est pas dans la
+    \textit{whitelist}. Le second exemple permet les modules sous
+    \texttt{github.com/feeley} d'être installé automatiquement.
+    Le dernier exemple montre comment désactiver l'installation automatique
+    en vidant la whitelist.}
   \label{fig:whitelist_manipulation}
 \end{figure}
 
-En plus de la \textit{whitelist} il y a aussi le mode d'installation.
-Le mode d'installation indique si l'installation demande une confirmation
-à l'usager pour l'installation d'un module qui n'est pas dans la
+En plus de la \textit{whitelist} nous avons aussi ajouté un mode
+d'installation.  qui indique si l'installation demande une confirmation à
+l'usager pour l'installation d'un module qui n'est pas dans la
 \textit{whitelist}. Il y a trois modes d'installation.
 \begin{itemize}
   \item \textbf{never}: il y a seulement les modules qui sont dans la
     \textit{whitelist} qui peuvent être installés.
 
-  \item \textbf{repl}: les modules qui ne sont pas dans la \textit{whitelist}
+  \item \textbf{repl} (\textit{Read Eval Print Loop}): les modules qui ne sont pas dans la \textit{whitelist}
     peuvent être installés avec la confirmation textuelle de l'usager s'il y a
-    une \textit{repl}.
+    une \textit{repl}. C'est le mode par défaut.
 
   \item \textbf{ask-always}: les modules qui ne sont pas dans la \textit{whitelist}
     peuvent être installés avec la confirmation textuelle de l'usager.
