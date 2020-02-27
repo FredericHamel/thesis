@@ -3,7 +3,7 @@
 \label{ch:modules_implementation}
 
 Ce chapitre traite de notre implémentation des modules dans Gambit qui se veut
-éventuellement portable entre les différentes implémentations de Scheme.  Notre
+le plus portable entre les différentes implémentations de Scheme.  Notre
 approche des modules se base sur la syntaxe de R7RS.  Notre implémentation des
 modules utilise des formes déjà existantes et aussi de nouvelles formes qui ont
 été ajoutées au besoin.  Ces nouvelles formes nous ont permis d'intégrer la
@@ -16,10 +16,13 @@ programmation Scheme supportant R7RS.
 
 
 Les formats des modules R7RS, construits avec \lstcode{define-library}, contiennent
-plusieurs composantes. L'espace de nom du module qui regroupe toutes les
-fonctionnalités. Une liste des modules qui sont utilisés par le module courant.
-Une liste des symboles exportés par le module. Il est possible de modifier les
-identifiants d'un module lors de l'importation et de l'exportation.
+plusieurs composantes.
+\begin{itemize}
+  \item L'espace de nom du module qui regroupe toutes les fonctionnalités.
+  \item Une liste des modules qui sont utilisés par le module courant.
+  \item Une liste des symboles exportés par le module.
+\end{itemize}
+Il est possible de modifier les identifiants d'un module lors de l'importation et de l'exportation.
 L'importation multiple d'un module doit correspondre à un seul chargement.
 Pour exprimer les relations entre les modules certaines formes spéciales
 ont été ajoutées dans Gambit.  Si les concepteurs de bibliothèques respectent
@@ -42,17 +45,49 @@ du système Scheme pour lequel les bibliothèques ont été écrites.
 % - Créer un espace pour les modules.
 % - Spécifier les dépendence. (2)
 % - Spécifier les paramètre de compilation.
+\section{La notation des fichiers dans Gambit}
+%[TODO: notation ~~]
+Gambit utilise une notation qui est compatible avec l'environnement du
+système hôte. Il permet de référer au répertoire maison de l'utilisateur
+et aux répertoires d'installation.
+
+Un chemin est une chaine de caractère qui dénote une ressource.
+Le séparateur des composantes d'un chemin dépend du système
+d'exploitation, Linux et macOS utilise `/' alors que MSDOS et
+Microsoft Windows utilise `$\backslash$`.
+
+La notation qui permet de référer au répertoire maison de l'utilisateur
+courant est par la notation `\url{~}' qui n'est pas suivit d'un `\url{~}'.
+Le nom qui suit `\url{~}' est le nom de l'utilisateur. Par exemple,
+\url{~USER} représente le répertoire de l'utilisateur {\tt USER}.
+
+Un répertoire d'installation commence par les caractères `\url{~~}'. S'il n'y
+a rien qui suit ces caractères alors c'est le répertoire d'installation central.
+Sinon ce qui suit le `\url{~~}' est le nom du répertoire d'installation. Par
+exemple, `\url{~~lib}' est le chemin vers le répertoire d'installation `\url{lib}'
+des bibliothèques système de Gambit. Il est a noté que Gambit permet de redéfinir
+l'emplacement des répertoires d'installation par l'utilisation de l'option d'exécution
+`\verb|-:~~NAME=DIRECTORY|'.
 
 \section{La forme \lstcode{\#\#namespace}}
 
+Un identifiant est un symbole, utilisé dans le code, qui n'est pas sous un
+\lstcode{quote}. Par exemple \lstcode{pair?} est l'identifiant de la procédure
+qui teste que le type de donnée est une paire. Il est généralement lié à une
+valeur ou une macro. Un symbole est un type de donnée primitif de Scheme.
+
 Les espaces de nom sont gérés avec une forme spéciale propre à Gambit. Cette
-forme se nomme \lstcode{##namespace} et permet d'associer des identifiants à
-d'autres identifiants.  Cette forme primitive est présente dans Gambit depuis longtemps.  Un
-espace de nom se compose de n'importe quelle séquence de caractère terminé par
-un \lstcode{#}. Il y a seulement l'espace de nom vide qui est une exception à cette
-règle et c'est l'espace de nom par défaut.  Les associations de symboles données
-par la forme \lstcode{##namespace} respectent la portée lexicale. Il y a trois
-types d'opérations avec les espaces de nom.
+forme se nomme \lstcode{##namespace} et permet de lier des identifiants à
+d'autres identifiants dans le code. Cela affecte l'ensemble des identifiants
+spécifiés dans la forme \lstcode{##namespace}, l'ensemble vide correspond à
+tous les identifiants. Cette forme s'applique uniquement aux identifiants de
+variable et de macro. Elle ne s'applique pas aux valeurs.  Cette forme
+primitive est présente dans Gambit depuis longtemps.  Un espace de nom se
+compose de n'importe quelle séquence de caractère terminé par un \lstcode{#}.
+Il y a seulement l'espace de nom vide qui est une exception à cette règle et
+c'est l'espace de nom par défaut.  Les associations de symboles données par la
+forme \lstcode{##namespace} respectent la portée lexicale. Il y a trois types
+d'opérations avec les espaces de nom.
 
 Il y a les espaces de nom global qui s'applique à tous les symboles qui ne
 contiennent pas de \lstcode{#}. \\
@@ -161,16 +196,17 @@ Le mécanisme de chargement des modules est géré par la forme spéciale
 s'il n'est pas déjà chargé. Cette forme gère le chargement multiple d'un
 module. Elle est utilisée pour importer la liste des modules requis par le
 module courant.  Le fonctionnement de cette forme est similaire à la procédure
-\lstcode{load} avec quelques différences. La forme \lstcode{##demand-module} est
-une macro qui génère une expression vide. L'effet de cette forme agit après la
-phase d'expansion des macros. Le paramètre passé à \lstcode{##demand-module}
-doit être un symbole qui correspond au nom du module. La procédure \lstcode{load}
-requiert le chemin complet vers le fichier à charger.
+\lstcode{load} avec quelques différences. La forme spécial
+\lstcode{##demand-module} génère une expression vide. L'effet de cette
+forme agit après la phase d'expansion des macros. Le paramètre passé à
+\lstcode{##demand-module} doit être un symbole qui correspond au nom du module.
+La procédure \lstcode{load} requiert le chemin complet vers le fichier à
+charger.
 
-Il est à noter que l'ordre des \lstcode{##demand-module} correspond à l'ordre
-dont les modules sont visités. Cette forme agit, peu importe son emplacement
-où l'expansion de macros est appliquée.
-
+Il est à noter que l'ordre dans lequel les \lstcode{##demand-module}
+apparaissent correspond à l'ordre dont les modules sont visités. Cette forme
+est permise partout où une définition de macro est permise.
+%[TODO: ##demand-module]
 %% Review.
 
 % \begin{center}
@@ -181,11 +217,11 @@ où l'expansion de macros est appliquée.
 % \end{mplisting}
 % \end{center}
 
-Une forme spéciale conjointe au \lstcode{##demand-module}, qui indique le nom
-symbolique des modules importés des modules exportés. Cette forme spéciale est
-\lstcode{##supply-module}, elle accepte comme paramètre le nom du module exporté
-par l'entité courant.  La syntaxe de ces deux formes dans la figure
-\ref{fig:syntax->demand/supply-module}.\\
+Nous avons ajouté un forme spéciale conjointe au \lstcode{##demand-module}
+pour indique le nom symbolique des modules des modules exportés. Cette
+forme spéciale est \lstcode{##supply-module}, elle accepte comme paramètre le
+nom du module exporté par l'entité courant.  La syntaxe de ces deux formes dans
+la figure \ref{fig:syntax->demand/supply-module}.\\
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},
@@ -205,7 +241,7 @@ module des informations qui sont accessibles lors de l'expansion
 et même la compilation. Ces informations sont spécifiées par la forme
 \lstcode{##meta-info}. Cette forme accepte au moins un paramètre qui
 correspond au nom de la méta information, le reste des paramètres est la valeur
-associer à la méta donnée.
+associée à la méta donnée.
 
 \begin{center}
   \begin{mplisting}{0.5}
@@ -238,7 +274,6 @@ compilés.
 
 \end{itemize}
 
-%% XXX: antidote here
 \section{Implémentation des modules primitifs}
 
 Un module primitif est généralement constitué d'un fichier d'entête avec la
@@ -274,9 +309,10 @@ exemple, le module primitif \lstcode{angle2} doit inclure les fichiers
 (define (deg->rad x) (* x factor))
 (define (rad->deg x) (/ x factor))
 \end{mplisting}
-  \caption{Écriture d'un module qui implémente une pile. Ce module est
-           séparé en 2 fichiers. Le fichier \texttt{angle2/angle2\#.scm} contient les
-           exportations et \texttt{angle2/angle2.scm} contient l'implémentation des
+  \caption{Écriture d'un module qui implémente des fonctions de conversions
+           entre les angles en degrés et en radian. Ce module est séparé en 2 fichiers.
+           Le fichier \texttt{angle2/angle2\#.scm} contient les exportations et
+           \texttt{angle2/angle2.scm} contient l'implémentation des
            fonctions.}
   \label{fig:module->angle}
 \end{figure}
@@ -380,11 +416,29 @@ Gambit.
 
 
 \subsubsection{Importation d'un module primitif}
-L'importation d'un module primitif limite la syntaxe du \lstcode{import}.
-Il n'est pas possible d'utiliser les extensions \lstcode{only}, \lstcode{except}
-et \lstcode{rename} sur un module primitif présentement. Le \lstcode{import} R7RS se rabat
-sur le \lstcode{##import} des modules primitifs qui ne supporte pas les extensions R7RS.
-Cela permet d'utiliser des modules primitifs dans un contexte R7RS.\\
+%[FIXME: verify if ##import doesn't support only except rename]
+L'importation d'un module primitif limite la syntaxe du \lstcode{import}.  Il
+n'est pas possible d'utiliser les extensions \lstcode{only}, \lstcode{except}
+et \lstcode{rename} sur un module primitif. Pour utiliser ces extensions, il
+faut les métadonnées que les modules R7RS offrent.  La structure modules
+primitifs ne contient pas de déclaration qui indique les identifiants
+uniformes. Pour avoir l'ensemble des identifiants qu'un module primitif
+il faudrait analyser l'ensemble des fichiers du module primitif pour
+y extraire les identifiants qui sont exportés. Nous avons choisi
+la simplicité.
+
+Le \lstcode{import} R7RS se rabat sur le \lstcode{##import} des modules
+primitifs qui ne supporte pas les extensions R7RS.  C'est une extension que
+nous avons ajouté dans notre implémentation des modules R7RS pour permet
+l'utilisation des modules primitifs dans un contexte R7RS.
+
+Les modules R7RS ont tous la déclaration \lstcode{export} qui donne l'ensemble
+des identifiants qui sont exportés. Les modules primitifs sont plus proches de
+R5RS avec un mécanisme de chargement sophistiqué. Le \lstcode{import} requiert
+la méta information fournit par la déclaration \lstcode{export} dans le
+\lstcode{define-library}.
+
+Les modules primitifs font le pont entre R5RS et R7RS.
 \begin{figure}[ht]
   \lstset{language={scheme},frame=single}
 \begin{mplisting}{0.8}
@@ -397,11 +451,17 @@ Cela permet d'utiliser des modules primitifs dans un contexte R7RS.\\
 
 \subsubsection{Importation d'un module R7RS}
 
-L'importation d'un module R7RS est expansée en au plus trois parties.  Un
-\lstcode{##demand-module} qui s'occupe de charger l'implémentation des
-procédures du module. Une déclaration d'espace de nom qui donne accès aux
-identifiants que le module exporte. L'implémentation des macros qui sont
-exportées du module.
+L'importation d'un module R7RS est expansée en au plus trois parties.
+\begin{itemize}
+
+  \item Un \lstcode{##demand-module} qui s'occupe de charger l'implémentation des
+    procédures du module.
+
+  \item Une déclaration d'espace de nom qui donne accès aux identifiants que le
+    module exporte.
+
+  \item L'implémentation des macros qui sont exportées par le module.
+\end{itemize}
 
 L'instruction de chargement du module est générée dans tous les cas qu'un
 module définit des procédures. Un module qui ne définit que des macros ne
@@ -575,10 +635,15 @@ méta informations respectifs.
 
 \section{Conclusion}
 
-Notre implémentation des modules utilise une forme compatible avec
-les autres implémentations de Scheme R7RS. En plus, les extensions que nous avons ajoutées
-offrent une interface avec les modules système de Gambit. L'implémentation actuelle des modules
-est suffisante pour permettre la diffusion de code, car elle offre des identifiants uniques pour
+Nous avons ajouté la notion de module dans Gambit pour résoudre le manque de
+modularité dans le langage Termite.  Les concepts concrets de module sont absents
+de Gambit. Les formes qui ont été ajoutées sont: \lstcode{##demand-module},
+\lstcode{##supply-module}, \lstcode{##import}, \lstcode{import} et
+\lstcode{define-library}.  Notre implémentation des modules utilise une forme
+compatible avec les autres implémentations de Scheme R7RS. En plus, les
+extensions que nous avons ajoutées offrent une interface avec les modules
+système de Gambit. L'implémentation actuelle des modules est suffisante pour
+permettre la diffusion de code, car elle offre des identifiants uniques pour
 les modules.
 
 Notre approche supporte la création de modules qui dépendent de bibliothèques
