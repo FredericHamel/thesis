@@ -19,7 +19,7 @@ dans le chapitre \ref{ch:task_migration}.
 Ce chapitre introduit la syntaxe de Scheme et les différentes
 approches de modularisation existantes.  Afin de faciliter son
 adoption, le système de module que nous avons développé se base sur
-ces approches.
+ces approches de modularisation.
 
 % Ce concept pose des défis particuliers dans l'implantation.
 %Le tout, pour introduire la syntaxe des modules qui permet de résoudre
@@ -32,7 +32,9 @@ Le langage Scheme~\cite{Clinger:2008:SCH:1529966.1529973}, conçu en 1975 par
 Guy L. Steele et Gerald Jay Sussman, est une variante minimaliste de Lisp.
 Depuis sa conception, plusieurs normes ont vu le jour; les plus connues étant
 le R4RS (1991), R5RS (1998), R6RS (2007) et R7RS (2013). Notre implémentation
-utilise R7RS.
+utilise R7RS. Notre système de modules pourrait être conçu avec la syntaxe de
+R6RS. Il suffit que la structure des bibliothèques permette les noms uniques
+pour les modules.
 
 Scheme est un langage de programmation avec un
 système de type dynamique.  Les types sont associés aux valeurs plutôt qu'aux
@@ -216,7 +218,7 @@ les boucles à l'aide de la méta programmation.
       (newline))) ;; appel terminal
 \end{mplisting}
   \caption{Exemple de boucle affiche {\tt n} fois le message {\tt msg} qui
-    utilise des appel terminal lors de l'appel de {\tt repeat} et
+    utilise des appels terminaux lors de l'appel de {\tt repeat} et
     {\tt newline}.}
   \label{fig:appel_terminal_example}
 \end{figure}
@@ -427,17 +429,17 @@ exemple de module simple n'utilisant que la procédure \lstcode{load}.
 % - Import
 % - Corps de module
 
-Le standard R6RS\cite{Scheme:R6RS} renforce le concept de module avec la forme
-syntaxique \lstcode{library} qui a 4 parties: le nom, une
-sous-forme \lstcode{export}, une sous-forme \lstcode{import} et le corps du
-module. Le nom du module l'identifie de façon unique et il peut contenir une
-spécification de version. La version est spécifiée par une liste d'entiers
-positifs. Une liste vide \lstcode{()} correspond à ne pas spécifier la
-version. Ensuite, il y a la liste des exportations qui est spécifiée par la sous-forme
-\lstcode{export}. Chaque élément de cette liste est soit un identifiant ou une
-sous-forme \lstcode{rename} qui renomme l'identifiant exporté.
-L'\lstcode{import} donne la liste des dépendances du module. Chaque dépendance
-spécifie:
+Le standard R6RS\cite{Scheme:R6RS}, qui est une option possible pour concevoir
+le système de module, renforce le concept de module avec la forme syntaxique
+\lstcode{library} qui a 4 parties: le nom, une sous-forme \lstcode{export}, une
+sous-forme \lstcode{import} et le corps du module. Le nom du module l'identifie
+de façon unique et il peut contenir une spécification de version. La version
+est spécifiée par une liste d'entiers positifs. Une liste vide \lstcode{()}
+correspond à ne pas spécifier la version. Ensuite, il y a la liste des
+exportations qui est spécifiée par la sous-forme \lstcode{export}. Chaque
+élément de cette liste est soit un identifiant ou une sous-forme
+\lstcode{rename} qui renomme l'identifiant exporté.  L'\lstcode{import} donne
+la liste des dépendances du module. Chaque dépendance spécifie:
 
 \begin{itemize}
   \item le nom du module importé et de façon optionnelle, une contrainte sur
@@ -760,11 +762,13 @@ code \texttt{ping.scm}.
 
 Dans ce scénario, la mise à jour de code est effectuée dans les étapes
 \ref{step_clone}, \ref{step_migration} et \ref{step_update}. Cela
-permet de réparer le bogue qui est dans le serveur.
+permet de réparer le bogue qui est dans le serveur. Termite permet
+déjà la migration de code, mais sous certaines conditions.
 
-Le problème est que cet exemple ne fonctionne que si les deux nœuds sont interprétés,
-car le code source est transmis. Pour permettre la transmission de code dans le cas
-compilé que nous avons conçu un système de module.
+Les nœuds doivent être interprétés, dans ce cas le code source des procédures
+est transmis. Ce qui permet d'exécuter du code arbitraire sur le nœud distant.
+Lorsque compilé, l'information transmis ne contient pas l'information du code
+source.
 
 \section{Conclusion}
 %
