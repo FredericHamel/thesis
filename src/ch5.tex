@@ -106,11 +106,15 @@ formelle à la figure~\ref{fig:module-ref->grammar} décrit la syntaxe du
   \label{fig:module-ref->grammar}
 \end{figure}
 
-Le \lstcode{module-ref} \lstcode{github.com/gambit/hello} réfère
-au module \lstcode{hello} sur le serveur de révision \lstcode{github.com}
-dans l'espace \lstcode{gambit}. Le champ \lstcode{host} est dans ce
-cas \lstcode{github.com/gambit} qui correspond au nom de domaine avec
-le nom de l'espace sur le serveur.
+La règle \lstcode{<id>} est liée à un élément de l'URL vers le dépôt de
+code. Par exemple, le \lstcode{module-ref} \lstcode{github.com/gambit/hello}
+réfère au module \lstcode{hello} sur le serveur de révision
+\lstcode{github.com} dans l'espace \lstcode{gambit}, les \lstcode{<id>} sont
+respectivement \lstcode{gambit} et \lstcode{hello}. Le champ \lstcode{host} est
+dans ce cas \lstcode{github.com/gambit} qui correspond au nom de domaine avec
+le nom de l'espace sur le serveur. Les deux \lstcode{<id>} dans la syntaxe
+d'un module hébergé correspond au nom utilisateur ou de l'organisation (par
+exemple \texttt{gambit}) et au nom du dépôt sur le serveur de version.
 
 % \begin{itemize}
 %   \item \lstcode{install} effectue l'installation de modules.
@@ -233,7 +237,7 @@ Le répertoire d'installation \lstcode{<path>} est la racine utilisée pour
 installer les modules et est spécifié par l'option \lstcode{-dir}.  La racine
 par défaut est \lstcode{\~\~userlib}. Voici un exemple d'installation d'une
 version spécifique du module \lstcode{semver} qui implémente la logique du
-\textit{semantic versioning}. Les
+\textit{semantic versioning}\cite{SemanticVersioning} qui est une façon d'organiser les versions. Les
 figures~[\ref{fig:install_hosted_package_in_default_prefix},
 \ref{fig:install_hosted_package_in_custom_prefix},\ref{fig:install_local_package_in_custom_prefix}]
 montrent les différentes façons d'installer d'un \textit{package} en invoquant de
@@ -259,6 +263,7 @@ $ gsi -install -dir /tmp/exemple github.com/frederichamel/semver
   \label{fig:install_hosted_package_in_custom_prefix}
 \end{figure}
 
+% _vcs only
 \begin{figure}[ht]
   \centering
   \begin{mplisting}{1}
@@ -308,12 +313,16 @@ $ gsi -uninstall -dir /tmp/exemple github.com/frederichamel/semver
 
 
 \section{Mise à jour}
-%
+%[TODO: revérifier]
 Cette opération actualise le \textit{package} courant. Cela donne
 accès aux nouvelles publications d'un module. Le répertoire \texttt{@} est
 effacé et remplacé par le dernier état de la branche de développement.  Pour
 installer une nouvelle version d'un module, il suffit de faire la mise à jour
-de la branche master et d'installer la nouvelle version.
+de la branche master et d'installer la nouvelle version. La mise à jour d'un
+module n'affecte pas les versions spécifiques, comme la version 1.0.
+Cette opération est utilisée pour synchroniser le dépôt local avec le
+dépôt web. Sans cette opération l'installation de versions plus récente
+échouerait quand ils ne sont pas dans la cache locale du dépôt.
 
 \begin{center}
   \begin{mplisting}{0.8}
@@ -370,18 +379,25 @@ module qui doit être compilé pour fonctionner.
 
 
 \section{Comparaison avec d'autres systèmes}
+%[TODO: add more comparison]
+L'organisation des modules sur le système de fichier dans Gambit diffère de
+celui de OCaml, Python et NodeJS et des autres implémentations de Scheme.
+Akku\cite{Akku.scm}, un gestionnaire de module pour Scheme compatible avec
+plusieurs implémentations de Scheme comme Chez Scheme, Chibi Scheme et GNU
+Guile. Il gère les modules pour les projets. Une seule version de chaque module
+peut être installé dans un projet.
 
-L'organisation des modules sur le système de fichier dans Gambit
-diffère de celui de OCaml, Python et NodeJS. Ceux-ci ne permettent pas
-l'installation de plus d'une version d'un module directement. Le système
-de module qui est utilisé dans le langage de programmation Go est le plus
-similaire à celui dans Gambit.
+Ceux-ci ne permettent pas l'installation de plus d'une version d'un module
+directement. Le système de module qui est utilisé dans le langage de
+programmation Go est le plus similaire à celui dans Gambit.
 
-Un système de module permet la coexistence de plusieurs versions du même module
-sur le système de fichier s'ils sont considérés comme des modules différents.
-L'installation d'une version différente d'un module ne remplace pas la version
-déjà installée. L'organisation des bibliothèques est importante pour permettre
-cette coexistence.
+Notre système offre l'identification unique des modules, ce qui permet
+d'installer plusieurs versions d'un module.  Un système de module permet la
+coexistence de plusieurs versions du même module sur le système de fichier
+s'ils sont considérés comme des modules différents.  L'installation d'une
+version différente d'un module ne remplace pas la version déjà installée.
+L'organisation des bibliothèques est importante pour permettre cette
+coexistence.
 
 La caractéristique que le système de bibliothèque doit avoir pour permettre
 plusieurs versions d'une bibliothèque est une organisation qui permet de
@@ -393,7 +409,6 @@ installés. Chaque préfixe peut contenir une version différente d'un même
 module. Pour avoir une nouvelle version d'un module, il faut créer un nouveau
 préfixe.
 
-
 %Le nombre de bibliothèque moyen dans un langage est d'environ 90000 \colorbox{red}{ref}
 %en prennant en compte les gestionnaire de modules (bibliothèques) suivant:
 
@@ -403,7 +418,7 @@ préfixe.
 % d'utilisateur. Aussi le nombre de bibliothèques n'est pas représentatif du nombre
 % réellement utilisé.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \begin{tabular}{|r|c|c|c|c|}
   \hline   & Multiple versions \\\hline
   OCaml    & \xmark            \\\hline
@@ -411,6 +426,10 @@ préfixe.
   NodeJS   & \xmark            \\\hline
   Java     & \xmark            \\\hline
   Go       & \checkmark        \\\hline
+  Akku     & \xmark            \\\hline
+  Racket   & \xmark            \\\hline
+  Chez Scheme & \xmark         \\\hline
+  Gambit   & \checkmark        \\\hline
 %  Gambit Scheme & \checkmark & \checkmark & default \\\hline
 \end{tabular}
 
@@ -535,7 +554,7 @@ gopkg.in/user/pkg.v3 -> github.com/user/pkg   (branch/tag v3, v3.N, or v3.N.M)
   \label{fig:gopkg_import}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \lstset{language={Go},frame=single}
 \begin{mplisting}{1}
 package main
@@ -584,7 +603,7 @@ $GOPATH/
       - pkglist
         - objets
 \end{mplisting}
-  \caption{Arborescence des fichier dans le gopath.}
+  \caption{Arborescence des fichiers dans le gopath.}
   \label{fig:organisation_go}
 \end{figure}
 
@@ -596,6 +615,8 @@ la mise à jour.  Notre approche de gestion des modules offre correctement la
 possibilité d'avoir plus d'une version d'un module. Cela empêche les bris de
 dépendances lors de l'installation de nouveaux modules.  L'installation des
 modules peut-être déclenchés procéduralement ce qui est nécessaire pour diffuser
-les modules.
+les modules. Notre approche de gestion, qui utilise le nom du module et sa
+version, permet d'identifier de façon unique les modules et de les conserver
+dans le système de fichier.
 
 
