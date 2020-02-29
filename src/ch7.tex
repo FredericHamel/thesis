@@ -1,3 +1,4 @@
+%[TODO: read again]
 \chapter{Évaluation}
 
 Ce chapitre évalue les performances du système de modules.  Notre approche
@@ -44,20 +45,27 @@ modules pour tester les capacités de diffusion de code sont basés sur certains
 Nous référons à ces \textit{benchmarks} par leur taille du code source
 en octets (4K, 40K et 400K).
 
-Les tests de performance sont effectués sur deux nœuds \textbf{A}
-et \textbf{B}. Le test de RPC consiste à diffuser une tâche
-sur le nœud générique \textbf{B} qui ne connait aucun
-code qui est diffusé dessus.
+Les expériences sont effectuées dans trois scénarios distincts:
+\begin{itemize}
+  \item INTERPRETED: Les deux nœuds sont interprétés.
+  \item STEADY-STATE: Les modules sont déjà installés et compilés sur
+    le nœud destination, mais non chargé.
+  \item FIRST-INSTALL: Les modules ne sont pas installés sur le nœud
+    destination.
+\end{itemize}
+
+Les tests de performance sont effectués sur deux nœuds.  Le test de RPC
+consiste à diffuser une tâche sur le nœud générique qui ne connait
+aucun code qui est diffusé dessus.
 
 La diffusion de code est effectuée 100 fois pour chaque benchmark. Le temps
 d'exécution du benchmark est paramétré de telle sorte que le temps de la
 version interprétée du benchmark soit proportionnel à sa taille. Le temps
 respectif de la version interprétée des benchmarks: Puzzle, Scheme et Compiler
 sont respectivement dans les ordres de 0.1 seconde, 1 seconde et 10 secondes.
-La première ligne des
-figures~[\ref{fig:gambit-arctic-interp},~\ref{fig:tictoc-arctic-interp}] montre
-cette tendance dans les temps d'exécutions. Notre but est de montrer un lien
-entre la taille du programme et le temps d'exécution.
+La première ligne des figures~[\ref{fig:INTERPRETED}] montre cette tendance
+dans les temps d'exécutions. Notre but est de montrer un lien entre la taille
+du programme et le temps d'exécution.
 
 \section{Spécification des machines}
 Les machines sur lesquelles les tests ont été effectués sont:
@@ -72,11 +80,15 @@ l'annexe~\ref{ch:annexeA}. La diversité des machines utilisées montre que la
 diffusion de code compilé est indépendante de la plateforme et de l'architecture de la
 machine.
 
-La machine \textbf{arctic} est la machine la plus stable de toutes
-celles utilisées, car elle a un système de refroidissement au liquide.
+La machine \textbf{arctic} est la machine la plus stable numériquement de toutes
+celles utilisées, car elle a un système de refroidissement au liquide. Les résultats
+pris sur \textbf{arctic} ont une variance plus petite et sont reproductibles.
+
+La machine \textbf{tictoc} est la machine la moins perfomante et d'un architecture
+ARM. Cela permet de tester la transmission de tâche entre ARM et x86.
 
 \section{Résultats}
-
+%[TODO: refaire l'évaluation]
 Les temps dans les tests sont mesurés en millisecondes (ms).  Les éléments qui
 affectent les résultats sont le réseau et la vitesse de la machine de
 destination. Étant donné que le réseau a perturbé 10\% des transmissions
@@ -86,125 +98,192 @@ l'effet aléatoire du réseau.  Cela est observé par une variance élevée dans
 temps de transfert.  Pour la même taille de transmission, le temps de transfert
 est plus grand pour plusieurs exécutions.
 
-\begin{figure}[ht]
+\begin{figure}[t]
   \centering
-\begin{tabular}{|l|r|r|r|}
-\hline & 4K & 40K & 400K\\\hline
-Temps total & $~~~~~150.9(\sigma = ~~1.4)$ & $~~~~~978.2(\sigma = ~~1.5)$ & $~~~12397.7(\sigma = ~~5.2)$\\\hline
-%Serialization & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
-%Deserialization & $~~~~~~~5.2(\sigma = ~~0.0)$ & $~~~~~~10.6(\sigma = ~~0.0)$ & $~~~~~~46.7(\sigma = ~~1.0)$\\\hline
-%Transmission & $~~~~~~~0.4(\sigma = ~~0.0)$ & $~~~~~~~0.7(\sigma = ~~0.0)$ & $~~~~~~~7.7(\sigma = ~~0.1)$\\\hline
-Transfert & $~~~~~~~5.8(\sigma = ~~0.0)$ & $~~~~~~11.6(\sigma = ~~0.0)$ & $~~~~~~54.6(\sigma = ~~1.0)$\\\hline
-Exécution & $~~~~~139.0(\sigma = ~~1.3)$ & $~~~~~957.3(\sigma = ~~1.3)$ & $~~~12274.7(\sigma = ~~5.0)$\\\hline
+  \footnotesize
+\begin{tabular}{|l|rr|rr|rr|}
+\multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}}}\\[1.5ex]
+\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total for RPC     & ~~~~~146.4 & $\pm$~~0.6 & ~~~~~966.9 & $\pm$~~6.1 & ~~~10463.8 & $\pm$~~3.3\\\hline
+On destination    & ~~~~~131.6 & $\pm$~~0.2 & ~~~~~948.7 & $\pm$~~5.9 & ~~~10381.0 & $\pm$~~2.7\\\hline
+\multicolumn{7}{c}{}\\
+\multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}}}\\[1.5ex]
+\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total for RPC     & ~~~~~179.2 & $\pm$~~1.6 & ~~~~1002.7 & $\pm$~~8.1 & ~~~10801.1 & $\pm$~11.0\\\hline
+On destination    & ~~~~~132.6 & $\pm$~~0.7 & ~~~~~954.6 & $\pm$~~0.0 & ~~~10390.5 & $\pm$~~2.6\\\hline
 \end{tabular}
-  \caption{Comparaison de la performance RPC de Termite avant les modules dans un contexte interprété sur
-    la machine Gambit. (temps en millisecondes)}
-  \label{fig:gambit-arctic-interp}
+
+\caption{Timings in the INTERPRETED scenario with
+  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}} or
+  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}} as the start
+  node}
+  \label{fig:INTERPRETED}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[t]
   \centering
-\begin{tabular}{|l|r|r|r|}
-\hline & 4K & 40K & 400K\\\hline
-Temps total & $~~~~~178.6(\sigma = ~~1.4)$ & $~~~~1033.0(\sigma = ~~1.8)$ & $~~~12871.0(\sigma = ~18.5)$\\\hline
-%Serialization & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
-%Deserialization & $~~~~~~~5.2(\sigma = ~~0.0)$ & $~~~~~~10.9(\sigma = ~~0.0)$ & $~~~~~~33.9(\sigma = ~12.5)$\\\hline
-%Transmission & $~~~~~~~1.1(\sigma = ~~0.2)$ & $~~~~~~~1.9(\sigma = ~~0.3)$ & $~~~~~~16.3(\sigma = ~~4.8)$\\\hline
-Transfert & $~~~~~~~6.6(\sigma = ~~0.2)$ & $~~~~~~13.1(\sigma = ~~0.3)$ & $~~~~~~50.4(\sigma = ~13.6)$\\\hline
-Exécution & $~~~~~154.3(\sigma = ~~1.1)$ & $~~~~~987.1(\sigma = ~~1.5)$ & $~~~12559.9(\sigma = ~~4.6)$\\\hline
+  \footnotesize
+\begin{tabular}{|l|rr|rr|rr|}
+\multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}}}\\[1.5ex]
+\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total for RPC     & ~~~~~~15.5 & $\pm$~~0.7 & ~~~~~~48.5 & $\pm$~~0.6 & ~~~~~478.7 & $\pm$~~0.6\\\hline
+On destination    & ~~~~~~~2.2 & $\pm$~~0.0 & ~~~~~~35.2 & $\pm$~~0.1 & ~~~~~463.3 & $\pm$~~0.3\\\hline
+\multicolumn{7}{c}{}\\
+\multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}}}\\[1.5ex]
+\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total for RPC     & ~~~~~26.9 & $\pm$~~1.2 & ~~~~~60.4 & $\pm$~~0.6 & ~~~492.5 & $\pm$~~0.7\\\hline
+On destination    & ~~~~~~2.2 & $\pm$~~0.0 & ~~~~~35.2 & $\pm$~~0.0 & ~~~462.8 & $\pm$~~0.3\\\hline
 \end{tabular}
-  \caption{Comparaison de la performance RPC de Termite avant les modules dans un contexte interprété sur
-    la machine Tictoc. (temps en millisecondes)}
-  \label{fig:tictoc-arctic-interp}
+
+\caption{Timings in the STEADY-STATE scenario with
+  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}} or
+  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}} as the start
+  node}
+  \label{fig:STEADY-STATE}
+
 \end{figure}
 
-\begin{figure}[ht]
-\centering
-\begin{tabular}{|l|r|r|r|}
-\hline & 4K & 40K & 400K\\\hline
-Temps total & $~~~~1761.6(\sigma = ~84.9)$ & $~~~~4816.6(\sigma = 136.5)$ & $~~~48609.4(\sigma = 112.4)$\\\hline
-Scheme à C & $~~~~~122.7(\sigma = ~~4.9)$ & $~~~~~589.6(\sigma = ~~4.9)$ & $~~~~9335.7(\sigma = ~15.7)$\\\hline
-Compilation C & $~~~~~686.3(\sigma = ~~0.0)$ & $~~~~3102.1(\sigma = ~99.7)$ & $~~~36443.8(\sigma = ~53.8)$\\\hline
-% Serialization & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~~~~0.3(\sigma = ~~0.1)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
-% Deserialization & $~~~~~~57.5(\sigma = ~63.7)$ & $~~~~~170.7(\sigma = ~59.8)$ & $~~~~~131.4(\sigma = ~77.9)$\\\hline
-Install & $~~~~~850.4(\sigma = ~17.6)$ & $~~~~~918.6(\sigma = ~82.3)$ & $~~~~1192.3(\sigma = ~67.4)$\\\hline
-% Transmission & $~~~~~~~0.4(\sigma = ~~0.0)$ & $~~~~~~~0.5(\sigma = ~~0.0)$ & $~~~~~~~0.5(\sigma = ~~0.1)$\\\hline
-Transfert & $~~~~~~58.1(\sigma = ~63.8)$ & $~~~~~172.0(\sigma = ~60.0)$ & $~~~~~133.5(\sigma = ~77.4)$\\\hline
-Exécution & $~~~~~~~9.3(\sigma = ~~4.8)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~1473.0(\sigma = ~~9.3)$\\\hline
-\end{tabular}
-  \caption{Temps d'exécution et transmission de module de différente taille entre les machines
-  Gambit et Arctic. Les modules sont installés automatiquement sur Arctic lors de l'exécution.}
-  \label{fig:gambit-arctic-uninstall}
-\end{figure}
-
-\begin{figure}[ht]
+\begin{figure}[t]
   \centering
-\begin{tabular}{|l|r|r|r|}
-\hline & 4K & 40K & 400K\\\hline
-Temps total & $~~~~1851.8(\sigma = ~93.6)$ & $~~~~4885.8(\sigma = 167.9)$ & $~~~48656.7(\sigma = 112.8)$\\\hline
-Scheme à C & $~~~~~123.3(\sigma = ~~5.0)$ & $~~~~~590.1(\sigma = ~~5.2)$ & $~~~~9336.8(\sigma = ~16.3)$\\\hline
-Compilation C & $~~~~~686.3(\sigma = ~~0.1)$ & $~~~~3068.8(\sigma = ~98.5)$ & $~~~36444.8(\sigma = ~54.6)$\\\hline
-% Serialization & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~~~~0.3(\sigma = ~~0.1)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
-% Deserialization & $~~~~~~61.7(\sigma = ~65.0)$ & $~~~~~166.0(\sigma = ~66.0)$ & $~~~~~116.7(\sigma = ~79.2)$\\\hline
-Install & $~~~~~869.8(\sigma = ~56.6)$ & $~~~~~948.1(\sigma = ~98.7)$ & $~~~~1213.5(\sigma = ~29.4)$\\\hline
-% Transmission & $~~~~~~27.1(\sigma = ~~4.2)$ & $~~~~~~27.7(\sigma = ~~1.3)$ & $~~~~~~33.9(\sigma = ~~1.3)$\\\hline
-Transfert & $~~~~~~89.1(\sigma = ~64.8)$ & $~~~~~194.0(\sigma = ~66.1)$ & $~~~~~150.7(\sigma = ~79.2)$\\\hline
-Exécution & $~~~~~~10.2(\sigma = ~~5.5)$ & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~1467.6(\sigma = ~~9.8)$\\\hline
+  \footnotesize
+\begin{tabular}{|l|rr|rr|rr|}
+\multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}}}\\[1.5ex]
+\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total for RPC     & ~~~~~1208.6 & ~~ & ~~~~~2460.3 & ~~ & ~~~148536.2 & ~~\\\hline
+On destination    & ~~~~~~~~2.2 & ~~ & ~~~~~~~36.1 & ~~ & ~~~~~~464.7 & ~~\\\hline
+\multicolumn{7}{c}{}\\
+\multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}}}\\[1.5ex]
+\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total for RPC     & ~~~~~1159.8 & ~~ & ~~~~~2502.0 & ~~ & 153272.6 & ~~\\\hline
+On destination    & ~~~~~~~~2.2 & ~~ & ~~~~~~~37.1 & ~~ & ~~~464.1 & ~~\\\hline
 \end{tabular}
-  \caption{Cette expérience est le même que la figure~\ref{fig:gambit-arctic-uninstall}, sauf que le transfert de module est fait entre
-  une machine ARM (tictoc) et x86 (arctic).}
-  \label{fig:tictoc-arctic-uninstall}
-\end{figure}
 
-\begin{figure}[ht]
-  \centering
-\begin{tabular}{|l|r|r|r|}
-\hline & 4K & 40K & 400K\\\hline
-Temps total & $~~~~~~23.6(\sigma = ~~0.9)$ & $~~~~~~10.5(\sigma = ~~0.3)$ & $~~~~1492.8(\sigma = ~~1.9)$\\\hline
-%Serialization & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.3(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$\\\hline
-%Deserialization & $~~~~~~~4.1(\sigma = ~~0.0)$ & $~~~~~~~4.9(\sigma = ~~0.0)$ & $~~~~~~13.5(\sigma = ~~0.5)$\\\hline
-%Transmission & $~~~~~~~0.4(\sigma = ~~0.0)$ & $~~~~~~~0.5(\sigma = ~~0.0)$ & $~~~~~~~0.5(\sigma = ~~0.1)$\\\hline
-Transfert & $~~~~~~~4.8(\sigma = ~~0.1)$ & $~~~~~~~5.7(\sigma = ~~0.1)$ & $~~~~~~14.2(\sigma = ~~0.5)$\\\hline
-Exécution & $~~~~~~14.0(\sigma = ~~0.7)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~1473.5(\sigma = ~~1.6)$\\\hline
-\end{tabular}
-  \caption{Temps d'exécution et de transmission de module de différente taille entre Gambit et Arctic
-  suite à la première exécution (modules compilés déjà installés.}
-  \label{fig:gambit-arctic}
+\caption{Timings in the FIRST-INSTALL scenario with
+  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}} or
+  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}} as the start
+  node}
+  \label{fig:FIRST-INSTALL}
+
 \end{figure}
+%\begin{figure}[ht]
+%  \centering
+%\begin{tabular}{|l|r|r|r|}
+%\hline & 4K & 40K & 400K\\\hline
+%Temps total & $~~~~~150.9(\sigma = ~~1.4)$ & $~~~~~978.2(\sigma = ~~1.5)$ & $~~~12397.7(\sigma = ~~5.2)$\\\hline
+%%Serialization & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
+%%Deserialization & $~~~~~~~5.2(\sigma = ~~0.0)$ & $~~~~~~10.6(\sigma = ~~0.0)$ & $~~~~~~46.7(\sigma = ~~1.0)$\\\hline
+%%Transmission & $~~~~~~~0.4(\sigma = ~~0.0)$ & $~~~~~~~0.7(\sigma = ~~0.0)$ & $~~~~~~~7.7(\sigma = ~~0.1)$\\\hline
+%Transfert & $~~~~~~~5.8(\sigma = ~~0.0)$ & $~~~~~~11.6(\sigma = ~~0.0)$ & $~~~~~~54.6(\sigma = ~~1.0)$\\\hline
+%Exécution & $~~~~~139.0(\sigma = ~~1.3)$ & $~~~~~957.3(\sigma = ~~1.3)$ & $~~~12274.7(\sigma = ~~5.0)$\\\hline
+%\end{tabular}
+%  \caption{Comparaison de la performance RPC de Termite avant les modules dans un contexte interprété sur
+%    la machine Gambit. (temps en millisecondes)}
+%  \label{fig:gambit-arctic-interp}
+%\end{figure}
+
+%\begin{figure}[ht]
+%  \centering
+%\begin{tabular}{|l|r|r|r|}
+%\hline & 4K & 40K & 400K\\\hline
+%Temps total & $~~~~~178.6(\sigma = ~~1.4)$ & $~~~~1033.0(\sigma = ~~1.8)$ & $~~~12871.0(\sigma = ~18.5)$\\\hline
+%%Serialization & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
+%%Deserialization & $~~~~~~~5.2(\sigma = ~~0.0)$ & $~~~~~~10.9(\sigma = ~~0.0)$ & $~~~~~~33.9(\sigma = ~12.5)$\\\hline
+%%Transmission & $~~~~~~~1.1(\sigma = ~~0.2)$ & $~~~~~~~1.9(\sigma = ~~0.3)$ & $~~~~~~16.3(\sigma = ~~4.8)$\\\hline
+%Transfert & $~~~~~~~6.6(\sigma = ~~0.2)$ & $~~~~~~13.1(\sigma = ~~0.3)$ & $~~~~~~50.4(\sigma = ~13.6)$\\\hline
+%Exécution & $~~~~~154.3(\sigma = ~~1.1)$ & $~~~~~987.1(\sigma = ~~1.5)$ & $~~~12559.9(\sigma = ~~4.6)$\\\hline
+%\end{tabular}
+%  \caption{Comparaison de la performance RPC de Termite avant les modules dans un contexte interprété sur
+%    la machine Tictoc. (temps en millisecondes)}
+%  \label{fig:tictoc-arctic-interp}
+%\end{figure}
+
+%\begin{figure}[ht]
+%\centering
+%\begin{tabular}{|l|r|r|r|}
+%\hline & 4K & 40K & 400K\\\hline
+%Temps total & $~~~~1761.6(\sigma = ~84.9)$ & $~~~~4816.6(\sigma = 136.5)$ & $~~~48609.4(\sigma = 112.4)$\\\hline
+%Scheme à C & $~~~~~122.7(\sigma = ~~4.9)$ & $~~~~~589.6(\sigma = ~~4.9)$ & $~~~~9335.7(\sigma = ~15.7)$\\\hline
+%Compilation C & $~~~~~686.3(\sigma = ~~0.0)$ & $~~~~3102.1(\sigma = ~99.7)$ & $~~~36443.8(\sigma = ~53.8)$\\\hline
+%% Serialization & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~~~~0.3(\sigma = ~~0.1)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
+%% Deserialization & $~~~~~~57.5(\sigma = ~63.7)$ & $~~~~~170.7(\sigma = ~59.8)$ & $~~~~~131.4(\sigma = ~77.9)$\\\hline
+%Install & $~~~~~850.4(\sigma = ~17.6)$ & $~~~~~918.6(\sigma = ~82.3)$ & $~~~~1192.3(\sigma = ~67.4)$\\\hline
+%% Transmission & $~~~~~~~0.4(\sigma = ~~0.0)$ & $~~~~~~~0.5(\sigma = ~~0.0)$ & $~~~~~~~0.5(\sigma = ~~0.1)$\\\hline
+%Transfert & $~~~~~~58.1(\sigma = ~63.8)$ & $~~~~~172.0(\sigma = ~60.0)$ & $~~~~~133.5(\sigma = ~77.4)$\\\hline
+%Exécution & $~~~~~~~9.3(\sigma = ~~4.8)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~1473.0(\sigma = ~~9.3)$\\\hline
+%\end{tabular}
+%  \caption{Temps d'exécution et transmission de module de différente taille entre les machines
+%  Gambit et Arctic. Les modules sont installés automatiquement sur Arctic lors de l'exécution.}
+%  \label{fig:gambit-arctic-uninstall}
+%\end{figure}
+
+%\begin{figure}[ht]
+%  \centering
+%\begin{tabular}{|l|r|r|r|}
+%\hline & 4K & 40K & 400K\\\hline
+%Temps total & $~~~~1851.8(\sigma = ~93.6)$ & $~~~~4885.8(\sigma = 167.9)$ & $~~~48656.7(\sigma = 112.8)$\\\hline
+%Scheme à C & $~~~~~123.3(\sigma = ~~5.0)$ & $~~~~~590.1(\sigma = ~~5.2)$ & $~~~~9336.8(\sigma = ~16.3)$\\\hline
+%Compilation C & $~~~~~686.3(\sigma = ~~0.1)$ & $~~~~3068.8(\sigma = ~98.5)$ & $~~~36444.8(\sigma = ~54.6)$\\\hline
+%% Serialization & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~~~~0.3(\sigma = ~~0.1)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
+%% Deserialization & $~~~~~~61.7(\sigma = ~65.0)$ & $~~~~~166.0(\sigma = ~66.0)$ & $~~~~~116.7(\sigma = ~79.2)$\\\hline
+%Install & $~~~~~869.8(\sigma = ~56.6)$ & $~~~~~948.1(\sigma = ~98.7)$ & $~~~~1213.5(\sigma = ~29.4)$\\\hline
+%% Transmission & $~~~~~~27.1(\sigma = ~~4.2)$ & $~~~~~~27.7(\sigma = ~~1.3)$ & $~~~~~~33.9(\sigma = ~~1.3)$\\\hline
+%Transfert & $~~~~~~89.1(\sigma = ~64.8)$ & $~~~~~194.0(\sigma = ~66.1)$ & $~~~~~150.7(\sigma = ~79.2)$\\\hline
+%Exécution & $~~~~~~10.2(\sigma = ~~5.5)$ & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~1467.6(\sigma = ~~9.8)$\\\hline
+%\end{tabular}
+%  \caption{Cette expérience est le même que la figure~\ref{fig:gambit-arctic-uninstall}, sauf que le transfert de module est fait entre
+%  une machine ARM (tictoc) et x86 (arctic).}
+%  \label{fig:tictoc-arctic-uninstall}
+%\end{figure}
+
+%\begin{figure}[ht]
+%  \centering
+%\begin{tabular}{|l|r|r|r|}
+%\hline & 4K & 40K & 400K\\\hline
+%Temps total & $~~~~~~23.6(\sigma = ~~0.9)$ & $~~~~~~10.5(\sigma = ~~0.3)$ & $~~~~1492.8(\sigma = ~~1.9)$\\\hline
+%%Serialization & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~~~~0.3(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$\\\hline
+%%Deserialization & $~~~~~~~4.1(\sigma = ~~0.0)$ & $~~~~~~~4.9(\sigma = ~~0.0)$ & $~~~~~~13.5(\sigma = ~~0.5)$\\\hline
+%%Transmission & $~~~~~~~0.4(\sigma = ~~0.0)$ & $~~~~~~~0.5(\sigma = ~~0.0)$ & $~~~~~~~0.5(\sigma = ~~0.1)$\\\hline
+%Transfert & $~~~~~~~4.8(\sigma = ~~0.1)$ & $~~~~~~~5.7(\sigma = ~~0.1)$ & $~~~~~~14.2(\sigma = ~~0.5)$\\\hline
+%Exécution & $~~~~~~14.0(\sigma = ~~0.7)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~1473.5(\sigma = ~~1.6)$\\\hline
+%\end{tabular}
+%  \caption{Temps d'exécution et de transmission de module de différente taille entre Gambit et Arctic
+%  suite à la première exécution (modules compilés déjà installés.}
+%  \label{fig:gambit-arctic}
+%\end{figure}
 
 
-\begin{figure}[ht]
-  \centering
-\begin{tabular}{|l|r|r|r|}
-\hline & 4K & 40K & 400K\\\hline
-Temps total & $~~~~~~92.6(\sigma = ~15.2)$ & $~~~~~~92.9(\sigma = ~~5.2)$ & $~~~~1554.1(\sigma = ~17.3)$\\\hline
-%Serialization & $~~~~~~~0.3(\sigma = ~~0.0)$ & $~~~~~~~0.3(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$\\\hline
-%Deserialization & $~~~~~~~4.1(\sigma = ~~0.0)$ & $~~~~~~~4.9(\sigma = ~~0.1)$ & $~~~~~~14.7(\sigma = ~~0.0)$\\\hline
-%Transmission & $~~~~~~27.3(\sigma = ~~1.5)$ & $~~~~~~27.6(\sigma = ~~1.4)$ & $~~~~~~33.9(\sigma = ~~1.4)$\\\hline
-Transfert & $~~~~~~31.7(\sigma = ~~1.5)$ & $~~~~~~32.9(\sigma = ~~1.4)$ & $~~~~~~49.0(\sigma = ~~1.4)$\\\hline
-Exécution & $~~~~~~19.8(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~1486.6(\sigma = ~~2.1)$\\\hline
-\end{tabular}
-  \caption{Cette expérience est le même que la figure \ref{fig:gambit-arctic}, sauf que le transfert de module est fait entre
-  un système ARM (tictoc) et x86 (arctic).}
-  \label{fig:tictoc-arctic}
-\end{figure}
+%\begin{figure}[ht]
+%  \centering
+%\begin{tabular}{|l|r|r|r|}
+%\hline & 4K & 40K & 400K\\\hline
+%Temps total & $~~~~~~92.6(\sigma = ~15.2)$ & $~~~~~~92.9(\sigma = ~~5.2)$ & $~~~~1554.1(\sigma = ~17.3)$\\\hline
+%%Serialization & $~~~~~~~0.3(\sigma = ~~0.0)$ & $~~~~~~~0.3(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$\\\hline
+%%Deserialization & $~~~~~~~4.1(\sigma = ~~0.0)$ & $~~~~~~~4.9(\sigma = ~~0.1)$ & $~~~~~~14.7(\sigma = ~~0.0)$\\\hline
+%%Transmission & $~~~~~~27.3(\sigma = ~~1.5)$ & $~~~~~~27.6(\sigma = ~~1.4)$ & $~~~~~~33.9(\sigma = ~~1.4)$\\\hline
+%Transfert & $~~~~~~31.7(\sigma = ~~1.5)$ & $~~~~~~32.9(\sigma = ~~1.4)$ & $~~~~~~49.0(\sigma = ~~1.4)$\\\hline
+%Exécution & $~~~~~~19.8(\sigma = ~~0.0)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~1486.6(\sigma = ~~2.1)$\\\hline
+%\end{tabular}
+%  \caption{Cette expérience est le même que la figure \ref{fig:gambit-arctic}, sauf que le transfert de module est fait entre
+%  un système ARM (tictoc) et x86 (arctic).}
+%  \label{fig:tictoc-arctic}
+%\end{figure}
 
-\begin{figure}[ht]
-  \centering
-\begin{tabular}{|l|r|r|r|}
-\hline & 4K & 40K & 400K\\\hline
-Temps total & $~~~~2123.0(\sigma = 152.4)$ & $~~~~5219.7(\sigma = 152.9)$ & $~~~49377.5(\sigma = 154.4)$\\\hline
-Scheme à C & $~~~~~123.3(\sigma = ~~5.2)$ & $~~~~~590.9(\sigma = ~~5.5)$ & $~~~~9345.3(\sigma = ~20.7)$\\\hline
-Compilation C & $~~~~~686.3(\sigma = ~~0.1)$ & $~~~~3094.8(\sigma = 100.4)$ & $~~~36440.8(\sigma = ~47.8)$\\\hline
-%Serialization & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~~~~0.3(\sigma = ~~0.1)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
-%Deserialization & $~~~~~~62.3(\sigma = ~65.6)$ & $~~~~~172.2(\sigma = ~57.4)$ & $~~~~~128.7(\sigma = ~80.0)$\\\hline
-Install & $~~~~~895.6(\sigma = 133.8)$ & $~~~~~999.1(\sigma = ~71.2)$ & $~~~~1614.4(\sigma = ~95.2)$\\\hline
-%Transmission & $~~~~~272.4(\sigma = ~20.3)$ & $~~~~~276.7(\sigma = ~16.9)$ & $~~~~~339.1(\sigma = ~12.5)$\\\hline
-Transfert & $~~~~~335.0(\sigma = ~71.6)$ & $~~~~~449.2(\sigma = ~61.9)$ & $~~~~~468.0(\sigma = ~80.7)$\\\hline
-Exécution & $~~~~~~10.4(\sigma = ~~5.6)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~1467.7(\sigma = ~10.5)$\\\hline
-\end{tabular}
-  \caption{Ce test est identique à celui de la figure~\ref{fig:tictoc-arctic}, mais avec un réseau de $10Mbit/s$.}
-\end{figure}
+%\begin{figure}[ht]
+%  \centering
+%\begin{tabular}{|l|r|r|r|}
+%\hline & 4K & 40K & 400K\\\hline
+%Temps total & $~~~~2123.0(\sigma = 152.4)$ & $~~~~5219.7(\sigma = 152.9)$ & $~~~49377.5(\sigma = 154.4)$\\\hline
+%Scheme à C & $~~~~~123.3(\sigma = ~~5.2)$ & $~~~~~590.9(\sigma = ~~5.5)$ & $~~~~9345.3(\sigma = ~20.7)$\\\hline
+%Compilation C & $~~~~~686.3(\sigma = ~~0.1)$ & $~~~~3094.8(\sigma = 100.4)$ & $~~~36440.8(\sigma = ~47.8)$\\\hline
+%%Serialization & $~~~~~~~0.2(\sigma = ~~0.1)$ & $~~~~~~~0.3(\sigma = ~~0.1)$ & $~~~~~~~0.1(\sigma = ~~0.0)$\\\hline
+%%Deserialization & $~~~~~~62.3(\sigma = ~65.6)$ & $~~~~~172.2(\sigma = ~57.4)$ & $~~~~~128.7(\sigma = ~80.0)$\\\hline
+%Install & $~~~~~895.6(\sigma = 133.8)$ & $~~~~~999.1(\sigma = ~71.2)$ & $~~~~1614.4(\sigma = ~95.2)$\\\hline
+%%Transmission & $~~~~~272.4(\sigma = ~20.3)$ & $~~~~~276.7(\sigma = ~16.9)$ & $~~~~~339.1(\sigma = ~12.5)$\\\hline
+%Transfert & $~~~~~335.0(\sigma = ~71.6)$ & $~~~~~449.2(\sigma = ~61.9)$ & $~~~~~468.0(\sigma = ~80.7)$\\\hline
+%Exécution & $~~~~~~10.4(\sigma = ~~5.6)$ & $~~~~~~~0.2(\sigma = ~~0.0)$ & $~~~~1467.7(\sigma = ~10.5)$\\\hline
+%\end{tabular}
+%  \caption{Ce test est identique à celui de la figure~\ref{fig:tictoc-arctic}, mais avec un réseau de $10Mbit/s$.}
+%\end{figure}
 
 
 \subsection{Dépendance entre la taille du module et les temps}
@@ -243,9 +322,9 @@ Dans le cas où les modules ont déjà été installés et compilés, le temps g
 d'exécution des programmes de tests est plus rapide dans le cas compilé.  Dans ce cas,
 les modules sont chargés dynamiquement dans le programme de tests lors de la
 diffusion de code.  Les
-figures~[\ref{fig:gambit-arctic},~\ref{fig:tictoc-arctic}] montrent les temps
+figures~[\ref{fig:STEADY-STATE}] montrent les temps
 dans le cas où les modules ont été compilés et les
-figures~[\ref{fig:gambit-arctic-interp},~\ref{fig:tictoc-arctic-interp}] montrent
+figures~[\ref{fig:INTERPRETED}] montrent
 les temps des modules interprétés. Cela s'explique par le fait qu'il y a moins
 de données transmises et que l'exécution de code compilé est plus rapide que
 l'interprétation.
