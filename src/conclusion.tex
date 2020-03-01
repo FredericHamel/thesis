@@ -49,6 +49,34 @@ données sont plus compactes que lorsqu'interprété, le temps de transmission e
 généralement plus petit. La taille de la sérialisation d'une procédure compilée
 est environ 400 fois plus petite que sa version interprétée.
 
+%[TODO: continue here]
+L'approche de diffusion des modules est applicable à d'autres langages.
+Il faut que le langage supporte le chargement dynamique de module et
+que les procédures soient des objets manipulables comme des données.
+Il faut aussi que la sérialisation et désérialisation des procédures
+passe par un encodage qui uniforme et indépendant de la machine.
+L'information encodée doit contenir l'information du module qui contient
+la procédure et un identifiant unique de la procédure. Une
+sérialisation similaire à celle qui est utilisée dans Gambit.
+
+
+L'implémentation actuelle des modules a quelques éléments à améliorer.
+Les macros définies dans le contexte d'un module ont des problèmes d'hygiènes
+lors de l'expansion dans un autre module. Le temps d'installation des modules
+peut être optimisé.
+
+Les messages d'avertissement (\textit{warnings}) lors de la compilation
+des modules sont manquants. Il n'y a pas de message indiquant l'utilisation
+d'une liaison non définie.
+
+Notre approche de gestion des modules diffère des autres gestionnaires par la
+gestion des versions des modules. Plusieurs versions d'un module peuvent être
+installées. La gestion des modules dans Racket (\textit{raco}) ne permet pas
+d'installer plusieurs versions des modules. Akku, un autre gestionnaire de modules
+compatible avec plusieurs implémentations de Scheme à des caractéristiques
+similaires à \textit{raco}.
+
+
 
 % - Expérimentation dans Termite
 % - Diffusion de module
