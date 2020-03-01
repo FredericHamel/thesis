@@ -7,14 +7,17 @@
 %       l'existance de ce chapitre
 %       et mentionner ce dont tu va parler et pourquoi (le lien avec ce travail)
 
-Ce chapitre décrit l'organisation des modules sur le système de fichier pour
-permettre plusieurs versions d'un module. Notre approche est d'associer à
-chaque version d'un module un répertoire différent. Cela permet de stocker les
-différentes versions d'un module dans le système de fichier.  Nous avons
-comparé les différentes façons d'organiser les modules dans plusieurs langages
-comme Python, JavaScript, Go, OCaml. Il est important que l'installation d'un
-module n'altère pas le bon fonctionnement des autres modules.  Le modèle de gestion des
-modules choisi garantit que les dépendances d'un module sont fixes.
+Ce chapitre décrit l'organisation des modules sur le système de fichier que
+nous avons choisi pour permettre plusieurs versions d'un module. Notre
+approche est d'associer à chaque version d'un module un répertoire différent.
+Cela permet de stocker les différentes versions d'un module dans le système de
+fichier.  Nous avons comparé les différentes façons d'organiser les modules
+dans plusieurs langages comme Python, JavaScript, Go, OCaml. Il est important
+que l'installation d'un module n'altère pas le bon fonctionnement des autres
+modules.  Le modèle de gestion des modules choisi garantit que les dépendances
+d'un module sont fixes.
+
+%[TODO: PIP for Gambit]
 
 \section{Sommaire}
 % Installation, Désinstallation, Mise à jour, Compilation/Exécution
@@ -127,6 +130,8 @@ exemple \texttt{gambit}) et au nom du dépôt sur le serveur de version.
 \subsection{Installation des packages et des modules}
 % XXX: clone dans .gambit_repo
 %
+Les modules sont versionnés par un système de gestion de version
+pour permettre de différencier et conserver chaque version du module.
 Un \textit{package} est un regroupement de modules.  L'installation d'un
 package est faite à partir d'un serveur de révision ou un répertoire local qui
 est versionné par un système de gestion de versions (git, hg, svn).  La syntaxe
@@ -237,11 +242,12 @@ Le répertoire d'installation \lstcode{<path>} est la racine utilisée pour
 installer les modules et est spécifié par l'option \lstcode{-dir}.  La racine
 par défaut est \lstcode{\~\~userlib}. Voici un exemple d'installation d'une
 version spécifique du module \lstcode{semver} qui implémente la logique du
-\textit{semantic versioning}\cite{SemanticVersioning} qui est une façon d'organiser les versions. Les
+\textit{semantic versioning}\cite{SemanticVersioning} qui est une façon
+d'organiser les versions. Les
 figures~[\ref{fig:install_hosted_package_in_default_prefix},
 \ref{fig:install_hosted_package_in_custom_prefix},\ref{fig:install_local_package_in_custom_prefix}]
-montrent les différentes façons d'installer d'un \textit{package} en invoquant de
-l'interprète Gambit.
+montrent les différentes façons d'installer d'un \textit{package} en invoquant
+de l'interprète Gambit.
 
 \begin{figure}[ht]
   \centering
@@ -322,7 +328,8 @@ de la branche master et d'installer la nouvelle version. La mise à jour d'un
 module n'affecte pas les versions spécifiques, comme la version 1.0.
 Cette opération est utilisée pour synchroniser le dépôt local avec le
 dépôt web. Sans cette opération l'installation de versions plus récente
-échouerait quand ils ne sont pas dans la cache locale du dépôt.
+échouerait quand ils ne sont pas dans la cache locale du dépôt. La mise
+à jour d'un module est l'équivalent d'un \texttt{pull} dans git.
 
 \begin{center}
   \begin{mplisting}{0.8}
