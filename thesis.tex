@@ -339,6 +339,11 @@ Scheme, un compilateur et interprète du langage Scheme utilisé pour implanter
 Termite. Le système Termite Scheme est utilisé pour implémenter les système
 distribué.
 
+Le problème qui est résolu est la diffusion de code compilé entre les nœuds
+d'un système distribué quand le nœud destination n'a aucune connaissance du
+code qu'il reçoit. Ce problème est difficile, car les nœuds ne sont pas
+homogènes, ils ont différentes architectures (x86, ARM).
+
 Notre approche permet d'identifier les modules
 de façon unique dans un contexte distribué. La facilité
 d'utilisation et la portabilité ont été des facteurs importants
@@ -361,18 +366,25 @@ Scheme, Erlang, Système de module, Système distribué, Agent mobile.
 
 This thesis presents a module system for Termite Scheme that supports
 distributed computing.  This module system facilitates application modularity
-and eases code migration between the nodes of a distributed system. The Gambit
-Scheme system is used to implement the distributed Termite and the Module
-system.
+and eases code migration between the nodes of a distributed system. This module
+system also works for developing non-distributed applications.  The Gambit Scheme
+system is used to implement the distributed Termite and the Module system.
+
+The problem that is solved is the migration of compiled code between nodes of a
+distributed system when the receiving node has no knowledge of the code. This
+is a challenging problem because the nodes are not homogenous, they have
+different architectures (ARM, x86).
 
 Our approach uses a naming model for the modules
 that uniquely identifies in a distributed
 context. Both ease of use and portability were important factors
 in the design of the module system.
 
-The thesis describes the module system and how it was integrated into Gambit.
-The features of this system are shown through application examples and the
-performance is evaluated experimentally.
+The thesis describes a module system and how it was integrated into Gambit.
+The system allows developing distributed modular system.  The features of this
+system are shown through application examples and the performance is evaluated
+experimentally.
+
 
 \vspace*{1.5ex}
 \noindent\textbf{Keywords}: Functional programming, Scheme, Erlang,
