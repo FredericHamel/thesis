@@ -122,7 +122,7 @@ de l'espace de nom.\\
 
 %Chaque symbole dans l'espace de nom peut être renommé à un nouveau symbole en
 %spécifier une pair contenant l'association. La forme ressemble à l'exemple
-La forme \lstcode{##namespace} permet aussi d'associer un identifiant à un
+La forme \lstcode{##namespace} permet aussi de lier un identifiant à un
 autre identifiant dans un espace de nom donné. Chaque association est marquée
 par une paire qui crée un alias entre le premier élément et le second. Par exemple,
 la paire \lstcode{(<old> <new>)} remplace \lstcode{<old>} par \lstcode{<ns><new>}.\\
@@ -648,4 +648,5 @@ les modules.
 
 Notre approche supporte la création de modules qui dépendent de bibliothèques
 du système d'exploitation.  Cela est réalisé par les extensions de la forme
-\texttt{define-library} et par la FFI de Gambit.
+\texttt{define-library} et par la FFI de Gambit. Le système de module permet
+de regrouper de façon logique les fonctionnalités dans un module.
