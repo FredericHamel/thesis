@@ -55,7 +55,7 @@ dynamiques}.  Cela permet de garder la structure modulaire au
 \textit{déploiement}.  Chaque module est une composante séparée du programme
 principal.  Ces modules sont lus du disque et chargés en mémoire durant
 l'exécution du programme.  Ce chargement est effectué par l'\textit{éditeur de
-liens dynamique}~\cite{DBLP:journals/cse/BeazleyWC01,DBLP:journals/spe/HoO91}
+liens dynamique du système d'exploitation}~\cite{DBLP:journals/cse/BeazleyWC01,DBLP:journals/spe/HoO91}
 qui s'occupe de lier les fonctionnalités des modules au programme principal.
 % Le chapitre % chapter or section \ref{ch:module_systems} explique plus en
 % profondeur le fonctionnement de l'éditeur de liens dynamique du système
@@ -131,9 +131,9 @@ d'un module soient chargées pour accéder des fonctionnalités.
 % système de module.]
 
 Le concept de version de module n'est pas intégré à la sémantique de
-plusieurs langages de programmation.  Ainsi en Python et Java les
+plusieurs langages de programmation.  En Python et Java les
 modules sont référés dans le code avec un nom qui n'inclut pas la
-version.  Go est un rare exemple de langage de programmation qui
+version.  Go est exemple de langage de programmation qui
 permet d'inclure la version lorsqu'on réfère à un module.
 
 Dans les systèmes qui considèrent chaque version d'un module comme un
@@ -174,19 +174,19 @@ Erlang~\cite{M_mobileintelligent}, Java~\cite{And98transparentmigration},
 Scheme~\cite{Sumii00animplementation,DBLP:conf/erlang/Germain06},
  % \cite{TermiteScheme},
 JavaScript~\cite{DEV2017transparentmigration}. Ce mécanisme requiert
-typiquement que l'ensemble du code soit disponible sur le système distant.
+typiquement que l'ensemble du code soit disponible sur le nœud distant.
 
-Le système Java présenté dans l'article~\cite{And98transparentmigration} est un
-cas de migration de tâche. Il capture l'état présent du programme qui consiste
-aux valeurs et aux types de toutes les variables de chaque objet. La pile des
-appels de méthode avec les valeurs de toutes les
-variables est aussi incluse dans l'état du programme.
-Ces informations sont transmises au nœud distant qui les utilise pour reconstruire le programme initial.
-L'ensemble des méthodes sur le nœud de départ est présent sur le
-nœud d'arrivée.
+Un système écrit Java~\cite{And98transparentmigration} est un exemple de
+migration de tâche. Il capture l'état présent du programme qui consiste aux
+valeurs et aux types de toutes les variables de chaque objet. La pile des
+appels de méthode avec les valeurs de toutes les variables est aussi incluse
+dans l'état du programme.  Ces informations sont transmises au nœud distant qui
+les utilise pour reconstruire le programme initial.  L'ensemble des méthodes
+sur le nœud de départ est présent sur le nœud d'arrivée.
 
-Le système Erlang~\cite{M_mobileintelligent} qui implémente des agents mobiles
-requiert que le code soit disponible sur le nœud destination.
+Le système implémenté dans le langage de programmation
+Erlang~\cite{M_mobileintelligent} qui implémente des agents mobiles requiert
+que le code soit disponible sur le nœud destination.
 
 Le système de migration en JavaScript~\cite{DEV2017transparentmigration}
 utilise des nœuds pour conserver le code. Il est basé sur le fait que le code
@@ -195,8 +195,9 @@ connu, il suffit de transmettre l'état de l'agent pour effectuer une migration.
 %Ce modèle JavaScript ressemble à celui implémenté dans Gambit lors de la
 %transmission de procédures compilées par l'utilisation de nœuds pour conserver
 %le code.
-Un exemple de migration de code est présenté au chapitre
-\ref{ch:scheme_concepts}.
+Le scénario de migration de code présenté dans le chapitre
+\ref{ch:scheme_concepts} nous à inspiré dans la conception d'un système de
+module.
 % TODO: rendre + évident + tôt
 Notre motivation est la migration de code entre des nœuds d'un système
 distribué comme présenté à la fin du chapitre \ref{ch:scheme_concepts}.  Nous
@@ -215,11 +216,17 @@ gestionnaire, il serait avantageux de ne pas interrompre le
 fonctionnement du système distribué lorsque les modules sont
 améliorés.
 
-\section{Contributions}
-%[TODO: contrib]
+%\section{Approche de transmission}
+%[TODO: approche]
 
-Nous avons conçu un système de module pour les systèmes distribués.
-Nous l'avons intégré dans le système Gambit Scheme.
+
+%[TODO: contrib]
+Les contributions de se travail sont la conception d'un système de
+module pour les systèmes distribués et son intégration dans
+Gambit Scheme. Cela permet la diffusion des modules entre les nœuds
+d'un système distribué.
+% Nous avons conçu un système de module pour les systèmes distribués.
+% Nous l'avons intégré dans le système Gambit Scheme.
 
 % \begin{itemize}
 %   \item Modules mobiles.
