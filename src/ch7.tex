@@ -67,6 +67,9 @@ La première ligne des figures~[\ref{fig:INTERPRETED}] montre cette tendance
 dans les temps d'exécutions. Notre but est de montrer un lien entre la taille
 du programme et le temps d'exécution.
 
+Les optimisation que de Gambit ne change pas la forme ou le contenu des
+fermeture.
+
 \section{Spécification des machines}
 Les machines sur lesquelles les tests ont été effectués sont:
 \begin{itemize}
@@ -98,7 +101,7 @@ l'effet aléatoire du réseau.  Cela est observé par une variance élevée dans
 temps de transfert.  Pour la même taille de transmission, le temps de transfert
 est plus grand pour plusieurs exécutions.
 
-\begin{figure}[t]
+\begin{figure}[ht]
   \centering
   \footnotesize
 \begin{tabular}{|l|rr|rr|rr|}
@@ -313,7 +316,7 @@ transfert et d'exécution sont dépendant de la taille du module.
 
 Le temps d'exécution total des programmes de tests exploitant la diffusion de
 code compilé, nécessitant l'installation et la compilation du module, est plus
-lent que la version interprétée. Le facteur qui prend le plus de temps dans le
+court que la version interprétée. Le facteur qui prend le plus de temps dans le
 contexte compilé est l'installation et la compilation des modules diffusés.
 Suite à une première exécution qui a installé les module compilés, l'exécution
 est plus rapide que dans le cas interprété par un facteur d'environ 10.
@@ -330,7 +333,7 @@ de données transmises et que l'exécution de code compilé est plus rapide que
 l'interprétation.
 
 Le temps de transmission des données dans les programmes de test compilés était
-plus lent que dans le cas interprété pour certaines des transmissions, malgré
+plus court que dans le cas interprété pour certaines des transmissions, malgré
 le fait qu'il y a moins de données à transmettre. Cela affecte environ 10\% des
 transmissions et est lié à des facteurs aléatoires du réseau.
 
