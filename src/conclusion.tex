@@ -59,16 +59,6 @@ L'information encodée doit contenir l'information du module qui contient
 la procédure et un identifiant unique de la procédure. Une
 sérialisation similaire à celle qui est utilisée dans Gambit.
 
-
-L'implémentation actuelle des modules a quelques éléments à améliorer.
-Les macros définies dans le contexte d'un module ont des problèmes d'hygiènes
-lors de l'expansion dans un autre module. Le temps d'installation des modules
-peut être optimisé.
-
-Les messages d'avertissement (\textit{warnings}) lors de la compilation
-des modules sont manquants. Il n'y a pas de message indiquant l'utilisation
-d'une liaison non définie.
-
 Notre approche de gestion des modules diffère des autres gestionnaires par la
 gestion des versions des modules. Plusieurs versions d'un module peuvent être
 installées. La gestion des modules dans Racket (\textit{raco}) ne permet pas
@@ -76,7 +66,26 @@ d'installer plusieurs versions des modules. Akku, un autre gestionnaire de modul
 compatible avec plusieurs implémentations de Scheme à des caractéristiques
 similaires à \textit{raco}.
 
+L'implémentation actuelle des modules a quelques éléments à améliorer.
+Les macros définies dans le contexte d'un module ont des problèmes d'hygiènes
+lors de l'expansion dans un autre module. Le temps d'installation des modules
+peut être optimisé. L'opération de mise à jour ne permet pas de mettre
+à jour les branches qui sont installées.
 
+Les messages d'avertissement (\textit{warnings}) lors de la compilation
+des modules sont manquants. Il n'y a pas de message indiquant l'utilisation
+d'une liaison non définie.
+
+%[FIXME: update using other branch then master]
+
+Bref, notre approche de diffusion des modules compilés permet d'avoir une
+plus grande performance à l'exécution. Cela permet la mise à jour de
+code d'un nœud distant sans interrompre son service. Cette approche
+est applicable à d'autres langages. La transmission permet d'avoir
+une meilleure performance d'exécution. Le prix est le temps d'installation
+et de compilation du module.
+
+%[TODO: nice ending paragraph]
 
 % - Expérimentation dans Termite
 % - Diffusion de module
