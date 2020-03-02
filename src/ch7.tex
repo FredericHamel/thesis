@@ -1,16 +1,22 @@
 %[TODO: read again]
+\def \MMM[#1]{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{#1}}}
+
 \chapter{Évaluation}
 
-Ce chapitre évalue les performances du système de modules.  Notre approche
-d'évaluation utilise trois programmes de test (benchmarks). Nous avons
+L'originale implémentation de Termite était capable d'envoyer des messages qui
+contient du code, qui est absent sur le nœud destination, à condition que le
+code soit interprété. Notre système permet cette transmission dans le contexte
+compilé.  Ce chapitre évalue les performances du système de modules.  Notre
+approche d'évaluation utilise trois programmes de test (benchmarks). Nous avons
 fait des expérimentations pour comparer les performances de la diffusion de
-module, que nous avons conçu, dans un contexte compilé avec la diffusion
-de code interprété déjà présent dans Termite Scheme.
+module, que nous avons conçu, dans un contexte compilé avec la diffusion de
+code interprété déjà présent dans Termite Scheme.
 
 Le but est de prouver que l'utilisation de modules compilés, rendu possible par
 notre approche, est plus avantageuse au niveau de la performance par rapport à
 la diffusion de code interprété. Nous avons aussi testé la diffusion des modules
 entre des nœuds de nature différente (ARM, x86).
+
 
 % de taille
 % différente. Nous les avons adaptés pour qu'ils testent la diffusion des
@@ -67,15 +73,12 @@ La première ligne des figures~[\ref{fig:INTERPRETED}] montre cette tendance
 dans les temps d'exécutions. Notre but est de montrer un lien entre la taille
 du programme et le temps d'exécution.
 
-Les optimisation que de Gambit ne change pas la forme ou le contenu des
-fermeture.
-
 \section{Spécification des machines}
 Les machines sur lesquelles les tests ont été effectués sont:
 \begin{itemize}
-  \item arctic, une machine \texttt{x86\_64} roulant Linux;
-  \item gambit, une machine \texttt{x86\_64} roulant macOS;
-  \item tictoc, un Raspberry Pi \texttt{ARM} roulant Linux.
+  \item \MMM[x86/Linux] est une machine \texttt{x86\_64} roulant Linux;
+  \item \MMM[x86/macOS] est une machine \texttt{x86\_64} roulant macOS;
+  \item \MMM[ARM/Linux] est un Raspberry Pi \texttt{ARM} roulant Linux.
 \end{itemize}
 
 Les spécifications détaillées de ces machines sont présentes à
@@ -83,88 +86,110 @@ l'annexe~\ref{ch:annexeA}. La diversité des machines utilisées montre que la
 diffusion de code compilé est indépendante de la plateforme et de l'architecture de la
 machine.
 
-La machine \textbf{arctic} est la machine la plus stable numériquement de toutes
+La machine \MMM[x86/Linux] est la machine la plus stable numériquement de toutes
 celles utilisées, car elle a un système de refroidissement au liquide. Les résultats
-pris sur \textbf{arctic} ont une variance plus petite et sont reproductibles.
+pris sur \MMM[x86/Linux] ont une variance plus petite et sont reproductibles.
 
-La machine \textbf{tictoc} est la machine la moins perfomante et d'un architecture
-ARM. Cela permet de tester la transmission de tâche entre ARM et x86.
+La machine \MMM[ARM/Linux] est la machine la moins performante. Elle est d'une
+architecture ARM, ce qui permet de tester la transmission de tâche
+entre des architectures différentes.
 
 \section{Résultats}
 %[TODO: refaire l'évaluation]
-Les temps dans les tests sont mesurés en millisecondes (ms).  Les éléments qui
-affectent les résultats sont le réseau et la vitesse de la machine de
-destination. Étant donné que le réseau a perturbé 10\% des transmissions
-effectuées dans l'ensemble des tests dans l'ordre des millisecondes, nous avons
-enlevé 5\% des valeurs minimales et 5\% des valeurs maximales pour minimiser
-l'effet aléatoire du réseau.  Cela est observé par une variance élevée dans le
-temps de transfert.  Pour la même taille de transmission, le temps de transfert
-est plus grand pour plusieurs exécutions.
+Les temps dans les tests sont mesurés en millisecondes (ms).  Le programme est
+exécuté 20 fois, les valeurs extrêmes sont éliminées pour tenir compte des
+variations de la latence du réseau. Les tables des résultats contiennent
+la moyenne et l'écart-type de chaque mesure.
+
+% Étant donné que le réseau a perturbé 10\% des transmissions effectuées dans
+% l'ensemble des tests dans l'ordre des millisecondes, nous avons enlevé 5\%
+% des valeurs minimales et 5\% des valeurs maximales pour minimiser l'effet
+% aléatoire du réseau.  Cela est observé par une variance élevée dans le temps
+% de transfert.  Pour la même taille de transmission, le temps de transfert est
+% plus grand pour plusieurs exécutions.
+
+La première observation est que pour tous les scénarios le temps du nœud de
+départ n'a pas d'impact sur le temps RPC total. Cela est attendu puisque la
+majorité du travail est effectué sur le nœud destination. Les temps les plus
+grands sont généralement pour \MMM[ARM/Linux]. Cela peut être expliqué par
+temps de transfert qui est plus grand.
+
+Le temps de transfert (la latence réseau et de sérialisation/désérialisation)
+varie proportionnellement avec la taille des messages. Dans le scénario
+STEADY-STATE, les messages sont les paramètres de la procédure et le résultat.
+Dans ce scénario, le temps associé aux transmissions varie de 13-15ms pour
+\MMM[x86/macOS] et de 25-30ms pour \MMM[ARM/Linux] (un processeur et une
+interface réseau moins performants). Les temps mesurés sur le nœud destination
+sont essentiellement les mêmes.
+
+Dans le scénario INTERPRETED le message contient une représentation du code
+à exécuter, ce qui est gros pour le 400K. Dans ce scénario, le temps des
+transmissions varie de 15-83ms pour \MMM[x86/macOS] et de 47-411ms pour
+\MMM[ARM/Linux] (encore une fois le temps est affecté par la performance
+du processeur et l'interface réseau). Le temps de transmission est
+négligeable par rapport au temps total du RPC. Pour le scénario
+STEADY-STATE, le temps de transmission est plus important pour le 4K qui
+est le programme le plus petit. La transmission demande plus de travail que
+le calcul sur le nœud destination.
 
 \begin{figure}[ht]
   \centering
   \footnotesize
 \begin{tabular}{|l|rr|rr|rr|}
 \multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}}}\\[1.5ex]
-\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
-Total for RPC     & ~~~~~146.4 & $\pm$~~0.6 & ~~~~~966.9 & $\pm$~~6.1 & ~~~10463.8 & $\pm$~~3.3\\\hline
-On destination    & ~~~~~131.6 & $\pm$~~0.2 & ~~~~~948.7 & $\pm$~~5.9 & ~~~10381.0 & $\pm$~~2.7\\\hline
+\hline Temps (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total pour RPC     & ~~~~~146.4 & $\pm$~~0.6 & ~~~~~966.9 & $\pm$~~6.1 & ~~~10463.8 & $\pm$~~3.3\\\hline
+Sur la destination    & ~~~~~131.6 & $\pm$~~0.2 & ~~~~~948.7 & $\pm$~~5.9 & ~~~10381.0 & $\pm$~~2.7\\\hline
 \multicolumn{7}{c}{}\\
 \multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}}}\\[1.5ex]
-\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
-Total for RPC     & ~~~~~179.2 & $\pm$~~1.6 & ~~~~1002.7 & $\pm$~~8.1 & ~~~10801.1 & $\pm$~11.0\\\hline
-On destination    & ~~~~~132.6 & $\pm$~~0.7 & ~~~~~954.6 & $\pm$~~0.0 & ~~~10390.5 & $\pm$~~2.6\\\hline
+\hline Temps (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total pour RPC     & ~~~~~179.2 & $\pm$~~1.6 & ~~~~1002.7 & $\pm$~~8.1 & ~~~10801.1 & $\pm$~11.0\\\hline
+Sur la destination    & ~~~~~132.6 & $\pm$~~0.7 & ~~~~~954.6 & $\pm$~~0.0 & ~~~10390.5 & $\pm$~~2.6\\\hline
 \end{tabular}
 
-\caption{Timings in the INTERPRETED scenario with
-  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}} or
-  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}} as the start
-  node}
+\caption{Les temps le scénario INTERPRETED avec
+  \MMM[x86/macOS] ou \MMM[ARM/Linux] comme le nœud de départ}
   \label{fig:INTERPRETED}
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[ht]
   \centering
   \footnotesize
 \begin{tabular}{|l|rr|rr|rr|}
 \multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}}}\\[1.5ex]
-\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
-Total for RPC     & ~~~~~~15.5 & $\pm$~~0.7 & ~~~~~~48.5 & $\pm$~~0.6 & ~~~~~478.7 & $\pm$~~0.6\\\hline
-On destination    & ~~~~~~~2.2 & $\pm$~~0.0 & ~~~~~~35.2 & $\pm$~~0.1 & ~~~~~463.3 & $\pm$~~0.3\\\hline
+\hline Temps (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total pour RPC     & ~~~~~~15.5 & $\pm$~~0.7 & ~~~~~~48.5 & $\pm$~~0.6 & ~~~~~478.7 & $\pm$~~0.6\\\hline
+Sur la destination    & ~~~~~~~2.2 & $\pm$~~0.0 & ~~~~~~35.2 & $\pm$~~0.1 & ~~~~~463.3 & $\pm$~~0.3\\\hline
 \multicolumn{7}{c}{}\\
 \multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}}}\\[1.5ex]
-\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
-Total for RPC     & ~~~~~26.9 & $\pm$~~1.2 & ~~~~~60.4 & $\pm$~~0.6 & ~~~492.5 & $\pm$~~0.7\\\hline
-On destination    & ~~~~~~2.2 & $\pm$~~0.0 & ~~~~~35.2 & $\pm$~~0.0 & ~~~462.8 & $\pm$~~0.3\\\hline
+\hline Temps (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total pour RPC     & ~~~~~26.9 & $\pm$~~1.2 & ~~~~~60.4 & $\pm$~~0.6 & ~~~492.5 & $\pm$~~0.7\\\hline
+Sur la destination    & ~~~~~~2.2 & $\pm$~~0.0 & ~~~~~35.2 & $\pm$~~0.0 & ~~~462.8 & $\pm$~~0.3\\\hline
 \end{tabular}
 
-\caption{Timings in the STEADY-STATE scenario with
-  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}} or
-  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}} as the start
-  node}
+\caption{Les temps dans le scénario STEADY-STATE avec
+  \MMM[x86/macOS] ou \MMM[ARM/Linux] comme le nœud de départ}
   \label{fig:STEADY-STATE}
 
 \end{figure}
 
-\begin{figure}[t]
+\begin{figure}[ht]
   \centering
   \footnotesize
 \begin{tabular}{|l|rr|rr|rr|}
 \multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}}}\\[1.5ex]
-\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
-Total for RPC     & ~~~~~1208.6 & ~~ & ~~~~~2460.3 & ~~ & ~~~148536.2 & ~~\\\hline
-On destination    & ~~~~~~~~2.2 & ~~ & ~~~~~~~36.1 & ~~ & ~~~~~~464.7 & ~~\\\hline
+\hline Temps (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total pour RPC     & ~~~~~1208.6 & ~~ & ~~~~~2460.3 & ~~ & ~~~148536.2 & ~~\\\hline
+Sur la destination    & ~~~~~~~~2.2 & ~~ & ~~~~~~~36.1 & ~~ & ~~~~~~464.7 & ~~\\\hline
 \multicolumn{7}{c}{}\\
 \multicolumn{7}{c}{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}}}\\[1.5ex]
-\hline Time (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
-Total for RPC     & ~~~~~1159.8 & ~~ & ~~~~~2502.0 & ~~ & 153272.6 & ~~\\\hline
-On destination    & ~~~~~~~~2.2 & ~~ & ~~~~~~~37.1 & ~~ & ~~~464.1 & ~~\\\hline
+\hline Temps (ms) & \multicolumn{2}{|c|}{4K} & \multicolumn{2}{|c|}{40K} & \multicolumn{2}{|c|}{400K}\\\hline
+Total pour RPC     & ~~~~~1159.8 & ~~ & ~~~~~2502.0 & ~~ & 153272.6 & ~~\\\hline
+Sur la destination    & ~~~~~~~~2.2 & ~~ & ~~~~~~~37.1 & ~~ & ~~~464.1 & ~~\\\hline
 \end{tabular}
 
-\caption{Timings in the FIRST-INSTALL scenario with
-  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{x86/macOS}} or
-  \textit{\normalsize M\footnotesize\raisebox{-0.8ex}{ARM/Linux}} as the start
-  node}
+\caption{Les temps dans les scénario FIRST-INSTALL avec
+  \MMM[x86/macOS] ou \MMM[ARM/Linux] comme le nœud de départ}
   \label{fig:FIRST-INSTALL}
 
 \end{figure}
@@ -289,25 +314,39 @@ On destination    & ~~~~~~~~2.2 & ~~ & ~~~~~~~37.1 & ~~ & ~~~464.1 & ~~\\\hline
 %\end{figure}
 
 
-\subsection{Dépendance entre la taille du module et les temps}
-Le temps d'installation du module sur le nœud de destination
-est dépendant de sa taille. Plus un module est
-gros, plus il prend de temps à s'installer.
 
-Les temps de compilation de Scheme à C et C à langage machine sont stable pour
-toutes les expériences, puisque les compilations ont tous été effectuées sur le
-même système \textbf{arctic} pour la stabilité d'exécution.  Les temps de
-compilation croissent avec la taille du programme.
+% Le temps d'installation du module sur le nœud de destination
+% est dépendant de sa taille. Plus un module est
+% gros, plus il prend de temps à s'installer.
 
-Le temps d'exécution ne suit pas la même tendance. Dans les cas
-compilés, l'expérience 40K est plus rapide que 4K dans l'exécution.  Cela
-s'explique par le fait que certains programmes sont mieux optimisés que
-d'autres par le compilateur.
+% Les temps de compilation de Scheme à C et C à langage machine sont stable pour
+% toutes les expériences, puisque les compilations ont tous été effectuées sur le
+% même système \MMM[x86/Linux] pour la stabilité d'exécution.  Les temps de
+% transmission croît avec croissent avec la taille du programme.
 
-Cela respecte la première l'hypothèse qui suppose le temps de compilation de
-transfert et d'exécution sont dépendant de la taille du module.
+% Le temps d'exécution ne suit pas la même tendance. Dans les cas
+% compilés, l'expérience 40K est plus rapide que 4K dans l'exécution.  Cela
+% s'explique par le fait que certains programmes sont mieux optimisés que
+% d'autres par le compilateur.
 
-\subsection{Comparaison entre les temps interprétés et compilés}
+\subsection{Comparaison entre les scénarios INTERPRETED et STEADY-STATE}
+
+Pour évaluer les performances de notre système, nous pouvons comparer le temps
+des scénarios INTERPRETED et STEADY-STATE. Le temps RPC total du scénario
+STEADY-STATE est 22x plus plus petit pour \MMM[x86/macOS] et \MMM[ARM/Linux]
+que dans le scénario INTERPRETED pour le 400K. Pour le 4K, les temps
+d'exécution du RPC total sont de 6x-9x plus petit que dans le cas INTERPRETED.
+Dans le cas moyen 40K, l'accélération est de 16x-20x plus rapide que le
+scénario interprété.
+
+\subsection{Comparaison entre les scénarios INTERPRETED et FIRST-INSTALL}
+
+Le scénario FIRST-INSTALL inclut le temps d'installation et de compilation des
+modules. En comparaison avec le scénario INTERPRETED, une première observation
+indique que le temps total RPC pour \MMM[x86/macOS] et \MMM[ARM/Linux] sont
+6x-8x fois plus grand pour le bench 4K (le module le plus petit). Cela
+s'explique par le temps de compilation et d'installation.  Le temps d'exécution
+sur le nœud de destination est 60x plus rapide que dans le cas INTERPRETED.
 
 % tests est le téléchargement et la compilation du modules. Les temps interprété
 % est présenté dans la figure~\ref{fig:gambit-arctic-interp}. Les temps compilé,
@@ -318,19 +357,17 @@ Le temps d'exécution total des programmes de tests exploitant la diffusion de
 code compilé, nécessitant l'installation et la compilation du module, est plus
 court que la version interprétée. Le facteur qui prend le plus de temps dans le
 contexte compilé est l'installation et la compilation des modules diffusés.
-Suite à une première exécution qui a installé les module compilés, l'exécution
-est plus rapide que dans le cas interprété par un facteur d'environ 10.
+Suite à une première exécution qui a installé les modules compilés, l'exécution
+est plus rapide que dans le cas interprété.
 
 Dans le cas où les modules ont déjà été installés et compilés, le temps global
-d'exécution des programmes de tests est plus rapide dans le cas compilé.  Dans ce cas,
-les modules sont chargés dynamiquement dans le programme de tests lors de la
-diffusion de code.  Les
-figures~[\ref{fig:STEADY-STATE}] montrent les temps
-dans le cas où les modules ont été compilés et les
-figures~[\ref{fig:INTERPRETED}] montrent
-les temps des modules interprétés. Cela s'explique par le fait qu'il y a moins
-de données transmises et que l'exécution de code compilé est plus rapide que
-l'interprétation.
+d'exécution des programmes de tests est plus rapide dans le cas compilé.  Dans
+ce cas, les modules sont chargés dynamiquement dans le programme de tests lors
+de la diffusion de code.  Les figures~[\ref{fig:STEADY-STATE}] montrent les
+temps dans le cas où les modules ont été compilés et les
+figures~[\ref{fig:INTERPRETED}] montrent les temps des modules interprétés.
+Cela s'explique par le fait qu'il y a moins de données transmises et que
+l'exécution de code compilé est plus rapide que l'interprétation.
 
 Le temps de transmission des données dans les programmes de test compilés était
 plus court que dans le cas interprété pour certaines des transmissions, malgré
