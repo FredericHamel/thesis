@@ -6,6 +6,14 @@ la migration de code. Notre approche exploite la sérialisation des objets
 Scheme, le langage Termite et l'installation automatique des modules durant
 l'exécution.
 
+La migration de code entre les nœuds d'un système distribué n'est possible
+que si chaque nœud utilise la même version de Gambit configuré avec les
+mêmes paramètres. Des versions différentes de Gambit vont compiler le code
+différemment, ce qui peut rendre la sérialisation/désérialisation possiblement
+incompatible. La compilation des modules doit utiliser les mêmes déclarations
+et optimisations Scheme. Le compilateur C, le système d'exploitation, la taille
+des mots mémoires n'ont pas d'importance.
+
 \section{Systèmes distribués}
 
 Les systèmes distribués sont constitués d'un ensemble de nœuds interconnectés
@@ -303,7 +311,7 @@ de diffusion du code. Notre implémentation de ce système permet l'installation
 de la nouvelle version d'un module qui répare un bug dans l'application
 \texttt{termite-clock} dans arrêter l'application.
 
-Ce mécanisme est utile pour mettre à jour un serveur évolutif
-sans l'interrompre. Notre approche permet la diffusion de modules
-entre les nœuds d'un système distribué.
-
+Ce mécanisme est utile pour mettre à jour un serveur évolutif sans
+l'interrompre. Notre approche permet la diffusion de modules entre les nœuds
+d'un système distribué. Nous évaluons les performances de notre
+système dans le prochain chapitre.
