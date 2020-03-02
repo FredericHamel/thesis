@@ -34,7 +34,7 @@ d'un module et l'exécution des tests unitaires du module. Les modules
 sont versionnés par Git. L'emplacement des modules est spécifié par
 une liste de répertoires qui inclut les modules système et les modules
 utilisateur. La gestion des modules est effectuée par le module \lstcode{_pkg}
-qui offre les procédures d'installation d'installation et de désinstallation.
+qui offre les procédures d'installation et de désinstallation.
 
 
 % % quicklisp.org
@@ -102,7 +102,7 @@ formelle à la figure~\ref{fig:module-ref->grammar} décrit la syntaxe du
 <module-ref>       := <local> | <hosted>
 <local-package>    := <id>
 <hosted-package>   := <hostname>/<id>/<id>
-<local-module>     := <local-package>(/<id>)*<tag>
+<local-module>     := <local-package>(/<id>)*@<tag>
 <hosted-module>    := <hosted-package>(/<id>)*(@<tag>)?
 \end{mplisting}
   \caption{Grammaire formelle d'un \texttt{module-ref}}
@@ -243,7 +243,9 @@ installer les modules et est spécifié par l'option \lstcode{-dir}.  La racine
 par défaut est \lstcode{\~\~userlib}. Voici un exemple d'installation d'une
 version spécifique du module \lstcode{semver} qui implémente la logique du
 \textit{semantic versioning}\cite{SemanticVersioning} qui est une façon
-d'organiser les versions. Les
+d'organiser les versions. Cette organisation est recommandée pour étiqueter les
+versions. La présente version de système de module ne requiert pas
+l'utilisation du \textit{semantic versioning}.  Les
 figures~[\ref{fig:install_hosted_package_in_default_prefix},
 \ref{fig:install_hosted_package_in_custom_prefix},\ref{fig:install_local_package_in_custom_prefix}]
 montrent les différentes façons d'installer d'un \textit{package} en invoquant
@@ -330,6 +332,10 @@ Cette opération est utilisée pour synchroniser le dépôt local avec le
 dépôt web. Sans cette opération l'installation de versions plus récente
 échouerait quand ils ne sont pas dans la cache locale du dépôt. La mise
 à jour d'un module est l'équivalent d'un \texttt{pull} dans git.
+
+Notre système de module permet l'installation d'une branche.
+L'opération de mise à jour sur cette branche n'est pas encore
+supportée. C'est un élément qui est à rafiner.
 
 \begin{center}
   \begin{mplisting}{0.8}
@@ -534,6 +540,10 @@ n'est pas liée au nom du module dans le cas de Java. Il n'est pas possible de
 charger deux modules qui utilisent le même espace de nom, comme deux versions
 d'un même module.
 
+Les projets Java utilise générallement Gradle ou Maven des système de
+\textit{build} automatique. Ces système gère l'installation et la compilation
+des dépendances.
+
 \subsection{Organisation de Go}
 %
 L'organisation des bibliothèques dans Go~\cite{GoLang} est plus dans un contexte
@@ -624,6 +634,7 @@ dépendances lors de l'installation de nouveaux modules.  L'installation des
 modules peut-être déclenchés procéduralement ce qui est nécessaire pour diffuser
 les modules. Notre approche de gestion, qui utilise le nom du module et sa
 version, permet d'identifier de façon unique les modules et de les conserver
-dans le système de fichier.
-
+dans le système de fichier. L'installation automatique des modules avec le
+chargement dynamique permet l'évolution d'une application sans qu'il soit
+redémarré. C'est une partie important de la diffusion des modules.
 
