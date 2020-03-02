@@ -250,13 +250,14 @@ La construction d'une bibliothèque dynamique à partir du fichier
 compilateur de Gambit qui se nomme \texttt{gsc} depuis longtemps. Cela produit
 un fichier avec l'extension \texttt{.oN} où le \texttt{N} correspond à la
 version générée de la bibliothèque qui commence à 1. Gambit support
-déjà un versionnement des modules compilés.
+déjà une gestion des versions des modules compilés avant l'intégration
+du système de module.
 
 
 \section{Module hébergé}
 
 Un module qui est hébergé est un module dont le code source est stocké sur un
-serveur de versionnement de source accessible sur e réseau au nœud d'un nom nom
+serveur de versionnement de source accessible sur le réseau au nœud d'un nom
 de domaine comme \url{github.com}. La syntaxe des noms de domaine est inspirée
 du RFC-2396~\cite{RFC:URI-2396}.  La différence avec la spécification du
 \textit{hostname} dans le RFC-2396 est que le \textit{hostname} ne peut pas se
@@ -289,7 +290,9 @@ qui indique quels modules peuvent être installés inconditionnellement.
 Nous avons nommé cette liste \textit{whitelist}, elle valide les
 \textit{<module-ref>}.  La validation consiste à trouver un
 élément dans la \textit{whitelist} qui correspond à un préfixe du
-\textit{<module-ref>}.
+\textit{<module-ref>}. Chaque processus Gambit possède une
+\textit{whitelist} différente, cela implique que chaque nœud Termite
+peut avoir une \textit{whitelist} distinct.
 
 %[TODO: not done, February 27 is the deadline for this part]
 
@@ -298,7 +301,7 @@ est incluse dans le \textit{<module-ref>} dans le même ordre. L'élément
 \texttt{github.com/gambit} est un préfixe de \texttt{github.com/gambit/hello},
 car les parties \texttt{github.com} et \texttt{gambit} font partie du
 \textit{<module-ref>}. Le module \texttt{github.com/gambitXYZ/hello} ne
-contient pas le préfixe \texttt{gihtub.com/gambit}, car \texttt{gambit} est
+contient pas le préfixe \texttt{github.com/gambit}, car \texttt{gambit} est
 différent de \texttt{gambitXYZ}.
 
 Par défaut l'emplacement \texttt{github.com/gambit} est inclus dans la
@@ -340,7 +343,7 @@ l'usager pour l'installation d'un module qui n'est pas dans la
 
   \item \textbf{repl} (\textit{Read Eval Print Loop}): les modules qui ne sont pas dans la \textit{whitelist}
     peuvent être installés avec la confirmation textuelle de l'usager s'il y a
-    une \textit{repl}. C'est le mode par défaut.
+    une \textit{repl} disponible. C'est le mode par défaut.
 
   \item \textbf{ask-always}: les modules qui ne sont pas dans la \textit{whitelist}
     peuvent être installés avec la confirmation textuelle de l'usager.
