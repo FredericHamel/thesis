@@ -179,16 +179,16 @@ La sérialisation de la procédure contient le nom de la procédure incluant
 l'espace de nom. Le nœud Termite qui roule l'application de l'horloge
 programmable a configuré l'installation automatique des modules. Même si la
 procédure n'existe pas sur le nœud Termite de l'horloge programmable le système
-va l'installer, le compiler et le charger dynamiquement.
+va l'installer, le compiler et le charger dynamiquement.\\
 
 % Le code exécuté par la boucle principale est présent dans la figure
 % \ref{fig:termite-clock@v1}. L'affichage de l'heure est actualisé à une
 % fréquence constante.
 
 \begin{figure}[ht]
-  \centering\fontsize{8}{7}
+  \centering\fontsize{10}{10}
   \lstset{language={Scheme},frame=single}
-\begin{mplisting}{0.75}
+\begin{mplisting}{0.85}
 ;; clock-app.scm
 (import (termite))
 (import (github.com/frederichamel/termite-clock @v1))
@@ -222,9 +222,9 @@ va l'installer, le compiler et le charger dynamiquement.
 
 
 \begin{figure}[ht]
-  \centering\fontsize{8}{7}
+  \centering\fontsize{10}{10}
   \lstset{language={Scheme},frame=single}
-\begin{mplisting}{0.75}
+\begin{mplisting}{0.85}
 (define (clock-thread-loop timezone)
   (let tick ()
     (let* ((now (time->seconds (current-time)))
@@ -254,16 +254,15 @@ va l'installer, le compiler et le charger dynamiquement.
 \end{figure}
 
 \begin{figure}[ht]
-  \centering\fontsize{8}{7}
+  \centering\fontsize{10}{10}
   \lstset{language={Scheme},frame=single}
   \begin{tabular}{c}
-\begin{mplisting}{0.75}
+\begin{mplisting}{0.85}
 ;; config.scm
 (define local    (make-node "a.local" 3000)) ;; x86 arch
 (define remote   (make-node "b.local" 3000)) ;; ARM arch
-\end{mplisting}\\
-
-\begin{mplisting}{0.75}
+\end{mplisting}\\[5ex]
+\begin{mplisting}{0.85}
 ;; timezone-set.scm
 (import (termite))
 
@@ -279,9 +278,8 @@ va l'installer, le compiler et le charger dynamiquement.
       (!? (remote-service 'clock-app remote) 0) ;; => 'ok
       (let ((timezone (string->number (car rest))))
         (!? (remote-service 'clock-app remote) (or timezone 0))))) ;; => 'ok
-\end{mplisting}\\
-
-\begin{mplisting}{0.75}
+\end{mplisting}\\[5ex]
+\begin{mplisting}{0.85}
 ;; updater.scm
 (import (termite))
 (import (github.com/frederichamel/termite-clock @v2))
