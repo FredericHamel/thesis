@@ -98,6 +98,7 @@ formelle à la figure~\ref{fig:module-ref->grammar} décrit la syntaxe du
 
 \begin{figure}[ht]
   \lstset{frame=single}
+  \fontsize{12}{8}
   \begin{mplisting}{0.8}
 <module-ref>       := <local> | <hosted>
 <local-package>    := <id>
@@ -242,23 +243,27 @@ Le répertoire d'installation \lstcode{<path>} est la racine utilisée pour
 installer les modules et est spécifié par l'option \lstcode{-dir}.  La racine
 par défaut est \lstcode{\~\~userlib}. Voici un exemple d'installation d'une
 version spécifique du module \lstcode{semver} qui implémente la logique du
-\textit{semantic versioning}\cite{SemanticVersioning} qui est une façon
+\textit{semantic versioning}~\cite{SemanticVersioning} qui est une façon
 d'organiser les versions. Cette organisation est recommandée pour étiqueter les
 versions. La présente version de système de module ne requiert pas
-l'utilisation du \textit{semantic versioning}.  Les
-figures~[\ref{fig:install_hosted_package_in_default_prefix},
-\ref{fig:install_hosted_package_in_custom_prefix},\ref{fig:install_local_package_in_custom_prefix}]
-montrent les différentes façons d'installer d'un \textit{package} en invoquant
-de l'interprète Gambit.
+l'utilisation du \textit{semantic versioning}.  La
+figure~\ref{fig:install_hosted_package} montrent les différentes façons
+d'installer d'un \textit{package} en invoquant de l'interprète Gambit.
 
 \begin{figure}[ht]
   \centering
+  \fontsize{12}{8}
   \begin{mplisting}{1}
 $ gsi -install github.com/frederichamel/semver
+
+$ gsi -install -dir /tmp/exemple github.com/frederichamel/semver
+
+$ gsi -install -dir /tmp/exemple /local/dir/ github.com/frederichamel/semver
 \end{mplisting}
-  \caption{Exemple d'installation d'un \textit{package} hébergé dans le préfixe d'installation
-    par défaut.}
-  \label{fig:install_hosted_package_in_default_prefix}
+  \caption{Exemples d'installation d'un \textit{package} hébergé dans le préfixe
+    d'installation par défaut, dans un répertoire spécifique et
+    dans un répertoire spécifique à partir d'un répertoire local.}
+  \label{fig:install_hosted_package}
 \end{figure}
 
 \begin{figure}[ht]
@@ -388,14 +393,14 @@ L'arborescence du répertoire du module après la compilation du module
 
 Il est possible de forcer la compilation d'un module par la présence d'un fichier
 \texttt{\textit{module-name}.\_must-build\_}. Cette fonctionnalité permet le chargement d'un
-module qui doit être compilé pour fonctionner.
+module qui doit être compilé pour fonctionner correctement.
 
 
 \section{Comparaison avec d'autres systèmes}
 %[TODO: add more comparison]
 L'organisation des modules sur le système de fichier dans Gambit diffère de
 celui de OCaml, Python et NodeJS et des autres implémentations de Scheme.
-Akku\cite{Akku.scm}, un gestionnaire de module pour Scheme compatible avec
+Akku~\cite{Akku.scm}, un gestionnaire de module pour Scheme compatible avec
 plusieurs implémentations de Scheme comme Chez Scheme, Chibi Scheme et GNU
 Guile. Il gère les modules pour les projets. Une seule version de chaque module
 peut être installé dans un projet.
@@ -438,12 +443,12 @@ préfixe.
   Python   & \xmark            \\\hline
   NodeJS   & \xmark            \\\hline
   Java     & \xmark            \\\hline
-  Go       & \checkmark        \\\hline
+  Go       & \hspace{-8ex}\checkmark        \\\hline
   Akku     & \xmark            \\\hline
   Racket   & \xmark            \\\hline
   Chez Scheme & \xmark         \\\hline
-  Gambit   & \checkmark        \\\hline
-  Nix      & \checkmark        \\\hline
+  Gambit   & \hspace{-8ex}\checkmark        \\\hline
+  Nix      & \hspace{-8ex}\checkmark        \\\hline
 %  Gambit Scheme & \checkmark & \checkmark & default \\\hline
 \end{tabular}
 
@@ -491,7 +496,8 @@ désinstalle ou masque la version déjà installée. Le système de module ne pe
 pas de référer à deux versions de la même bibliothèque.
 
 \begin{figure}[ht]
-    \begin{minipage}[t]{0.5\textwidth}
+    \fontsize{12}{8}
+    \begin{minipage}[ht]{0.5\textwidth}
 \begin{verbatim}
 >>> import sys
 >>> print('\n'.join(sys.path))
@@ -551,7 +557,7 @@ des dépendances.
 
 \subsection{Organisation de Go}
 %
-L'organisation des bibliothèques dans Go~\cite{GoLang} est plus dans un contexte
+L'organisation des bibliothèques dans Go~\cite{GoLang} est effectuée dans
 environnement dont la racine est spécifiée par la variable d'environnement
 \texttt{GOPATH} avec un répertoire pour les exécutables compilés
 (\texttt{bin}), un répertoire contenant le code source des différents projets
@@ -567,6 +573,7 @@ de spécifier une version spécifique du module lors de l'importation.
 \noindent
 \begin{figure}[ht]
   \centering
+  \fontsize{12}{8}
 \begin{mplisting}{1}
 gopkg.in/pkg.v3      -> github.com/go-pkg/pkg (branch/tag v3, v3.N, or v3.N.M)
 gopkg.in/user/pkg.v3 -> github.com/user/pkg   (branch/tag v3, v3.N, or v3.N.M)
@@ -578,6 +585,7 @@ gopkg.in/user/pkg.v3 -> github.com/user/pkg   (branch/tag v3, v3.N, or v3.N.M)
 
 \begin{figure}[ht]
   \lstset{language={Go},frame=single}
+  \fontsize{12}{8}
 \begin{mplisting}{1}
 package main
 
@@ -608,6 +616,8 @@ func main() {
 \begin{figure}[ht]
   \centering
   \lstset{frame=single}
+  \vspace*{4ex}
+  \fontsize{12}{8}
 \begin{mplisting}{1}
 $GOPATH/
   - bin
@@ -625,7 +635,8 @@ $GOPATH/
       - pkglist
         - objets
 \end{mplisting}
-  \caption{Arborescence des fichiers dans le gopath.}
+  \caption{Arborescence des fichiers dans le gopath qui contient
+    l'URL complet vers le dépôt de chaque module.}
   \label{fig:organisation_go}
 \end{figure}
 

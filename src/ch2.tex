@@ -1,20 +1,21 @@
 
-\chapter{Bibliothèques Scheme}
-\label{ch:scheme_concepts}
-
+\chapter{Bibliothèques Scheme} \label{ch:scheme_concepts}
+% Racket, Chez Scheme, Guile, Chicken, Bigloo
 Pour développer notre approche de modularisation dans le contexte de systèmes
 distribués nous avons choisi un langage de programmation nous permettant de
 facilement expérimenter avec le code mobile. Le langage de programmation Scheme
-a plusieurs implémentations, dont Gambit, Racket\cite{Racket},
-Gerbil\cite{Gerbil} et JazzScheme\cite{JazzScheme}.  Le langage Termite
+a plusieurs implémentations, dont Gambit, Racket~\cite{Racket}, Chez
+Scheme~\cite{dybvig2011chez}, Guile~\cite{galassi1996guile},
+Chicken~\cite{chicken131practical}, Bigloo~\cite{Bigloo}, Gerbil~\cite{Gerbil} et
+JazzScheme~\cite{JazzScheme}.  Le langage Termite
 Scheme~\cite{DBLP:conf/erlang/Germain06}, une variante de Scheme étendue avec
 des fonctionnalités de programmation distribuée inspirées du langage Erlang,
 nous est apparu comme une option intéressante vue sa performance, sa
 portabilité et son support pour la méta programmation facilitée par son
-homoiconicité. Il est implémenté en tant que module de Gambit. Notre travail a
-donc pu se concentrer sur la conception d'un système de module spécialisé aux
-besoins du code mobile. Le système Termite Scheme est expliqué sommairement
-dans le chapitre \ref{ch:task_migration}.
+homoiconicité. Termite est implémenté en tant que module de Gambit.  Notre
+travail a donc pu se concentrer sur la conception d'un système de module
+spécialisé aux besoins du code mobile. Le système Termite Scheme est expliqué
+sommairement au chapitre \ref{ch:task_migration}.
 
 Ce chapitre introduit la syntaxe de Scheme et les différentes
 approches de modularisation existantes.  Afin de faciliter son
@@ -32,7 +33,7 @@ Le langage Scheme~\cite{Clinger:2008:SCH:1529966.1529973}, conçu en 1975 par
 Guy L. Steele et Gerald Jay Sussman, est une variante minimaliste de Lisp.
 Depuis sa conception, plusieurs normes ont vu le jour; les plus connues étant
 le R4RS (1991), R5RS (1998), R6RS (2007) et R7RS (2013). Notre implémentation
-utilise R7RS. Notre système de modules pourrait être conçu avec la syntaxe de
+utilise R7RS, mais pourrait aussi s'appliquer à la syntaxe de
 R6RS. Il suffit que la structure des bibliothèques permette les noms uniques
 pour les modules.
 
@@ -51,8 +52,9 @@ qui dénote un appel de procédure, un appel de macro, ou une forme spéciale.
 Les formes syntaxiques spéciales de base en Scheme sont \lstcode{define}, \lstcode{lambda},
 \lstcode{let}, \lstcode{if} et \lstcode{set!}.
 \begin{itemize}
-  \item La forme \texttt{(define \textit{<name>} \textit{<val>})} associe le nom \textit{<name>} avec
-    la valeur de l'expression \textit{<val>}. Il est utilisé pour définir les variables globales.
+  \item La forme \texttt{(define \textit{<name>} \textit{<val>})} associe le
+    nom \textit{<name>} avec la valeur de l'expression \textit{<val>}. Elle est
+    utilisée pour définir les variables globales.
 
   \item La forme \texttt{(lambda \textit{<params>} \textit{<body>})} permet la définition de
     procédures anonymes. Les paramètres sont \textit{<params>} et le corps
@@ -196,11 +198,11 @@ Lors de l'appel d'une procédure, chacun des paramètres actuels est évalué pu
 propagé à la procédure. C'est un mode de passage de paramètre par valeur. Les
 boucles sont normalement exprimées sous la forme de récursion.  Cela est
 facilité par l'existence de l'appel terminal~\cite{DBLP:conf/acm/Steele77}
-garanti, qui permet des récursions sans coût. L'appel terminal de procédure est
-simplement la dernière appel effectué dans une procédure. Ces appels n'ont pas
-besoin de retourner, ils permettent d'exprimer les boucles infinies souvent
-utilisées dans le contexte d'un serveur qui boucle sur les évènements.  Par
-exemple, l'appel récursif de \lstcode{repeat} dans la
+garanti, qui permet des récursions sans coût en espace. L'appel terminal de
+procédure est simplement le dernier appel effectué dans une procédure. Ces
+appels n'ont pas besoin de retourner, ils permettent d'exprimer les boucles
+très longues souvent utilisées dans le contexte d'un serveur qui boucle sur les
+évènements.  Par exemple, l'appel récursif de \lstcode{repeat} dans la
 figure~\ref{fig:appel_terminal_example} est terminal, car l'appelant n'a pas
 besoin du résultat pour terminer, donc l'appelant peut donner le contrôle à la
 procédure. Sans les appels terminaux, les boucles infinies mèneraient à un
@@ -211,7 +213,7 @@ les boucles à l'aide de la méta programmation.
   \lstset{language={Scheme}}
   \begin{mplisting}{0.9}
 (define (repeat msg n)
-  (if (< 0 n)
+  (if (> n 0)
       (begin
         (display msg)
         (repeat msg (- n 1))) ;; appel terminal
@@ -345,7 +347,7 @@ pertinentes à ce mémoire.
 
 Les bibliothèques, aussi appelées modules, facilitent le partage de
 fonctionnalités entre plusieurs programmes. Dans le standard
-R4RS\cite{Scheme:R4RS} et R5RS\cite{Scheme:R5RS} les modules consistent en des
+R4RS~\cite{Scheme:R4RS} et R5RS~\cite{Scheme:R5RS} les modules consistent en des
 fichiers Scheme qui contiennent des définitions de procédures et de macros. Ils
 sont chargés dans l'environnement global par la procédure \lstcode{load}. Certaines
 implémentations de Scheme ont la forme spéciale \lstcode{include} qui permet de
@@ -429,7 +431,7 @@ exemple de module simple n'utilisant que la procédure \lstcode{load}.
 % - Import
 % - Corps de module
 
-Le standard R6RS\cite{Scheme:R6RS}, qui est une option possible pour concevoir
+Le standard R6RS~\cite{Scheme:R6RS}, qui est une option possible pour concevoir
 le système de module, renforce le concept de module avec la forme syntaxique
 \lstcode{library} qui a 4 parties: le nom, une sous-forme \lstcode{export}, une
 sous-forme \lstcode{import} et le corps du module. Le nom du module l'identifie
@@ -531,8 +533,8 @@ les modules.
 % bibliothèques soit distinct, ce qui ajoute une tâche au programmeur.
 
 % What is define-library?
-Le standard R7RS\cite{Scheme:R7RS} simplifie la syntaxe des modules
-R6RS\cite{Scheme:R6RS}.  L'importation d'un module fait abstraction du niveau
+Le standard R7RS~\cite{Scheme:R7RS} simplifie la syntaxe des modules
+R6RS~\cite{Scheme:R6RS}.  L'importation d'un module fait abstraction du niveau
 d'importation. Les macros et les procédures sont importées de façon
 transparente. La procédure \lstcode{load} est conservée. La forme spéciale pour
 définir un module est \lstcode{define-library}. Il n'y a pas d'ordre spécifique
@@ -654,17 +656,17 @@ Termite expose plusieurs procédures pour gérer les processus et la transmissio
 de message entre chacun des nœuds.
 
 \begin{itemize}
-  \item La procédure \texttt{(spawn \textit{<thunk>} \#!key \textit{<name>})} permet de
+  \item La procédure \texttt{(spawn~\textit{<thunk>} \#!key \textit{<name>})} permet de
     créer des processus Termite. Le paramètre \textit{<thunk>} est la procédure principale
-    du thread. Le paramètre \textit{<name>} est un paramètre associatif optionnel.
+    du thread. Le paramètre \texttt{\itshape <name>} est un paramètre associatif optionnel.
 
-  \item La procédure \texttt{(! \textit{<node>} \textit{<msg>})} envoie le message
+  \item La procédure \texttt{(!~{\itshape{<node>}} {\itshape <msg>})} envoie le message
     \lstcode{msg} au nœud \lstcode{node}.
 
   \item La procédure \lstcode{(?)} permet de recevoir un message
     envoyé par un autre processus au nœud courant.
 
-  \item La procédure \texttt{(!? \textit{<node>} \textit{<msg>})} envoie un message au
+  \item La procédure \texttt{(!?~\textit{<node>} \textit{<msg>})} envoie un message au
     nœud \lstcode{node} et attend la réponse.
 
   \item La macro \texttt{(recv (\textit{<pattern>} \textit{<expr1>} \dots) \dots)}
@@ -765,9 +767,9 @@ Dans ce scénario, la mise à jour de code est effectuée dans les étapes
 permet de réparer le bogue qui est dans le serveur. Termite permet
 déjà la migration de code, mais sous certaines conditions.
 
-Les nœuds doivent être interprétés, dans ce cas le code source des procédures
-est transmis. Ce qui permet d'exécuter du code arbitraire sur le nœud distant.
-Lorsque compilé, l'information transmis ne contient pas l'information du code
+Les nœuds doivent être interprétés, pour que le code source des procédures soit
+transmis. Ceci permet d'exécuter du code arbitraire sur le nœud distant.
+Lorsque le code est compilé, l'information transmise ne contient pas le code
 source.
 
 \section{Conclusion}

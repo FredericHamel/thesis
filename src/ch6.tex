@@ -17,11 +17,10 @@ des mots mémoires n'ont pas d'importance.
 \section{Systèmes distribués}
 
 Les systèmes distribués sont constitués d'un ensemble de nœuds interconnectés
-de calculs. Les nœuds interagissent par l'envoi et la réception de message
-au sein d'un réseau de communication. Chaque nœud a un but spécifique. Le
-\textit{Web} est un exemple notable qui permet d'avoir un aperçu.
-Il est composé de clients et de serveurs qui exécutent
-des applications clients et serveurs différentes.
+de calculs. Les nœuds interagissent par l'envoi et la réception de message au
+sein d'un réseau de communication. Chaque nœud a un but spécifique. Le
+\textit{Web} est un exemple notable représentatif.  Il est composé de clients
+et de serveurs qui exécutent des applications clients et serveurs différentes.
 
 L'implémentation d'un système distribué inclut le développement des applications
 installé sur les nœuds et la logique d'interaction entre les nœuds. Il est
@@ -72,20 +71,20 @@ chaque nœud possède le code compilé des procédures qui sont transmises.
 
 \section{Communication dans Termite}
 
-L'ensemble des données transmis sont sérialisées par la procédure
+L'ensemble des données transmises sont sérialisées par la procédure
 \lstcode{object->u8vector} qui prend en paramètre l'objet à sérialiser et
-optionnellement une procédure \textit{transform} qui est appellé sur toutes les
+optionnellement une procédure \textit{transform} qui est appellé sur tous les
 sous-objets dans l'objet pour personnaliser le processus de sérialisation. Le
 résultat est un \texttt{u8vector} (vector d'octets).
 
-La sérialisation des de la plupart des objets utilise les bits de poids fort
-du premier octet pour indiquer le type de l'objet. Le reste des bits du
-premier est utiliser pour encoder des propriétés de base comme la longueur
+La sérialisation de la plupart des objets utilise les bits de poids fort
+du premier octet pour indiquer le type de l'objet. Les autres des bits du
+premier octet sont utilisés pour encoder des propriétés de base comme la longueur
 de l'objet (si la valeur peut être encodé avec ces bits).
 
-La sérialization du vecteur \texttt{\#(1 2 3)} est représenté par ces 4 octets
+La sérialization du vecteur \texttt{\#(1 2 3)} est représenté par les 4 octets
 \texttt{\#x23} \texttt{\#x51} \texttt{\#x52} \texttt{\#x53}.  Le premier octet
-indique que c'est un type vector de longueur 3, les autres octets représente
+indique que c'est un type vector de longueur 3, les autres octets représentent
 les nombre 1, 2 et 3.  La sérialisation d'une procédure contient le nom de
 celle-ci et un entier qui l'identifie. La figure~\ref{fig:proc_serialization}
 montre un exemple de la sérialisation d'une procédure compilée. Cette
@@ -134,7 +133,7 @@ compilé requiert une version uniforme de Gambit. La représentation des
 \textit{subprocedure} peut être inconsistante entre les versions de Gambit.
 
 L'application est une horloge programmable écrite en Termite Scheme qui affiche
-l'heure dans plusieurs fuseaux horaires. Cette application a un bogue
+l'heure dans un certain fuseau horaire configurable. Cette application a un bogue
 d'affichage volontaire qui se produit lorsque l'horloge passe de {\tt 12h59} à
 {\tt 1h00}. L'affichage montre {\tt 1h009} au lieu de {\tt 1h00}.
 
@@ -152,7 +151,7 @@ Cette horloge offre un API simple:
   \item Tous les autres messages sont rejetés par le serveur.
 \end{itemize}
 
-L'horloge programmable est démarrée sur le nœud, par exemple un raspberry 4.
+L'horloge programmable est démarrée sur le nœud, par exemple un raspberry pi 4.
 L'heure affichée n'est pas dans le bon fuseau horaire, donc nous utilisons
 le programme \texttt{timezone-set.scm} de la figure~\ref{fig:termite_clock_client}
 pour configurer le bon fuseau horaire. Par exemple, pour assigner le fuseau 4
@@ -166,8 +165,7 @@ du code qui est (\lstcode{update-code}).
 Le programme \texttt{updater.scm} de la figure \ref{fig:termite_clock_client}
 permet d'envoyer la nouvelle version de l'horloge programmable. La mise à jour
 est faite en envoyant une procédure ou une continuation qui contient la logique
-ou une continuation (comme dans la figure\ref{fig:buggy_pong_server}) qui
-contient la logique. Dans ce cas c'est une procédure qui est envoyée
+(comme dans la figure~\ref{fig:buggy_pong_server}). Dans ce cas c'est une procédure qui est envoyée
 pour mettre à jour le horloge programmable.
 
 La procédure envoyée provient du module \texttt{github.com/frederichamel/termite-clock@v2}
@@ -186,9 +184,9 @@ va l'installer, le compiler et le charger dynamiquement.\\
 % fréquence constante.
 
 \begin{figure}[ht]
-  \centering\fontsize{10}{10}
+  \centering\fontsize{12}{8}
   \lstset{language={Scheme},frame=single}
-\begin{mplisting}{0.85}
+\begin{mplisting}{1}
 ;; clock-app.scm
 (import (termite))
 (import (github.com/frederichamel/termite-clock @v1))
@@ -205,15 +203,16 @@ va l'installer, le compiler et le charger dynamiquement.\\
                proc))))))
 
 (define node (make-node "b.local" 3000))
+
 (define (start)
   (node-init node)
-  (display "\033[H\033[J") ;; clean screen
+  (display "\033[H\033[J") ;; clear screen
   (clock-start 'clock-app)
   (wait-for (resolve-service 'clock-app)))
 
 (start)
 \end{mplisting}
-  \caption{Le code du serveur qui configure la \textit{hook}
+  \caption{Le code du serveur qui configure le \textit{hook}
     qui résout les références à des procédures inconnues.
     C'est effectué avec la procédure
     \lstcode{\#\#unknown-procedure-handler-set!}.}
@@ -222,14 +221,14 @@ va l'installer, le compiler et le charger dynamiquement.\\
 
 
 \begin{figure}[ht]
-  \centering\fontsize{10}{10}
+  \centering\fontsize{12}{8}
   \lstset{language={Scheme},frame=single}
-\begin{mplisting}{0.85}
+\begin{mplisting}{1}
 (define (clock-thread-loop timezone)
   (let tick ()
     (let* ((now (time->seconds (current-time)))
            (next (* 0.5 (floor (+ 1 (* 2 now))))) ;; next 1/2 second
-           (to (seconds->time next)))
+           (timeout (seconds->time next)))
       (let wait ()
         (recv
           ((from tag timezone) (where (integer? timezone))
@@ -244,7 +243,7 @@ va l'installer, le compiler et le charger dynamiquement.\\
            (! from (list tag timezone))
            (wait))
 
-          (after to
+          (after timeout
            (clock-update next timezone)
            (tick)))))))
 \end{mplisting}
@@ -254,15 +253,15 @@ va l'installer, le compiler et le charger dynamiquement.\\
 \end{figure}
 
 \begin{figure}[ht]
-  \centering\fontsize{10}{10}
+  \centering\fontsize{12}{8}
   \lstset{language={Scheme},frame=single}
   \begin{tabular}{c}
-\begin{mplisting}{0.85}
+\begin{mplisting}{1}
 ;; config.scm
 (define local    (make-node "a.local" 3000)) ;; x86 arch
 (define remote   (make-node "b.local" 3000)) ;; ARM arch
 \end{mplisting}\\[5ex]
-\begin{mplisting}{0.85}
+\begin{mplisting}{1}
 ;; timezone-set.scm
 (import (termite))
 
@@ -279,7 +278,7 @@ va l'installer, le compiler et le charger dynamiquement.\\
       (let ((timezone (string->number (car rest))))
         (!? (remote-service 'clock-app remote) (or timezone 0))))) ;; => 'ok
 \end{mplisting}\\[5ex]
-\begin{mplisting}{0.85}
+\begin{mplisting}{1}
 ;; updater.scm
 (import (termite))
 (import (github.com/frederichamel/termite-clock @v2))
@@ -293,7 +292,7 @@ va l'installer, le compiler et le charger dynamiquement.\\
 \end{mplisting}
   \end{tabular}
   \caption{Les applications clients qui interragissent avec
-    l'horloge programmable. Il y a le programme qui modifit
+    l'horloge programmable. Il y a le programme qui modifie
     le timezone de l'horloge programme dans \texttt{timezone-set.scm}.
     Il y a le programme de mise à jour de l'horloge programmable
     dans \texttt{updater.scm}.}

@@ -41,7 +41,7 @@ bibliothèque doit charger la bibliothèque et rendre ses fonctionnalités
 disponibles dans le contexte où l'importation a eu lieu (qui peut soit venir d'un
 programme principal ou d'une bibliothèque).
 
-Le chargement d'une bibliothèque peut-être effectuée à l'exécution par
+Le chargement d'une bibliothèque peut-être effectué à l'exécution par
 l'utilisation de \texttt{eval} (par \texttt{load}) pour les fichiers source et
 \texttt{load-object-file} pour les bibliothèques compilées. Cette recherche
 peut aussi avoir lieu durant l'édition des liens en utilisant les méta-infos
@@ -247,10 +247,10 @@ dynamiques.\\
 
 La construction d'une bibliothèque dynamique à partir du fichier
 \texttt{fib.scm} de la figure \ref{fig:basic_fib_module} s'effectue par le
-compilateur de Gambit qui se nomme \texttt{gsc} depuis longtemps. Cela produit
-un fichier avec l'extension \texttt{.oN} où le \texttt{N} correspond à la
-version générée de la bibliothèque qui commence à 1. Gambit support
-déjà une gestion des versions des modules compilés avant l'intégration
+compilateur de Gambit qui se nomme \texttt{gsc}. Cela produit
+un fichier avec l'extension \texttt{.oN} où le \texttt{N} correspond au
+numéro de séquence générée de la bibliothèque, qui commence à 1. Gambit support
+déjà une certaine gestion des versions des modules compilés avant l'intégration
 du système de module.
 
 
@@ -314,6 +314,7 @@ les variables d'environnement et par les arguments de ligne de commande.
 
 \begin{figure}[ht]
   \centering
+  \fontsize{12}{7}
   \begin{mplisting}{1}
 $ gsi -e '(import (github.com/feeley/pyffi))'
 *** ERROR IN (stdin)@1.9 -- Cannot find library (github.com/feeley/pyffi)
@@ -350,9 +351,10 @@ l'usager pour l'installation d'un module qui n'est pas dans la
 \end{itemize}
 
 Le mode d'installation est spécifié par le \textit{runtime option} nommée
-\textit{ask-install}.
-\begin{figure}[h]
+\textit{ask-install}.\\
+\begin{figure}[ht]
   \lstset{language={Scheme}}
+  \fontsize{12}{7}
 \begin{mplisting}{1}
 $ gsi -:ask-install=always
 Gambit v4.9.3

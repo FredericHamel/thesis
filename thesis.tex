@@ -280,7 +280,7 @@
 
 \department{Département d'informatique et recherche opérationnelle}
 
-\date{\today} %Date du DÉPÔT INITIAL (ou du 2e dépôt s'il y a corrections majeures)
+\date{\todayfr} %Date du DÉPÔT INITIAL (ou du 2e dépôt s'il y a corrections majeures)
 
 \sujet{Informatique}
 %%
@@ -291,14 +291,14 @@
 %% \orientation{mathématiques de l'ingénieur} et
 %% \orientation{mathématiques appliquées}
 
-\president{Michail Famelis}
+\president{Michalis Famelis}
 
 \directeur{Marc Feeley}
 
 %%\codirecteur{Nom du 1er codirecteur}         % s'il y a lieu
 %%\codirecteurs{Nom du 2e codirecteur}         % s'il y a lieu
 
-\membrejury{Stafan Monnier}
+\membrejury{Stefan Monnier}
 
 %%\examinateur{Nom de l'examinateur externe}   %obligatoire pour la these
 
@@ -336,13 +336,13 @@ distribuées ou pas.  Il a pour but de faciliter la conception des programmes
 dans une structure modulaire et faciliter la migration de code entre les nœuds
 d'un système distribué. Le système de module est conçu pour le système Gambit
 Scheme, un compilateur et interprète du langage Scheme utilisé pour implanter
-Termite. Le système Termite Scheme est utilisé pour implémenter les système
-distribué.
+Termite. Le système Termite Scheme est utilisé pour implémenter les systèmes
+distribués.
 
 Le problème qui est résolu est la diffusion de code compilé entre les nœuds
-d'un système distribué quand le nœud destination n'a aucune connaissance du
-code qu'il reçoit. Ce problème est difficile, car les nœuds ne sont pas
-homogènes, ils ont différentes architectures (x86, ARM).
+d'un système distribué quand le nœud destination n'a aucune connaissance
+préalable du code qu'il reçoit. Ce problème est difficile car les nœuds sont
+hétérogènes, ils ont différentes architectures (x86, ARM).
 
 Notre approche permet d'identifier les modules
 de façon unique dans un contexte distribué. La facilité
@@ -371,17 +371,17 @@ system also works for developing non-distributed applications.  The Gambit Schem
 system is used to implement the distributed Termite and the Module system.
 
 The problem that is solved is the migration of compiled code between nodes of a
-distributed system when the receiving node has no knowledge of the code. This
-is a challenging problem because the nodes are not homogenous, they have
+distributed system when the receiving node has no prior knowledge of the code.
+This is a challenging problem because the nodes are not homogenous, they have
 different architectures (ARM, x86).
 
 Our approach uses a naming model for the modules
-that uniquely identifies in a distributed
+that uniquely identifies them in a distributed
 context. Both ease of use and portability were important factors
 in the design of the module system.
 
 The thesis describes a module system and how it was integrated into Gambit.
-The system allows developing distributed modular system.  The features of this
+The system allows developing distributed modular systems.  The features of this
 system are shown through application examples and the performance is evaluated
 experimentally.
 

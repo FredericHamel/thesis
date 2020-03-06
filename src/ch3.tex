@@ -3,17 +3,17 @@
 \label{ch:modules_implementation}
 
 Ce chapitre traite de notre implémentation des modules dans Gambit qui se veut
-le plus portable entre les différentes implémentations de Scheme.  Notre
-approche des modules se base sur la syntaxe de R7RS.  Notre implémentation des
-modules utilise des formes déjà existantes et aussi de nouvelles formes qui ont
-été ajoutées au besoin.  Ces nouvelles formes nous ont permis d'intégrer la
-syntaxe des modules R7RS avec les modules primitifs de Gambit. Il y a deux
-façons d'écrire des modules.  Les modules primitifs sont utilisés pour
-implémenter des fonctionnalités système dans Gambit, par exemple, un module qui
-implémente une nouvelle syntaxe.  La syntaxe des modules R7RS est utilisée
-lorsqu'un module se veut compatible avec d'autres implémentations du langage de
-programmation Scheme supportant R7RS.
-
+le plus portable entre les différentes implémentations de Scheme.  Nous avons
+ajouté une syntaxe pour les modules à Gambit parce qu'elle était manquante.
+Notre implémentation des modules se base sur la syntaxe de R7RS et utilise des
+formes déjà existantes et aussi de nouvelles formes qui ont qui ont été
+ajoutées au besoin.  Ces nouvelles formes nous ont permis d'intégrer la syntaxe
+des modules R7RS avec les modules primitifs de Gambit. Il y a deux façons
+d'écrire des modules.  Les modules primitifs sont utilisés pour implémenter des
+fonctionnalités système dans Gambit, par exemple, un module qui implémente une
+nouvelle syntaxe.  La syntaxe des modules R7RS est utilisée lorsqu'un module se
+veut compatible avec d'autres implémentations du langage de programmation
+Scheme supportant R7RS.
 
 Les formats des modules R7RS, construits avec \lstcode{define-library}, contiennent
 plusieurs composantes.
@@ -51,23 +51,24 @@ Gambit utilise une notation qui est compatible avec l'environnement du
 système hôte. Il permet de référer au répertoire maison de l'utilisateur
 et aux répertoires d'installation.
 
-Un chemin est une chaine de caractère qui dénote une ressource.
+Un chemin est une chaîne de caractère qui dénote une ressource.
 Le séparateur des composantes d'un chemin dépend du système
-d'exploitation, Linux et macOS utilise `/' alors que MSDOS et
-Microsoft Windows utilise `$\backslash$`.
+d'exploitation, Linux et macOS utilisent `/' alors que MSDOS et
+Microsoft Windows utilisent `$\backslash$'.
 
-La notation qui permet de référer au répertoire maison de l'utilisateur
-courant est par la notation `\url{~}' qui n'est pas suivit d'un `\url{~}'.
-Le nom qui suit `\url{~}' est le nom de l'utilisateur. Par exemple,
-\url{~USER} représente le répertoire de l'utilisateur {\tt USER}.
+La notation qui permet de référer au répertoire maison de l'utilisateur courant
+est par la notation `\url{~}' qui n'est pas suivit d'un autre `\url{~}'.  Le
+nom qui suit `\url{~}' est le nom de l'utilisateur. Par exemple, \url{~USER}
+représente le répertoire de l'utilisateur {\tt USER}.
 
-Un répertoire d'installation commence par les caractères `\url{~~}'. S'il n'y
-a rien qui suit ces caractères alors c'est le répertoire d'installation central.
-Sinon ce qui suit le `\url{~~}' est le nom du répertoire d'installation. Par
-exemple, `\url{~~lib}' est le chemin vers le répertoire d'installation `\url{lib}'
-des bibliothèques système de Gambit. Il est a noté que Gambit permet de redéfinir
-l'emplacement des répertoires d'installation par l'utilisation de l'option d'exécution
-`\verb|-:~~NAME=DIRECTORY|'.
+Un répertoire symbolique commence par les caractères `\url{~~}'. S'il n'y a
+rien qui suit ces caractères alors ça réfère au répertoire d'installation
+central de Gambit.  Sinon ce qui suit le `\url{~~}' est le nom d'un répertoire
+symbolique qui sera cherché dans un dictionnaire de répertoires symboliques.
+Par exemple, `\url{~~lib}' réfère au répertoire d'installation `\url{lib}' des
+bibliothèques système de Gambit. Il est a noté que Gambit permet de redéfinir
+l'emplacement des répertoires symboliques par l'utilisation de l'option
+d'exécution `\verb|-:~~NAME=DIRECTORY|'.
 
 \section{La forme \lstcode{\#\#namespace}}
 
@@ -89,8 +90,8 @@ c'est l'espace de nom par défaut.  Les associations de symboles données par la
 forme \lstcode{##namespace} respectent la portée lexicale. Il y a trois types
 d'opérations avec les espaces de nom.
 
-Il y a les espaces de nom global qui s'applique à tous les symboles qui ne
-contiennent pas de \lstcode{#}. \\
+Il y a la déclaration d'espaces de nom global qui s'applique à tous les
+symboles qui ne contiennent pas de \lstcode{#}. \\
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},frame=single}
@@ -110,6 +111,7 @@ de l'espace de nom.\\
   \centering
   \lstset{language={scheme},
           frame=single}
+  \fontsize{12}{7}
   \begin{mplisting}{0.6}
 (##namespace ("<ns>" A B ...))
 ;; A => <ns>A
@@ -130,6 +132,7 @@ la paire \lstcode{(<old> <new>)} remplace \lstcode{<old>} par \lstcode{<ns><new>
   \centering
   \lstset{language={scheme},
           frame=single}
+  \fontsize{12}{7}
   \begin{mplisting}{0.6}
 (##namespace ("<ns>" (<old> <new>) ...))
 ;; <old> => <ns><new>
@@ -174,6 +177,7 @@ et \ref{fig:forms->namespace-rename}.
   \centering
   \lstset{language={scheme},
           frame=single}
+  \fontsize{12}{7}
 \begin{mplisting}{0.6}
 ;; hello.scm
 (##namespace ("hello#" hi))
@@ -226,6 +230,7 @@ la figure \ref{fig:syntax->demand/supply-module}.\\
   \centering
   \lstset{language={scheme},
           frame=single}
+  \fontsize{12}{7}
   \begin{mplisting}{0.8}
 (##demand-module %*\textit{<module-ref>}*)
 (##supply-module %*\textit{<module-ref>}*)
@@ -296,6 +301,7 @@ exemple, le module primitif \lstcode{angle2} doit inclure les fichiers
 \lstcode{angle2/angle2.scm} et généralement \lstcode{angle2/angle2#.scm}.\\
 \begin{figure}[ht]
   \lstset{language={scheme},frame=single}
+  \fontsize{12}{7}
 \begin{mplisting}{0.9}
 ;; angle2/angle2#.scm
 (##namespace ("angle2#" deg->rad rad->deg))
@@ -382,6 +388,7 @@ d'entête s'il existe et un \lstcode{##demand-module} du module.  L'importation
 \begin{figure}[ht]
   \centering
   \lstset{language={Scheme},frame=single}
+  \fontsize{12}{7}
   \begin{mplisting}{0.9}
 (##include "/un/chemin/angle2/angle2#.scm")
 (##demand-module angle2)
@@ -441,6 +448,7 @@ la méta information fournit par la déclaration \lstcode{export} dans le
 Les modules primitifs font le pont entre R5RS et R7RS.\\
 \begin{figure}[ht]
   \lstset{language={scheme},frame=single}
+  \fontsize{12}{7}
 \begin{mplisting}{0.8}
 ;; expansion of (import (termite))
 (##import termite)
@@ -478,14 +486,14 @@ module sont importés.  Les opérateurs \lstcode{only} et \lstcode{except}
 affectent le nombre d'identifiants importés. Les opérateurs \lstcode{prefix} et
 \lstcode{rename} affectent le nom des identifiants.  Dans l'exemple
 \ref{fig:import->expand-r7rs}, l'importation inclut l'ensemble des identifiants
-exportés par le module. L'ensemble des formes \lstcode{##namespace} générées par
-un \lstcode{import} est donné par la
-figure~\ref{fig:import->expand-r7rs-namespace}.
-\\
+exportés par le module. L'ensemble des formes \lstcode{##namespace} générées
+par un \lstcode{import} est donné par la
+figure~\ref{fig:import->expand-r7rs-namespace}.\\
 
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},frame=single}
+  \fontsize{12}{7}
   \begin{mplisting}{1}
 ;; expansion of (import (github.com/gambit/hello))
 (##demand-module github.com/gambit/hello)
@@ -498,10 +506,11 @@ figure~\ref{fig:import->expand-r7rs-namespace}.
   \label{fig:import->expand-r7rs}
 \end{figure}
 
-
 \begin{figure}[ht]
   \centering
+\vspace*{3ex}
   \lstset{language={scheme},frame=single}
+  \fontsize{12}{7}
   \begin{mplisting}{1}
 ;; (import (only (github.com/gambit/hello) hi))
 (##namespace ("github.com/gambit/hello#" hi))
@@ -532,11 +541,12 @@ valide si tous les identifiants exportés sont distincts. Une déclaration
 syntaxe. Les informations sur les identifiants exportés ne sont pas utilisés lors de
 l'expansion du \lstcode{define-library}, mais lors de l'importation de cette
 bibliothèque.  Les déclarations \lstcode{import} sont expansées de la même
-façon que dans des programmes principaux.\\
+façon que dans des programmes principaux.\\[3ex]
 
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},frame=single}
+  \fontsize{12}{7}
 \begin{mplisting}{0.9}
 (define-library (hello)
   (import (scheme base) (scheme write))
@@ -550,16 +560,8 @@ façon que dans des programmes principaux.\\
     (define (salut name) (exclaim "bonjour " name))
     ;; it is best for a library to not have side-effects...
     #;(salut "le monde")))
-\end{mplisting}
-  \caption{Le code source du module
-    \lstcode{github.com/gambit/hello} avant l'expansion.}
-  \label{fig:define-library->expand}
-\end{figure}
-  \vspace*{4ex}
-\begin{figure}[ht]
-  \centering
-  \lstset{language={scheme},frame=single}
-  \begin{mplisting}{0.9}
+\end{mplisting}\\[2ex]
+\begin{mplisting}{0.9}
 ;; expansion of (define-library (hello) ...)
 (##declare (block))
 (##supply-module github.com/gambit/hello)
@@ -572,9 +574,9 @@ façon que dans des programmes principaux.\\
 (define (salut name) (exclaim "bonjour " name))
 (##namespace (""))
 \end{mplisting}
-  \caption{Expansion de la forme \lstcode{define-library}
-    du module \lstcode{github.com/gambit/hello}.}
-  \label{fig:define-library->expand-after}
+  \caption{Le code source du module
+    \lstcode{github.com/gambit/hello} et son expansion.}
+  \label{fig:define-library->expand}
 \end{figure}
 
 \subsubsection{Extensions de Gambit}
@@ -591,7 +593,6 @@ courant. Plusieurs déclarations supplémentaires ont été ajoutées dans la fo
   \item \lstcode{pkg-config} et \lstcode{pkg-config-path}
 \end{itemize}
 
-
 La figure~\ref{fig:relative-import} est un exemple d'importation relative.
 L'importation relative part du \lstcode{module-ref} du module courant.  Un
 \lstcode{import} de \lstcode{(.. C)} à partir du module \lstcode{(A B)}
@@ -602,6 +603,7 @@ tests unitaires de référer au module principal en préservant le
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},frame=single}
+  \fontsize{12}{7}
   \begin{mplisting}{0.8}
 (define-library (A B)
   (import (.. C))  ;; => (import (A C))
@@ -618,6 +620,7 @@ exporte les fonctionnalités déjà implémentées dans Gambit. \\
 \begin{figure}[ht]
   \lstset{language={scheme},
           frame=single}
+  \fontsize{12}{7}
   \begin{mplisting}{0.8}
 (define-library (scheme case-lambda)
   (namespace "")
@@ -636,15 +639,14 @@ méta informations respectifs.
 \section{Conclusion}
 
 Nous avons ajouté la notion de module dans Gambit pour résoudre le manque de
-modularité dans le langage Termite.  Les concepts concrets de module sont absents
-de Gambit. Les formes qui ont été ajoutées sont: \lstcode{##demand-module},
-\lstcode{##supply-module}, \lstcode{##import}, \lstcode{import} et
-\lstcode{define-library}.  Notre implémentation des modules utilise une forme
-compatible avec les autres implémentations de Scheme R7RS. En plus, les
-extensions que nous avons ajoutées offrent une interface avec les modules
-système de Gambit. L'implémentation actuelle des modules est suffisante pour
-permettre la diffusion de code, car elle offre des identifiants uniques pour
-les modules.
+modularité dans le langage Termite.  Les formes que nous avons ajoutées sont:
+\lstcode{##demand-module}, \lstcode{##supply-module}, \lstcode{##import},
+\lstcode{import} et \lstcode{define-library}.  Notre implémentation des modules
+utilise une forme compatible avec les autres implémentations de Scheme R7RS. En
+plus, les extensions que nous avons ajoutées offrent une interface avec les
+modules système de Gambit. L'implémentation actuelle des modules est suffisante
+pour permettre la diffusion de code, car elle offre des identifiants uniques
+pour les modules.
 
 Notre approche supporte la création de modules qui dépendent de bibliothèques
 du système d'exploitation.  Cela est réalisé par les extensions de la forme

@@ -2,8 +2,9 @@
 \def \MMM[#1]{\textit{\normalsize M\footnotesize\raisebox{-0.8ex}{#1}}}
 
 \chapter{Évaluation}
+\label{ch:evaluation}
 
-L'originale implémentation de Termite était capable d'envoyer des messages qui
+L'implémentation originale de Termite était capable d'envoyer des messages qui
 contient du code, qui est absent sur le nœud destination, à condition que le
 code soit interprété. Notre système permet cette transmission dans le contexte
 compilé.  Ce chapitre évalue les performances du système de modules.  Notre
@@ -69,7 +70,7 @@ d'exécution du benchmark est paramétré de telle sorte que le temps de la
 version interprétée du benchmark soit proportionnel à sa taille. Le temps
 respectif de la version interprétée des benchmarks: Puzzle, Scheme et Compiler
 sont respectivement dans les ordres de 0.1 seconde, 1 seconde et 10 secondes.
-La première ligne des figures~[\ref{fig:INTERPRETED}] montre cette tendance
+La première ligne des figures~\ref{fig:INTERPRETED} montre cette tendance
 dans les temps d'exécutions. Notre but est de montrer un lien entre la taille
 du programme et le temps d'exécution.
 
@@ -97,9 +98,9 @@ entre des architectures différentes.
 \section{Résultats}
 %[TODO: refaire l'évaluation]
 Les temps dans les tests sont mesurés en millisecondes (ms).  Le programme est
-exécuté 20 fois, les valeurs extrêmes sont éliminées pour tenir compte des
-variations de la latence du réseau. Les tables des résultats contiennent
-la moyenne et l'écart-type de chaque mesure.
+exécuté 20 fois, les valeurs extrêmes (la plus grande est la plus petite) sont
+éliminées pour tenir compte des variations de la latence du réseau. Les tables
+des résultats contiennent la moyenne et l'écart-type de chaque mesure.
 
 % Étant donné que le réseau a perturbé 10\% des transmissions effectuées dans
 % l'ensemble des tests dans l'ordre des millisecondes, nous avons enlevé 5\%
@@ -111,26 +112,26 @@ la moyenne et l'écart-type de chaque mesure.
 La première observation est que pour tous les scénarios le temps du nœud de
 départ n'a pas d'impact sur le temps RPC total. Cela est attendu puisque la
 majorité du travail est effectué sur le nœud destination. Les temps les plus
-grands sont généralement pour \MMM[ARM/Linux]. Cela peut être expliqué par
-temps de transfert qui est plus grand.
+grands sont généralement pour \MMM[ARM/Linux]. Cela peut être expliqué par le
+temps de transfert qui est légèrement plus grand.
 
 Le temps de transfert (la latence réseau et de sérialisation/désérialisation)
 varie proportionnellement avec la taille des messages. Dans le scénario
 STEADY-STATE, les messages sont les paramètres de la procédure et le résultat.
-Dans ce scénario, le temps associé aux transmissions varie de 13-15ms pour
+Dans ce scénario, le temps associé aux transmissions est de 13-15ms pour
 \MMM[x86/macOS] et de 25-30ms pour \MMM[ARM/Linux] (un processeur et une
 interface réseau moins performants). Les temps mesurés sur le nœud destination
 sont essentiellement les mêmes.
 
-Dans le scénario INTERPRETED le message contient une représentation du code
-à exécuter, ce qui est gros pour le 400K. Dans ce scénario, le temps des
-transmissions varie de 15-83ms pour \MMM[x86/macOS] et de 47-411ms pour
-\MMM[ARM/Linux] (encore une fois le temps est affecté par la performance
-du processeur et l'interface réseau). Le temps de transmission est
-négligeable par rapport au temps total du RPC. Pour le scénario
-STEADY-STATE, le temps de transmission est plus important pour le 4K qui
-est le programme le plus petit. La transmission demande plus de travail que
-le calcul sur le nœud destination.
+Dans le scénario INTERPRETED le message contient une représentation du code à
+exécuter, ce qui est gros pour le 400K. Dans ce scénario, le temps de
+transmission est de 15-83ms pour \MMM[x86/macOS] et de 47-411ms pour
+\MMM[ARM/Linux] (encore une fois le temps est affecté par la performance du
+processeur et l'interface réseau). Le temps de transmission est négligeable par
+rapport au temps total du RPC. Pour le scénario STEADY-STATE, le temps de
+transmission est relativement plus important pour le 4K qui est le programme le
+plus petit. La transmission demande plus de travail par rapport au calcul sur
+le nœud destination.
 
 \begin{figure}[ht]
   \centering
@@ -147,7 +148,7 @@ Total pour RPC     & ~~~~~179.2 & $\pm$~~1.6 & ~~~~1002.7 & $\pm$~~8.1 & ~~~1080
 Sur la destination    & ~~~~~132.6 & $\pm$~~0.7 & ~~~~~954.6 & $\pm$~~0.0 & ~~~10390.5 & $\pm$~~2.6\\\hline
 \end{tabular}
 
-\caption{Les temps le scénario INTERPRETED avec
+\caption{Les temps dans le scénario INTERPRETED avec
   \MMM[x86/macOS] ou \MMM[ARM/Linux] comme le nœud de départ}
   \label{fig:INTERPRETED}
 \end{figure}
@@ -335,7 +336,7 @@ Pour évaluer les performances de notre système, nous pouvons comparer le temps
 des scénarios INTERPRETED et STEADY-STATE. Le temps RPC total du scénario
 STEADY-STATE est 22x plus plus petit pour \MMM[x86/macOS] et \MMM[ARM/Linux]
 que dans le scénario INTERPRETED pour le 400K. Pour le 4K, les temps
-d'exécution du RPC total sont de 6x-9x plus petit que dans le cas INTERPRETED.
+d'exécution du RPC total sont de 6x-9x plus petits que dans le cas INTERPRETED.
 Dans le cas moyen 40K, l'accélération est de 16x-20x plus rapide que le
 scénario interprété.
 
@@ -343,16 +344,20 @@ scénario interprété.
 
 Le scénario FIRST-INSTALL inclut le temps d'installation et de compilation des
 modules. En comparaison avec le scénario INTERPRETED, une première observation
-indique que le temps total RPC pour \MMM[x86/macOS] et \MMM[ARM/Linux] sont
+indique que le temps total RPC pour \MMM[x86/macOS] et \MMM[ARM/Linux] est
 6x-8x fois plus grand pour le bench 4K (le module le plus petit). Cela
 s'explique par le temps de compilation et d'installation.  Le temps d'exécution
-sur le nœud de destination est 60x plus rapide que dans le cas INTERPRETED.
+sur le nœud de destination est 60x plus rapide que dans le cas INTERPRETED,
+mais le temps de computation ajoute un coût substanciel qui fait que le RPC
+est plus lent.
 
 % tests est le téléchargement et la compilation du modules. Les temps interprété
 % est présenté dans la figure~\ref{fig:gambit-arctic-interp}. Les temps compilé,
 % nécessitant l'installation et la compilation du module, sont présentés dans les
 % figures~[\ref{fig:gambit-arctic-uninstall},~\ref{fig:tictoc-arctic-uninstall}].
 
+\subsection{Comparaison entre les scénario FIRST-INSTALL et STEADY-STATE}
+%
 Le temps d'exécution total des programmes de tests exploitant la diffusion de
 code compilé, nécessitant l'installation et la compilation du module, est plus
 court que la version interprétée. Le facteur qui prend le plus de temps dans le
@@ -360,14 +365,14 @@ contexte compilé est l'installation et la compilation des modules diffusés.
 Suite à une première exécution qui a installé les modules compilés, l'exécution
 est plus rapide que dans le cas interprété.
 
-Dans le cas où les modules ont déjà été installés et compilés, le temps global
-d'exécution des programmes de tests est plus rapide dans le cas compilé.  Dans
-ce cas, les modules sont chargés dynamiquement dans le programme de tests lors
-de la diffusion de code.  Les figures~[\ref{fig:STEADY-STATE}] montrent les
-temps dans le cas où les modules ont été compilés et les
-figures~[\ref{fig:INTERPRETED}] montrent les temps des modules interprétés.
-Cela s'explique par le fait qu'il y a moins de données transmises et que
-l'exécution de code compilé est plus rapide que l'interprétation.
+Dans le cas où les modules ont déjà été installés et compilés, l'exécution
+complète des programmes de tests est plus rapide dans le cas compilé, jusqu'à
+22x.  Dans ce cas, les modules sont chargés dynamiquement dans le programme de
+test lors de la diffusion de code.  Les figures~\ref{fig:STEADY-STATE}
+montrent les temps dans le cas où les modules ont été compilés et les
+figures~\ref{fig:INTERPRETED} montrent les temps des modules interprétés.  Cela
+s'explique par le fait qu'il y a moins de données transmises et que l'exécution
+de code compilé est plus rapide que l'interprétation.
 
 Le temps de transmission des données dans les programmes de test compilés était
 plus court que dans le cas interprété pour certaines des transmissions, malgré

@@ -176,13 +176,14 @@ Scheme~\cite{Sumii00animplementation,DBLP:conf/erlang/Germain06},
 JavaScript~\cite{DEV2017transparentmigration}. Ce mécanisme requiert
 typiquement que l'ensemble du code soit disponible sur le nœud distant.
 
-Un système écrit Java~\cite{And98transparentmigration} est un exemple de
-migration de tâche. Il capture l'état présent du programme qui consiste aux
-valeurs et aux types de toutes les variables de chaque objet. La pile des
-appels de méthode avec les valeurs de toutes les variables est aussi incluse
-dans l'état du programme.  Ces informations sont transmises au nœud distant qui
-les utilise pour reconstruire le programme initial.  L'ensemble des méthodes
-sur le nœud de départ est présent sur le nœud d'arrivée.
+Stefan Fünfrocken a conçu un système d'agents mobiles écrit en
+Java~\cite{And98transparentmigration}. Il capture l'état présent du programme
+qui inclut les valeurs et les types de toutes les variables de chaque objet.
+La pile des appels de méthode avec les valeurs de toutes les variables est
+aussi incluse dans l'état du programme.  Ces informations sont transmises au
+nœud distant qui les utilise pour reconstruire le programme initial.
+L'ensemble des méthodes sur le nœud de départ est présent sur le nœud
+d'arrivée.
 
 Le système implémenté dans le langage de programmation
 Erlang~\cite{M_mobileintelligent} qui implémente des agents mobiles requiert
@@ -221,12 +222,13 @@ améliorés.
 
 
 %[TODO: contrib]
-Les contributions de se travail sont la conception d'un système de
-module pour les systèmes distribués et son intégration dans
-Gambit Scheme. Cela permet la diffusion des modules entre les nœuds
-d'un système distribué.
-% Nous avons conçu un système de module pour les systèmes distribués.
-% Nous l'avons intégré dans le système Gambit Scheme.
+Les contributions de ce travail sont la conception d'un système de module pour
+les systèmes distribués et son intégration dans Gambit Scheme. Ce système
+permet la diffusion des modules compilés entre les nœuds d'un système
+distribué sans préconfiguration des modules avec le code et permettant
+de multiples versions d'un module de coexister.
+% Nous avons conçu un système de module pour les systèmes distribués.  Nous
+% l'avons intégré dans le système Gambit Scheme.
 
 % \begin{itemize}
 %   \item Modules mobiles.
@@ -237,17 +239,18 @@ d'un système distribué.
 
 \section{Survol}
 
-Le chapitre 2 explique les approches existantes de modularisation en
-Scheme.  Le chapitre 3 explique les problématiques des dépendances
-entre des modules natifs au sein du système de module. Le chapitre 4
-traite de l'implémentation du système de module et son intégration
-dans Gambit, un compilateur/interprète performant pour Scheme. Le chapitre 5
-explique les mécanismes de chargement des modules.  Le chapitre 6
-traite de la diffusion des modules et de la migration de tâche.  Le
-chapitre 7 présente une évaluation du système de modules avec des résultats
-d'expériences effectuées entre des systèmes d'exploitation (SE) et
+Le chapitre  explique les approches existantes de modularisation en Scheme.  Le
+chapitre \ref{ch:scheme_concepts} explique les problématiques des dépendances
+entre des modules natifs au sein du système de module. Le chapitre
+\ref{ch:modules_implementation} traite de l'implémentation du système de module
+et son intégration dans Gambit, un compilateur/interprète performant pour
+Scheme. Le chapitre \ref{ch:loading-model} explique les mécanismes de
+chargement des modules.  Le chapitre \ref{ch:module_management} traite de
+l'organisation générale des modules. Le chapitre \ref{ch:task_migration} traite
+de la diffusion des modules et de la migration de tâche.  Le chapitre
+\ref{ch:evaluation} présente une évaluation du système de modules avec des
+résultats d'expériences effectuées entre des systèmes d'exploitation et
 architectures différentes.
-
 
 
 % XXX: Agent TCL
