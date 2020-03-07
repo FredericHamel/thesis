@@ -133,7 +133,7 @@ d'un module soient chargées pour accéder des fonctionnalités.
 Le concept de version de module n'est pas intégré à la sémantique de
 plusieurs langages de programmation.  En Python et Java les
 modules sont référés dans le code avec un nom qui n'inclut pas la
-version.  Go est exemple de langage de programmation qui
+version.  Go est un exemple de langage de programmation qui
 permet d'inclure la version lorsqu'on réfère à un module.
 
 Dans les systèmes qui considèrent chaque version d'un module comme un
@@ -197,9 +197,8 @@ connu, il suffit de transmettre l'état de l'agent pour effectuer une migration.
 %transmission de procédures compilées par l'utilisation de nœuds pour conserver
 %le code.
 Le scénario de migration de code présenté dans le chapitre
-\ref{ch:scheme_concepts} nous à inspiré dans la conception d'un système de
+\ref{ch:scheme_concepts} nous a inspiré dans la conception d'un système de
 module.
-% TODO: rendre + évident + tôt
 Notre motivation est la migration de code entre des nœuds d'un système
 distribué comme présenté à la fin du chapitre \ref{ch:scheme_concepts}.  Nous
 avons développé un système de module pour le langage de programmation Scheme
@@ -239,18 +238,16 @@ de multiples versions d'un module de coexister.
 
 \section{Survol}
 
-Le chapitre  explique les approches existantes de modularisation en Scheme.  Le
-chapitre \ref{ch:scheme_concepts} explique les problématiques des dépendances
-entre des modules natifs au sein du système de module. Le chapitre
-\ref{ch:modules_implementation} traite de l'implémentation du système de module
-et son intégration dans Gambit, un compilateur/interprète performant pour
-Scheme. Le chapitre \ref{ch:loading-model} explique les mécanismes de
-chargement des modules.  Le chapitre \ref{ch:module_management} traite de
-l'organisation générale des modules. Le chapitre \ref{ch:task_migration} traite
-de la diffusion des modules et de la migration de tâche.  Le chapitre
-\ref{ch:evaluation} présente une évaluation du système de modules avec des
-résultats d'expériences effectuées entre des systèmes d'exploitation et
-architectures différentes.
+Le chapitre \ref{ch:scheme_concepts} explique les approches existantes de
+modularisation en Scheme.  Le chapitre \ref{ch:modules_implementation}
+traite de l'implémentation du système de module et son intégration dans Gambit,
+un compilateur/interprète performant pour Scheme. Le chapitre
+\ref{ch:loading-model} explique les mécanismes de chargement des modules.  Le
+chapitre \ref{ch:module_management} traite de l'organisation générale des
+modules. Le chapitre \ref{ch:task_migration} traite de la diffusion des modules
+et de la migration de tâche.  Le chapitre \ref{ch:evaluation} présente une
+évaluation du système de modules avec des résultats d'expériences effectuées
+entre des systèmes d'exploitation et architectures différentes.
 
 
 % XXX: Agent TCL
