@@ -2,7 +2,8 @@
 \chapter{Conclusion}
 
 Ce mémoire a présenté un système de module spécialisé pour les systèmes
-distribués. Il permet la conception d'applications qui exploitent la diffusion de
+distribués. Il permet la conception d'applications qui exploitent la diffusion
+transparente de
 modules entre les nœuds. Les appels RPC et la migration de code mobile entre
 des nœuds de nature différente sont possibles. Chaque module diffusé a un nom
 unique basé sur l'URL du dépôt de code qui permet de le récupérer. La diffusion
@@ -82,7 +83,8 @@ traitement des versions des modules. Plusieurs versions d'un module peuvent
 être installées. La gestion des modules dans Racket (\textit{raco}) ne permet
 pas d'installer plusieurs versions des modules. Akku, un autre gestionnaire de
 modules compatible avec plusieurs implémentations de Scheme a des
-caractéristiques similaires à \textit{raco}.
+caractéristiques similaires à \textit{raco} (le gestionnaire de
+\textit{package} de Racket~\cite{Racket}).
 
 L'implémentation actuelle des modules a quelques aspects mineurs à améliorer.
 Les macros définies dans le contexte d'un module ont des problèmes d'hygiènes
