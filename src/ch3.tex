@@ -1,7 +1,7 @@
 
 \chapter{Implémentation des modules}
 \label{ch:modules_implementation}
-
+%[FIXME: module manquant]
 Ce chapitre traite de notre implémentation des modules dans Gambit qui se veut
 le plus portable entre les différentes implémentations de Scheme.  Nous avons
 ajouté une syntaxe pour les modules à Gambit parce qu'elle était manquante.
@@ -111,7 +111,7 @@ de l'espace de nom.\\
   \centering
   \lstset{language={scheme},
           frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
   \begin{mplisting}{0.6}
 (##namespace ("<ns>" A B ...))
 ;; A => <ns>A
@@ -132,7 +132,7 @@ la paire \lstcode{(<old> <new>)} remplace \lstcode{<old>} par \lstcode{<ns><new>
   \centering
   \lstset{language={scheme},
           frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
   \begin{mplisting}{0.6}
 (##namespace ("<ns>" (<old> <new>) ...))
 ;; <old> => <ns><new>
@@ -177,7 +177,7 @@ et \ref{fig:forms->namespace-rename}.
   \centering
   \lstset{language={scheme},
           frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
 \begin{mplisting}{0.6}
 ;; hello.scm
 (##namespace ("hello#" hi))
@@ -230,7 +230,7 @@ la figure \ref{fig:syntax->demand/supply-module}.\\
   \centering
   \lstset{language={scheme},
           frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
   \begin{mplisting}{0.8}
 (##demand-module %*\textit{<module-ref>}*)
 (##supply-module %*\textit{<module-ref>}*)
@@ -301,11 +301,11 @@ exemple, le module primitif \lstcode{angle2} doit inclure les fichiers
 \lstcode{angle2/angle2.scm} et généralement \lstcode{angle2/angle2#.scm}.\\
 \begin{figure}[ht]
   \lstset{language={scheme},frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
 \begin{mplisting}{0.9}
 ;; angle2/angle2#.scm
 (##namespace ("angle2#" deg->rad rad->deg))
-\end{mplisting}\\[4ex]
+\end{mplisting}\\[3ex]
 \begin{mplisting}{0.9}
 ;; angle2/angle2.scm
 (include "angle2#.scm")
@@ -388,7 +388,7 @@ d'entête s'il existe et un \lstcode{##demand-module} du module.  L'importation
 \begin{figure}[ht]
   \centering
   \lstset{language={Scheme},frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
   \begin{mplisting}{0.9}
 (##include "/un/chemin/angle2/angle2#.scm")
 (##demand-module angle2)
@@ -448,7 +448,7 @@ la méta information fournit par la déclaration \lstcode{export} dans le
 Les modules primitifs font le pont entre R5RS et R7RS.\\
 \begin{figure}[ht]
   \lstset{language={scheme},frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
 \begin{mplisting}{0.8}
 ;; expansion of (import (termite))
 (##import termite)
@@ -493,7 +493,7 @@ figure~\ref{fig:import->expand-r7rs-namespace}.\\
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
   \begin{mplisting}{1}
 ;; expansion of (import (github.com/gambit/hello))
 (##demand-module github.com/gambit/hello)
@@ -510,7 +510,7 @@ figure~\ref{fig:import->expand-r7rs-namespace}.\\
   \centering
 \vspace*{3ex}
   \lstset{language={scheme},frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
   \begin{mplisting}{1}
 ;; (import (only (github.com/gambit/hello) hi))
 (##namespace ("github.com/gambit/hello#" hi))
@@ -538,15 +538,16 @@ module primitif. Chacune des déclarations de la bibliothèque est utilisée dan
 l'expansion du \lstcode{define-library}. La déclaration d'exportation est
 valide si tous les identifiants exportés sont distincts. Une déclaration
 \lstcode{export} qui exporte un identifiant plusieurs fois cause une erreur de
-syntaxe. Les informations sur les identifiants exportés ne sont pas utilisés lors de
-l'expansion du \lstcode{define-library}, mais lors de l'importation de cette
-bibliothèque.  Les déclarations \lstcode{import} sont expansées de la même
-façon que dans des programmes principaux.\\[3ex]
+syntaxe. Les informations sur les identifiants exportés ne sont pas utilisés
+lors de l'expansion du
+\lstcode{define-library} (figure \ref{fig:define-library->expand}), mais lors de
+l'importation de cette bibliothèque.  Les déclarations \lstcode{import} sont
+expansées de la même façon que dans des programmes principaux.\\[3ex]
 
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
 \begin{mplisting}{0.9}
 (define-library (hello)
   (import (scheme base) (scheme write))
@@ -603,7 +604,7 @@ tests unitaires de référer au module principal en préservant le
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
   \begin{mplisting}{0.8}
 (define-library (A B)
   (import (.. C))  ;; => (import (A C))
@@ -620,7 +621,7 @@ exporte les fonctionnalités déjà implémentées dans Gambit. \\
 \begin{figure}[ht]
   \lstset{language={scheme},
           frame=single}
-  \fontsize{12}{7}
+  \fontsize{12}{10}
   \begin{mplisting}{0.8}
 (define-library (scheme case-lambda)
   (namespace "")
