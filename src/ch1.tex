@@ -15,6 +15,7 @@ distribués où le calcul est réparti sur de multiples ordinateurs
 reliés en réseau.  Ce contexte pose des défis particuliers de
 déploiement.
 
+
 \section{Déploiement}
 
 Le \textit{déploiement} d'un programme c'est sa mise en service pour
@@ -216,6 +217,15 @@ gestionnaire, il serait avantageux de ne pas interrompre le
 fonctionnement du système distribué lorsque les modules sont
 améliorés.
 
+Le problème qui nous attaquons est la transmission de code compilé
+entre les nœuds d'un système distribué hétérogène. Chaque nœud a
+possiblement une architecture différente (x86, ARM) et est sur un
+système d'exploitation différent (Windows, Mac, Linux).
+Les architectures différentes ne sont pas compatibles, donc
+le code compilé ne peut pas juste être transmis tel quel.
+Le format des exécutables natifs varie d'un système d'exploitation
+à un autre. Le code transmis a des dépendances qui doivent aussi être
+transmises pour son bon fonctionnement.
 %\section{Approche de transmission}
 %[TODO: approche]
 
