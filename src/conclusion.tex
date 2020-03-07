@@ -2,88 +2,104 @@
 \chapter{Conclusion}
 
 Ce mémoire a présenté un système de module spécialisé pour les systèmes
-distribués. Il permet la conception d'applications qui exploite la diffusion de
+distribués. Il permet la conception d'applications qui exploitent la diffusion de
 modules entre les nœuds. Les appels RPC et la migration de code mobile entre
 des nœuds de nature différente sont possibles. Chaque module diffusé a un nom
 unique basé sur l'URL du dépôt de code qui permet de le récupérer. La diffusion
-se fait par le nom des identifiants qui contient l'URL du module. La façon de nommer les
+se fait au moyen du nom des identifiants qui contient l'URL du module. La façon de nommer les
 modules dans ce système est similaire à celui du langage de programmation Go.
 
-Nous avons commencé par exposer les limitations du système Termite Scheme par
-des expérimentations dans plusieurs situations. Dans le contexte purement
-interprété, la migration fonctionnait correctement même dans le cas ou le nœud
-de destination ne connait pas le code de l'agent mobile.  C'est dans le
+Nous avons commencé par exposer les limitations du système Termite Scheme
+existant par des expérimentations dans plusieurs situations. Dans le contexte
+purement interprété, la migration fonctionnait correctement même dans le cas ou
+le nœud de destination ne connait pas le code de l'agent mobile.  C'est dans le
 contexte où les applications de chaque nœud sont compilées que la migration de
 tâche est un défi, car elle requiert la présence du code compilé de l'agent
-mobile sur l'ensemble des nœuds qui peuvent avoir des architectures et système
-d'exploitation différents.
+mobile sur l'ensemble des nœuds qui peuvent avoir des architectures et un
+système d'exploitation différents.
 
 Nous avons exploré plusieurs méthodes de chargement automatique des modules.
-Le langage Scheme permet le chargement de module à la demande.
+Le langage Scheme (que ce soit R5RS, R6RS ou R7RS) permet le chargement de
+module à la demande, mais pas simultanément de multiples versions d'un module ce
+qui limite énormément la possibilité de mise à niveau d'un service sans
+interruption.  Ceci nous a menés à un constat que le nom des identifiants de
+module transmis devait être unique au sein du système distribué.
 
-Ce qui nous a menés à un constat que le nom des identifiants de module transmit
-devait être unique au sein du système distribué. Les modules, basés sur R5RS,
-n'offraient pas la possibilité d'avoir des identifiants uniques.
+Nous avons ajouté une forme spéciale à Gambit pour permettre la définition de
+modules. Ce projet a mené au système de modules spécialisés pour les systèmes
+distribués présenté dans ce mémoire. Le résultat est prometteur, il permet le
+déploiement de serveurs sur plusieurs machines d'architecture et de systèmes
+d'exploitation différents, tel que démontré par nos expériences.
 
-Nous avons ajouté une forme spéciale à Gambit pour permettre la création de
-modules. Le projet a mené au système de modules spécialisés pour les systèmes
-distribués à commencer par des expérimentations avec Termite. Le résultat
-présent est prometteur, il permet le déploiement de serveurs sur plusieurs
-machines d'architecture et de systèmes d'exploitation différents.
-
-Le système Gambit a été amélioré par l'ajout des modules primitifs et aussi
-des modules R7RS. De nouveaux mécanismes de chargement de modules ont été
-ajoutés pour garantir l'ordre et le chargement unique de chaque module.
+Le système Gambit a été amélioré par l'ajout des modules primitifs et aussi des
+modules compatible avec la syntaxe de R7RS. De nouveaux mécanismes de
+chargement de modules ont été ajoutés pour garantir l'ordre et le chargement
+unique de chaque module.
 
 L'installation et la compilation des modules sont effectuées automatiquement à
-la demande.  Les coûts du chargement de module sont amorties après la première
+la demande.  Les coûts du chargement de module sont amortis après la première
 installation et compilation d'un module. L'utilisation interprétée de Termite
 n'utilise pas la compilation et l'installation automatique.  La vitesse
-d'exécution après l'amortissement surpasse la version interprétée.  Le facteur
+d'exécution après la compilation surpasse la version interprétée.  Le facteur
 d'accélération observé après la première exécution qui installe les modules
 compilés est approximativement de 75x pour le test de 4K, 459x pour le test de
-40K et 33x pour le test de 400K.  Le facteur d'accélération est principalement
-lié au fait que le code compilé est plus rapide que celui interprété.
-Puisqu'il y a moins de transmission dans le temps compilé, parce que les
-données sont plus compactes que lorsqu'interprété, le temps de transmission est
-généralement plus petit. La taille de la sérialisation d'une procédure compilée
-est environ 400 fois plus petite que sa version interprétée.
+40K et 33x pour le test de 400K, des programmes de taille grandissante.  Le
+facteur d'accélération est principalement lié au fait que le code compilé est
+plus rapide que celui interprété.  Puisqu'il y a moins de transmission dans le
+cas compilé, car les données sont plus compactes que lorsqu'interprété, le
+temps de transmission est généralement plus petit. Dans nos tests, la taille de
+la sérialisation d'une procédure compilée est environ 400 fois plus petite que
+sa version interprétée.
 
 %[TODO: continue here]
-L'approche de diffusion des modules est applicable à d'autres langages.
-Il faut que le langage supporte le chargement dynamique de module et
-que les procédures soient des objets manipulables comme des données.
-Il faut aussi que la sérialisation et désérialisation des procédures
-passe par un encodage qui uniforme et indépendant de la machine.
-L'information encodée doit contenir l'information du module qui contient
-la procédure et un identifiant unique de la procédure. Une
-sérialisation similaire à celle qui est utilisée dans Gambit.
+L'approche de diffusion des modules est applicable à d'autres langages.  La
+coexistence de plusieurs versions d'un module est indépendante du chargement
+dynamique et de la sérialisation des objets. Le chargement dynamique est
+nécessaire pour développer des applications extensibles, car cela permet le
+chargement de bibliothèque durant l'exécution (sans interruption de service).
+Les procédures doivent être manipulables comme une donnée et sérialisable pour
+pouvoir être transmis à un autre nœud.  Une sérialisation et déserialisation
+qui est indépendante de la machine est nécessaire pour la transmission des
+objets (nombre, booléen, liste, vecteur, procédures) entre les nœuds d'un
+système distribué hétérogène.  La sérialisation doit être similaire à celle qui
+est utilisée dans Gambit, par son uniformité sur toutes les plateformes.
+L'installation automatique avec le chargement dynamique offre la possibilité de
+charger un module qui n'est pas présent sur le nœud courant.  La sérialisation
+des procédures contient l'information qui est utilisée dans l'installation
+automatique du module qui contient cette procédure.
+%[...]
 
-Notre approche de gestion des modules diffère des autres gestionnaires par la
-gestion des versions des modules. Plusieurs versions d'un module peuvent être
-installées. La gestion des modules dans Racket (\textit{raco}) ne permet pas
-d'installer plusieurs versions des modules. Akku, un autre gestionnaire de modules
-compatible avec plusieurs implémentations de Scheme à des caractéristiques
-similaires à \textit{raco}.
+% Il faut que le langage supporte le chargement dynamique de module et
+% que les procédures soient des objets manipulables comme des données.
+% Il faut aussi que la sérialisation et désérialisation des procédures
+% passe par un encodage uniforme et indépendant de la machine.
+% L'information encodée doit contenir l'information du module qui contient
+% la procédure et un identifiant unique de la procédure. Une
+% sérialisation similaire à celle qui est utilisée dans Gambit.
 
-L'implémentation actuelle des modules a quelques éléments à améliorer.
+Notre approche de gestion des modules diffère des autres gestionnaires par le
+traitement des versions des modules. Plusieurs versions d'un module peuvent
+être installées. La gestion des modules dans Racket (\textit{raco}) ne permet
+pas d'installer plusieurs versions des modules. Akku, un autre gestionnaire de
+modules compatible avec plusieurs implémentations de Scheme a des
+caractéristiques similaires à \textit{raco}.
+
+L'implémentation actuelle des modules a quelques aspects mineurs à améliorer.
 Les macros définies dans le contexte d'un module ont des problèmes d'hygiènes
 lors de l'expansion dans un autre module. Le temps d'installation des modules
-peut être optimisé. L'opération de mise à jour ne permet pas de mettre
-à jour les branches qui sont installées.
-
-Les messages d'avertissement (\textit{warnings}) lors de la compilation
-des modules sont manquants. Il n'y a pas de message indiquant l'utilisation
-d'une liaison non définie.
+peut être optimisé. L'opération de mise à jour ne permet pas de mettre à jour
+les branches qui sont installées.  Les messages d'avertissement
+(\textit{warnings}) lors de la compilation des modules sont manquants. Il n'y a
+pas de message indiquant l'utilisation d'une liaison non définie.
 
 %[FIXME: update using other branch then master]
 
-Bref, notre approche de diffusion des modules compilés permet d'avoir une
-plus grande performance à l'exécution. Cela permet la mise à jour de
-code d'un nœud distant sans interrompre son service. Cette approche
+En résumé, notre approche de diffusion des modules compilés offre une
+plus grande flexibilité et performance à l'exécution. Cela permet la mise à jour de
+code d'un nœud distant sans interrompre son service et sans intervention
+manuelle de déploiement du nouveau code. Cette approche
 est applicable à d'autres langages. La transmission permet d'avoir
-une meilleure performance d'exécution. Le prix est le temps d'installation
-et de compilation du module.
+une meilleure performance d'exécution.
 
 %[TODO: nice ending paragraph]
 
