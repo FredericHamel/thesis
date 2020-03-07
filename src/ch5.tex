@@ -98,12 +98,12 @@ formelle à la figure~\ref{fig:module-ref->grammar} décrit la syntaxe du
 
 \begin{figure}[ht]
   \lstset{frame=single}
-  \fontsize{12}{8}
+  \fontsize{12}{10}
   \begin{mplisting}{0.8}
 <module-ref>       := <local> | <hosted>
 <local-package>    := <id>
 <hosted-package>   := <hostname>/<id>/<id>
-<local-module>     := <local-package>(/<id>)*@<tag>
+<local-module>     := <local-package>(/<id>)*(@<tag>)?
 <hosted-module>    := <hosted-package>(/<id>)*(@<tag>)?
 \end{mplisting}
   \caption{Grammaire formelle d'un \texttt{module-ref}}
@@ -252,7 +252,7 @@ d'installer d'un \textit{package} en invoquant de l'interprète Gambit.
 
 \begin{figure}[ht]
   \centering
-  \fontsize{12}{8}
+  \fontsize{12}{10}
   \begin{mplisting}{1}
 $ gsi -install github.com/frederichamel/semver
 
@@ -340,7 +340,7 @@ dépôt web. Sans cette opération l'installation de versions plus récente
 
 Notre système de module permet l'installation d'une branche.
 L'opération de mise à jour sur cette branche n'est pas encore
-supportée. C'est un élément qui est à rafiner.
+supportée. C'est un aspect qui est à explorer.
 
 \begin{center}
   \begin{mplisting}{0.8}
@@ -496,7 +496,7 @@ désinstalle ou masque la version déjà installée. Le système de module ne pe
 pas de référer à deux versions de la même bibliothèque.
 
 \begin{figure}[ht]
-    \fontsize{12}{8}
+    \fontsize{12}{10}
     \begin{minipage}[ht]{0.5\textwidth}
 \begin{verbatim}
 >>> import sys
@@ -573,7 +573,7 @@ de spécifier une version spécifique du module lors de l'importation.
 \noindent
 \begin{figure}[ht]
   \centering
-  \fontsize{12}{8}
+  \fontsize{12}{10}
 \begin{mplisting}{1}
 gopkg.in/pkg.v3      -> github.com/go-pkg/pkg (branch/tag v3, v3.N, or v3.N.M)
 gopkg.in/user/pkg.v3 -> github.com/user/pkg   (branch/tag v3, v3.N, or v3.N.M)
@@ -585,7 +585,7 @@ gopkg.in/user/pkg.v3 -> github.com/user/pkg   (branch/tag v3, v3.N, or v3.N.M)
 
 \begin{figure}[ht]
   \lstset{language={Go},frame=single}
-  \fontsize{12}{8}
+  \fontsize{12}{10}
 \begin{mplisting}{1}
 package main
 
@@ -617,7 +617,7 @@ func main() {
   \centering
   \lstset{frame=single}
   \vspace*{4ex}
-  \fontsize{12}{8}
+  \fontsize{12}{10}
 \begin{mplisting}{1}
 $GOPATH/
   - bin
