@@ -22,10 +22,10 @@ sein d'un réseau de communication. Chaque nœud a un but spécifique. Le
 \textit{Web} est un exemple notable représentatif.  Il est composé de clients
 et de serveurs qui exécutent des applications clients et serveurs différentes.
 
-L'implémentation d'un système distribué inclut le développement des applications
-installé sur les nœuds et la logique d'interaction entre les nœuds. Il est
-possible de voir l'ensemble des programmes sur les nœuds comme un programme
-global. Les problèmes discutés dans ce chapitre sont les suivants:
+L'implémentation d'un système distribué inclut le développement des
+applications installées sur les nœuds et la logique d'interaction entre les
+nœuds. Il est possible de voir l'ensemble des programmes sur les nœuds comme un
+programme global. Les problèmes discutés dans ce chapitre sont les suivants:
 
 \begin{itemize}
 
@@ -77,10 +77,10 @@ optionnellement une procédure \textit{transform} qui est appellé sur tous les
 sous-objets dans l'objet pour personnaliser le processus de sérialisation. Le
 résultat est un \texttt{u8vector} (vector d'octets).
 
-La sérialisation de la plupart des objets utilise les bits de poids fort
-du premier octet pour indiquer le type de l'objet. Les autres des bits du
-premier octet sont utilisés pour encoder des propriétés de base comme la longueur
-de l'objet (si la valeur peut être encodé avec ces bits).
+La sérialisation de la plupart des objets utilise les bits de poids fort du
+premier octet pour indiquer le type de l'objet. Les autres des bits du premier
+octet sont utilisés pour encoder des propriétés de base comme la longueur de
+l'objet (si la valeur peut être encodé avec ces bits).
 
 La sérialization du vecteur \texttt{\#(1 2 3)} est représenté par les 4 octets
 \texttt{\#x23} \texttt{\#x51} \texttt{\#x52} \texttt{\#x53}.  Le premier octet
@@ -123,7 +123,7 @@ qui implémente la procédure inconnue.
 %\newpage
 \section{Exemple de migration de code}
 
-Pour montrer les capacités de du système nous avons conçu un scénario de mise à
+Pour montrer les capacités du système nous avons conçu un scénario de mise à
 jour de code entre deux nœuds. Un nœud qui exécute l'application compilée et un
 nœud qui exécute le code qui effectue la mise à jour de l'application sans
 interrompre le service.
@@ -165,13 +165,14 @@ du code qui est (\lstcode{update-code}).
 Le programme \texttt{updater.scm} de la figure \ref{fig:termite_clock_client}
 permet d'envoyer la nouvelle version de l'horloge programmable. La mise à jour
 est faite en envoyant une procédure ou une continuation qui contient la logique
-(comme dans la figure~\ref{fig:buggy_pong_server}). Dans ce cas c'est une procédure qui est envoyée
-pour mettre à jour le horloge programmable.
+(comme dans la figure~\ref{fig:buggy_pong_server}). Dans ce cas, c'est une
+procédure qui est envoyée pour mettre à jour le horloge programmable.
 
-La procédure envoyée provient du module \texttt{github.com/frederichamel/termite-clock@v2}
-qui est la nouvelle version de l'horloge. L'espace de nom de ce module
-est \texttt{github.com/frederichamel/termite-clock@v2\#}. Le nom de la procédure
-est \texttt{clock-thread-loop}.
+La procédure envoyée provient du module
+\texttt{github.com/frederichamel/termite-clock@v2} qui est la nouvelle version
+de l'horloge. L'espace de nom de ce module est
+\texttt{github.com/frederichamel/termite-clock@v2\#}. Le nom de la procédure
+est \texttt{clock-thread-loop} dans l'espace de nom de ce module.
 
 La sérialisation de la procédure contient le nom de la procédure incluant
 l'espace de nom. Le nœud Termite qui roule l'application de l'horloge
