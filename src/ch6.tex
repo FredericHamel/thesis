@@ -89,7 +89,11 @@ les nombre 1, 2 et 3.  La sérialisation d'une procédure contient le nom de
 celle-ci et un entier qui l'identifie. La figure~\ref{fig:proc_serialization}
 montre un exemple de la sérialisation d'une procédure compilée. Cette
 représentation est conçue pour être compacte et éviter la redondance dans les
-données. En plus, elle est indépendante de l'architecture de la machine.
+données. En plus, elle est indépendante de l'architecture de la machine.  Les
+fermetures utilisent une représentation
+plate~\cite{Cardelli1983TheFunctionalAbstractMachine}. Une fermeture est un
+objet similaire à un vecteur qui contient les variables libres et une référence
+au point de contrôle (le point d'entrée de la fermeture).
 
 \begin{figure}[ht]
   \centering
