@@ -227,6 +227,15 @@ Le format des exécutables natifs varie d'un système d'exploitation
 à un autre. Le code transmis a des dépendances qui doivent aussi être
 transmises pour son bon fonctionnement.
 %\section{Approche de transmission}
+
+Les contributions de ce travail sont la conception d'un système de module pour
+les systèmes distribués et son intégration dans Gambit Scheme. Ce système
+permet la diffusion des modules compilés entre les nœuds d'un système
+distribué sans préconfiguration des modules avec le code et permettant
+de multiples versions d'un module de coexister.
+% Nous avons conçu un système de module pour les systèmes distribués.  Nous
+% l'avons intégré dans le système Gambit Scheme.
+
 %[TODO: approche]
 La sérialisation indépendante de la machine des procédures, des fermetures et
 des continuations est basée sur la sérialisation des points de contrôle. Les
@@ -244,19 +253,11 @@ l'identifie.
 Nous attachons le nom du module avec la version, qui contient l'URL où le code
 peut être obtenu, au nom du point de contrôle. La combinaison de l'URL et de la
 version du module permet de générer des noms uniques. Cette information permet
-d'installer et compiler la version spécifique du module sur le nœud distant qui
-contient le code.  Nous avons ajouté un mécanisme de chargement dynamique qui
-permet d'intégrer le module et ses dépendances transitives au programme sans
-interruption.
+au nœud distant d'installer et compiler la version spécifique du module qui est
+requis par le code qui est transmis.  Nous avons ajouté un mécanisme de
+chargement dynamique qui permet d'intégrer le module et ses dépendances
+transitives au programme sans interruption.
 %[TODO: aproche FINE]
-
-Les contributions de ce travail sont la conception d'un système de module pour
-les systèmes distribués et son intégration dans Gambit Scheme. Ce système
-permet la diffusion des modules compilés entre les nœuds d'un système
-distribué sans préconfiguration des modules avec le code et permettant
-de multiples versions d'un module de coexister.
-% Nous avons conçu un système de module pour les systèmes distribués.  Nous
-% l'avons intégré dans le système Gambit Scheme.
 
 % \begin{itemize}
 %   \item Modules mobiles.
