@@ -226,7 +226,7 @@ Nous avons ajouté un forme spéciale conjointe au \lstcode{##demand-module}
 pour indique le nom symbolique des modules des modules exportés. Cette
 forme spéciale est \lstcode{##supply-module}, elle accepte comme paramètre le
 nom du module exporté par l'entité courant.  La syntaxe de ces deux formes dans
-la figure \ref{fig:syntax->demand/supply-module}.\\
+la figure \ref{fig:syntax->demand/supply-module}.\\[1ex]
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},
@@ -299,14 +299,14 @@ contenant les procédures. Dans Gambit les fichiers d'entête sont marqués par 
 
 Le nom des fichiers doit correspondre à la dernière partie du nom de module.  Par
 exemple, le module primitif \lstcode{angle2} doit inclure les fichiers
-\lstcode{angle2/angle2.scm} et généralement \lstcode{angle2/angle2#.scm}.\\
+\lstcode{angle2/angle2.scm} et généralement \lstcode{angle2/angle2#.scm}.\\[1ex]
 \begin{figure}[ht]
   \lstset{language={scheme},frame=single}
   \fontsize{12}{10}
 \begin{mplisting}{0.9}
 ;; angle2/angle2#.scm
 (##namespace ("angle2#" deg->rad rad->deg))
-\end{mplisting}\\[3ex]
+\end{mplisting}\\[4ex]
 \begin{mplisting}{0.9}
 ;; angle2/angle2.scm
 (include "angle2#.scm")
@@ -385,7 +385,7 @@ chargement des définitions.  La forme \lstcode{##import}, comme
 \lstcode{##demand-module} s'occupe de trouver l'emplacement du fichier d'entête
 à partir du nom du module. Elle génère le \lstcode{##include} du fichier
 d'entête s'il existe et un \lstcode{##demand-module} du module.  L'importation
-\lstcode{(##import angle2)} est équivalente à:\\
+\lstcode{(##import angle2)} est équivalente à:\\[1ex]
 \begin{figure}[ht]
   \centering
   \lstset{language={Scheme},frame=single}
@@ -446,7 +446,7 @@ R5RS avec un mécanisme de chargement sophistiqué. Le \lstcode{import} requiert
 la méta information fournit par la déclaration \lstcode{export} dans le
 \lstcode{define-library}.
 
-Les modules primitifs font le pont entre R5RS et R7RS.\\
+Les modules primitifs font le pont entre R5RS et R7RS.\\[1ex]
 \begin{figure}[ht]
   \lstset{language={scheme},frame=single}
   \fontsize{12}{10}
