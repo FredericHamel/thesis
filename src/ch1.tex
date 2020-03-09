@@ -217,20 +217,39 @@ gestionnaire, il serait avantageux de ne pas interrompre le
 fonctionnement du système distribué lorsque les modules sont
 améliorés.
 
-Le problème qui nous attaquons est la transmission de code compilé
+Le problème que nous attaquons est la transmission de code compilé
 entre les nœuds d'un système distribué hétérogène. Chaque nœud a
 possiblement une architecture différente (x86, ARM) et est sur un
 système d'exploitation différent (Windows, Mac, Linux).
 Les architectures différentes ne sont pas compatibles, donc
-le code compilé ne peut pas juste être transmis tel quel.
+le code compilé ne peut pas simplement être transmis tel quel.
 Le format des exécutables natifs varie d'un système d'exploitation
 à un autre. Le code transmis a des dépendances qui doivent aussi être
 transmises pour son bon fonctionnement.
 %\section{Approche de transmission}
 %[TODO: approche]
+La sérialisation indépendante de la machine des procédures, des fermetures et
+des continuations est basée sur la sérialisation des points de contrôle. Les
+points de contrôle sont à l'entrée des procédures, l'entrée des fermetures
+et le retour des points d'appel non terminal à une procédure.
 
+Les procédures compilées dans Gambit Scheme~\cite{gambitdoc} sont représentées
+sous la forme de point contrôle qui est indépendant de la machine afin d'avoir
+un format de sérialisation uniforme. Pour sérialiser une procédure, une
+fermeture ou un continuation, il faut sérialiser un point de contrôle. Chaque
+point de contrôle est identifié de façon unique au sein du module par un nom et
+un entier. Un point de contrôle est sérialisé par le nom et l'entier qui
+l'identifie.
 
-%[TODO: contrib]
+Nous attachons le nom du module avec la version, qui contient l'URL où le code
+peut être obtenu, au nom du point de contrôle. La combinaison de l'URL et de la
+version du module permet de générer des noms uniques. Cette information permet
+d'installer et compiler la version spécifique du module sur le nœud distant qui
+contient le code.  Nous avons ajouté un mécanisme de chargement dynamique qui
+permet d'intégrer le module et ses dépendances transitives au programme sans
+interruption.
+%[TODO: aproche FINE]
+
 Les contributions de ce travail sont la conception d'un système de module pour
 les systèmes distribués et son intégration dans Gambit Scheme. Ce système
 permet la diffusion des modules compilés entre les nœuds d'un système
