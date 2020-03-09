@@ -91,7 +91,7 @@ forme \lstcode{##namespace} respectent la portée lexicale. Il y a trois types
 d'opérations avec les espaces de nom.
 
 Il y a la déclaration d'espaces de nom global qui s'applique à tous les
-symboles qui ne contiennent pas de \lstcode{#}. \\
+symboles qui ne contiennent pas de \lstcode{#}. \\[1ex]
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},frame=single}
@@ -106,7 +106,7 @@ symboles qui ne contiennent pas de \lstcode{#}. \\
 Il est possible de spécifier la liste des symboles qui sont affectés par la
 déclaration d'espace de nom. À partir de la syntaxe de la figure
 \ref{fig:forms->namespace-global}, il suffit d'ajouter les symboles après le nom
-de l'espace de nom.\\
+de l'espace de nom.\\[1ex]
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},
@@ -127,7 +127,8 @@ de l'espace de nom.\\
 La forme \lstcode{##namespace} permet aussi de lier un identifiant à un
 autre identifiant dans un espace de nom donné. Chaque association est marquée
 par une paire qui crée un alias entre le premier élément et le second. Par exemple,
-la paire \lstcode{(<old> <new>)} remplace \lstcode{<old>} par \lstcode{<ns><new>}.\\
+la paire \lstcode{(<old> <new>)} remplace \lstcode{<old>} par \lstcode{<ns><new>}.
+\\[1ex]
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},
@@ -172,7 +173,7 @@ Chaque module commence par déclarer son espace de nom suivi des définitions
 des procédures du module. Les différentes formes d'espace de noms sont données
 par les figures \ref{fig:forms->namespace-global}, \ref{fig:forms->namespace-set}
 et \ref{fig:forms->namespace-rename}.
-\\
+\\[1ex]
 \begin{figure}[ht]
   \centering
   \lstset{language={scheme},
@@ -561,7 +562,7 @@ expansées de la même façon que dans des programmes principaux.\\[3ex]
     (define (salut name) (exclaim "bonjour " name))
     ;; it is best for a library to not have side-effects...
     #;(salut "le monde")))
-\end{mplisting}\\[2ex]
+\end{mplisting}\\[4ex]
 \begin{mplisting}{0.9}
 ;; expansion of (define-library (hello) ...)
 (##declare (block))
@@ -599,7 +600,7 @@ L'importation relative part du \lstcode{module-ref} du module courant.  Un
 \lstcode{import} de \lstcode{(.. C)} à partir du module \lstcode{(A B)}
 correspond à l'importation de \lstcode{(A C)}. Cela permet au sous-module de
 tests unitaires de référer au module principal en préservant le
-\lstcode{module-ref} avec la version. \\
+\lstcode{module-ref} avec la version. \\[1ex]
 
 \begin{figure}[ht]
   \centering
@@ -616,7 +617,7 @@ tests unitaires de référer au module principal en préservant le
 
 La déclaration \lstcode{namespace} permet de forcer l'espace de nom d'un module.
 L'utilisation primaire de cette déclaration est l'implémentation de modules qui
-exporte les fonctionnalités déjà implémentées dans Gambit. \\
+exporte les fonctionnalités déjà implémentées dans Gambit. \\[1ex]
 
 \begin{figure}[ht]
   \lstset{language={scheme},

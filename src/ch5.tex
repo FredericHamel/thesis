@@ -214,7 +214,7 @@ module spécifié par une étiquette au sein du système de gestion de version.
 % et l'extraire dans l'espace des modules.
 
 Il est possible d'installer un module par une procédure dans le langage.  La
-procédure \lstcode{install} du module interne \lstcode{_pkg} permet
+procédure \lstcode{pkg-install} du module interne \lstcode{_pkg} permet
 l'installation de module, elle accepte deux paramètres: le nom du module et de
 façon optionnelle le préfixe d'installation. Le module est installé par
 l'installation du \textit{package} englobant. Elle retourne la valeur de vérité
@@ -222,7 +222,7 @@ vraie (\lstcode{#t}) si l'installation réussit, sinon elle retourne la valeur
 de vérité fausse (\lstcode{#f}).
 \begin{center}
   \begin{mplisting}{0.4}
-(install mod #!optional dir)
+(pkg-install mod #!optional dir)
 \end{mplisting}
 \end{center}
 
@@ -235,7 +235,7 @@ le \textit{package} est situé. Un paramètre est reconnu comme un répertoire
 local, s'il termine soit par une barre oblique (\texttt{/}) ou par un point.
 \begin{center}
   \begin{mplisting}{0.8}
-$ gsi -install [-dir <path>] [local-dir] package
+$ gsi -install [-dir <path>] [local-dir] package[@<version>]
 \end{mplisting}
 \end{center}
 
@@ -266,41 +266,19 @@ $ gsi -install -dir /tmp/exemple /local/dir/ github.com/frederichamel/semver
   \label{fig:install_hosted_package}
 \end{figure}
 
-\begin{figure}[ht]
-  \centering
-  \begin{mplisting}{1}
-$ gsi -install -dir /tmp/exemple github.com/frederichamel/semver
-\end{mplisting}
-  \caption{Exemple d'installation d'un \textit{package} hébergé dans le préfixe d'installation
-    \texttt{/tmp/exemple}}
-  \label{fig:install_hosted_package_in_custom_prefix}
-\end{figure}
-
-% _vcs only
-\begin{figure}[ht]
-  \centering
-  \begin{mplisting}{1}
-$ gsi -install -dir /tmp/exemple /local/dir/ github.com/frederichamel/semver
-\end{mplisting}
-  \caption{Exemple d'installation d'un \textit{package} dans le préfixe d'installation
-    \texttt{/tmp/exemple} à partir du répertoire local \texttt{/local/dir/}.}
-  \label{fig:install_local_package_in_custom_prefix}
-\end{figure}
-
-
 \section{Désinstallation}
 
 Il est possible de désinstaller une version d'un module spécifique
 où le \textit{package} au complet.
 La désinstallation d'un module consiste à supprimer les fichiers
 de ce module. Le module \lstcode{_pkg} offre la procédure
-\lstcode{uninstall} qui accepte deux arguments: le nom du module,
+\lstcode{pkg-uninstall} qui accepte deux arguments: le nom du module,
 et de façon optionnelle, le répertoire dans lequel les modules
 sont situés. Les valeurs retournées par cette procédure sont
 similaires à la procédure \lstcode{install}.
 \begin{center}
   \begin{mplisting}{0.4}
-(uninstall mod #!optional dir)
+(pkg-uninstall mod #!optional dir)
 \end{mplisting}
 \end{center}
 La désinstallation peut être faite en passant l'option \lstcode{-uninstall}
@@ -308,7 +286,7 @@ La désinstallation peut être faite en passant l'option \lstcode{-uninstall}
 répertoire  des modules à désinstaller.
 \begin{center}
   \begin{mplisting}{0.8}
-$ gsi -uninstall [-dir <path>] (<module>|<package>)
+$ gsi -uninstall [-dir <path>] <package>[@<version>]
 \end{mplisting}
 \end{center}
 Le répertoire \lstcode{<path>} est l'emplacement des modules
@@ -338,13 +316,9 @@ dépôt web. Sans cette opération l'installation de versions plus récente
 échouerait quand ils ne sont pas dans la cache locale du dépôt. La mise
 à jour d'un module est l'équivalent d'un \texttt{pull} dans git.
 
-Notre système de module permet l'installation d'une branche.
-L'opération de mise à jour sur cette branche n'est pas encore
-supportée. C'est un aspect qui est à explorer.
-
 \begin{center}
   \begin{mplisting}{0.8}
-$ gsi -update [-dir <path>] <package>
+$ gsi -update [-dir <path>] <package>[@<version>]
 \end{mplisting}
 \end{center}
 
@@ -403,7 +377,7 @@ celui de OCaml, Python et NodeJS et des autres implémentations de Scheme.
 Akku~\cite{Akku.scm}, un gestionnaire de module pour Scheme compatible avec
 plusieurs implémentations de Scheme comme Chez Scheme, Chibi Scheme et GNU
 Guile. Il gère les modules pour les projets. Une seule version de chaque module
-peut être installé dans un projet.
+peut être installée dans un projet.
 
 Ceux-ci ne permettent pas l'installation de plus d'une version d'un module
 directement. Le système de module qui est utilisé dans le langage de
@@ -453,23 +427,22 @@ préfixe.
 \end{tabular}
 
 \caption{Une table qui compare différents systèmes de module sur la capacité
-  d'installer plusieurs versions d'un module.  Le système Go permet plusieurs
-  versions d'un module pour des versions incompatibles selon le sémantique de
-  version. La version \texttt{1.0.0} coexiste avec la version \texttt{2.0.0}.
-  La version récente \texttt{1.2.0} remplace la vieille version \texttt{1.0.1}.}
+  d'installer plusieurs versions d'un module.  }
 
 \end{figure}
 
 La gestion de module de notre système ressemble à Nix~\cite{Nix}, un gestionnaire
 de \textit{package} utilisé par le système d'exploitation NixOS. Les modules dans Nix
-sont traités de façon fonctionnelle. Chaque \textit{package} possède ces dépendances.
+sont traités de façon fonctionnelle. Chaque \textit{package} possède ses dépendances.
 Plusieurs versions d'un \textit{package} peuvent être installées simultanément pour permettre le
 fonctionnement de l'ensemble des \textit{packages}. Une mise à jour du système dans Nix
 ne brise pas les dépendances d'un \textit{package}.
-
-%\subsubsection{Organisation dans Gambit Scheme}
-%\todo{}
-% exemple coexistence sur un système de fichier
+Le système Go permet plusieurs versions d'un module pour des versions
+incompatibles selon la sémantique de version~\cite{SemanticVersioning}. La version \texttt{1.0.0}
+coexiste avec la version \texttt{2.0.0}.  La version récente \texttt{1.2.0}
+remplace la vieille version \texttt{1.0.1}.
+%\subsubsection{Organisation dans Gambit Scheme} \todo{} exemple coexistence
+%sur un système de fichier
 
 \subsection{Organisation de OCaml}
 %
@@ -643,7 +616,7 @@ $GOPATH/
 \section{Conclusion}
 %
 Ce chapitre a traité de la gestion des modules.  Les opérations du système de
-modules présentés dans ce chapitre sont l'installation, la désinstallation et
+modules présentées dans ce chapitre sont l'installation, la désinstallation et
 la mise à jour.  Notre approche de gestion des modules offre correctement la
 possibilité d'avoir plus d'une version d'un module. Cela empêche les bris de
 dépendances lors de l'installation de nouveaux modules.  L'installation des
