@@ -237,24 +237,19 @@ de multiples versions d'un module de coexister.
 % l'avons intégré dans le système Gambit Scheme.
 
 %[TODO: approche]
-La sérialisation indépendante de la machine des procédures, des fermetures et
-des continuations est basée sur la sérialisation des points de contrôle. Les
-points de contrôle sont à l'entrée des procédures, l'entrée des fermetures
-et le retour des points d'appel non terminal à une procédure.
+Dans notre système, la sérialisation des procédures, des fermetures et des
+continuations est basée sur la sérialisation des points de contrôle
+indépendamment de la machine. Les points de contrôle sont à l'entrée des
+procédures, l'entrée des fermetures et le retour des points d'appel non
+terminal à une procédure.  Chaque point de contrôle est identifié de façon
+unique au sein du module par un nom et un entier. Un point de contrôle est
+sérialisé par le nom et l'entier qui l'identifie.
 
-Les procédures compilées dans Gambit Scheme~\cite{gambitdoc} sont représentées
-sous la forme de point de contrôle qui est indépendant de la machine afin d'avoir
-un format de sérialisation uniforme. Pour sérialiser une procédure, une
-fermeture ou un continuation, il faut sérialiser un point de contrôle. Chaque
-point de contrôle est identifié de façon unique au sein du module par un nom et
-un entier. Un point de contrôle est sérialisé par le nom et l'entier qui
-l'identifie.
-
-Nous attachons le nom du module avec la version, qui contient l'URL où le code
-peut être obtenu, au nom du point de contrôle. La combinaison de l'URL et de la
-version du module permet de générer des noms uniques. Cette information permet
-au nœud distant d'installer et compiler la version spécifique du module qui est
-requis par le code qui est transmis.  Nous avons ajouté un mécanisme de
+Nous attachons le nom du module, qui contient l'URL où le code peut être
+obtenu, et la version au nom du point de contrôle. La combinaison de l'URL et
+de la version du module permet de générer des noms uniques. Cette information
+permet au nœud distant d'installer et compiler la version spécifique du module
+qui est requis par le code qui est transmis.  Nous avons ajouté un mécanisme de
 chargement dynamique qui permet d'intégrer le module et ses dépendances
 transitives au programme sans interruption.
 %[TODO: aproche FINE]
@@ -270,7 +265,7 @@ transitives au programme sans interruption.
 
 Le chapitre \ref{ch:scheme_concepts} explique les approches existantes de
 modularisation en Scheme.  Le chapitre \ref{ch:modules_implementation}
-traite de l'implémentation du système de module et son intégration dans Gambit,
+traite de l'implémentation du système de module et son intégration dans Gambit~\cite{gambitdoc},
 un compilateur/interprète performant pour Scheme. Le chapitre
 \ref{ch:loading-model} explique les mécanismes de chargement des modules.  Le
 chapitre \ref{ch:module_management} traite de l'organisation générale des
